@@ -7,15 +7,24 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 
 const ConfirmationDialog = ({ open, onClose, title, message, onConfirm }) => {
+  const handleClose = () => {
+    onClose();
+  };
+
+  const handleConfirm = () => {
+    onConfirm();
+    onClose();
+  };
+
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={handleClose}>
       <DialogTitle>{title || 'Confirmation'}</DialogTitle>
       <DialogContent>{message}</DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={handleClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={onConfirm} color="primary" autoFocus>
+        <Button onClick={handleConfirm} color="primary" autoFocus>
           Confirm
         </Button>
       </DialogActions>
