@@ -5,7 +5,7 @@ import DialogService from './DialogService';
 const YourComponent: React.FC = () => {
   const handleDelete = (userId: number) => {
     // Call the dialog service to confirm the deletion
-    DialogService.openDialog({
+    DialogService({
       open: true,
       title: 'Delete User',
       content: `Are you sure you want to delete user with ID ${userId}?`,
@@ -32,7 +32,7 @@ const YourComponent: React.FC = () => {
       </table>
 
       {/* Include the DialogService component in your component */}
-      <DialogService openDialog={(options) => DialogService.openDialog(options)} closeDialog={DialogService.closeDialog} />
+      <DialogService open={/* your boolean state */} title="Your Title" content="Your Content" />
     </div>
   );
 };
