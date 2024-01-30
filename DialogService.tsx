@@ -35,7 +35,12 @@ interface DialogServiceProps {
   onClose?: () => void;
 }
 
-const DialogService: React.FC = () => {
+interface DialogServiceFunctions {
+  openDialog: (dialogOptions: DialogServiceProps) => void;
+  closeDialog: () => void;
+}
+
+const DialogService: React.FC<DialogServiceFunctions> = ({ openDialog, closeDialog }) => {
   const [dialogProps, setDialogProps] = useState<DialogServiceProps>({
     open: false,
     title: 'Confirmation',
@@ -47,18 +52,10 @@ const DialogService: React.FC = () => {
     return () => setDialogProps({} as DialogServiceProps);
   }, []);
 
-  const openDialog = (dialogOptions: DialogServiceProps) => {
-    setDialogProps({
-      ...dialogOptions,
-      open: true,
-    });
-  };
-
-  const closeDialog = () => {
-    setDialogProps({
-      open: false,
-    });
-  };
+  openDialog({
+    ...dialogProps,
+    onClose: closeDialog,
+  });
 
   return (
     <ConfirmDialog
