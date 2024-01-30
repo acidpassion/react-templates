@@ -1,16 +1,8 @@
-// DialogService.tsx
+// DialogService.js
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 
-interface ConfirmDialogProps {
-  open: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  title: string;
-  content: string;
-}
-
-const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ open, onClose, onConfirm, title, content }) => {
+const ConfirmDialog = ({ open, onClose, onConfirm, title, content }) => {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
@@ -27,52 +19,40 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ open, onClose, onConfirm,
   );
 };
 
-interface DialogServiceProps {
-  open: boolean;
-  title: string;
-  content: string;
-  onConfirm?: () => void;
-  onClose?: () => void;
-}
-
-interface DialogServiceFunctions {
-  openDialog: (dialogOptions: DialogServiceProps) => void;
-  closeDialog: () => void;
-}
-
-const DialogService: React.FC<DialogServiceFunctions> = ({ openDialog, closeDialog }) => {
-  const [dialogProps, setDialogProps] = useState<DialogServiceProps>({
+const DialogService = () => {
+  const [dialogProps, setDialogProps] = useState({
     open: false,
     title: 'Confirmation',
     content: 'Are you sure?',
+    onConfirm: () => {},
+    onClose: () => {},
   });
 
   useEffect(() => {
     // Cleanup function to reset dialogProps when the component unmounts
-    return () => setDialogProps({} as DialogServiceProps);
+    return () => setDialogProps({});
   }, []);
 
-  const openDialogFunction = (dialogOptions: DialogServiceProps) => {
+  const openDialog = (dialogOptions) => {
     setDialogProps({
       ...dialogOptions,
       open: true,
     });
   };
 
-  const closeDialogFunction = () => {
+  const closeDialog = () => {
     setDialogProps({
       open: false,
     });
-    closeDialog?.(); // Call the provided closeDialog function, if any
   };
 
   return (
     <ConfirmDialog
       open={dialogProps.open}
-      onClose={closeDialogFunction}
+      onClose={closeDialog}
       onConfirm={() => {
-        dialogProps.onConfirm?.();
-        closeDialogFunction();
+        dialogProps.onConfirm();
+        closeDialog();
       }}
       title={dialogProps.title}
       content={dialogProps.content}
