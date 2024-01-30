@@ -31,8 +31,8 @@ interface DialogServiceProps {
   open: boolean;
   title: string;
   content: string;
-  onConfirm: () => void;
-  onClose: () => void;
+  onConfirm?: () => void;
+  onClose?: () => void;
 }
 
 const DialogService: React.FC = () => {
@@ -40,8 +40,6 @@ const DialogService: React.FC = () => {
     open: false,
     title: 'Confirmation',
     content: 'Are you sure?',
-    onConfirm: () => {},
-    onClose: () => {},
   });
 
   useEffect(() => {
@@ -65,11 +63,8 @@ const DialogService: React.FC = () => {
   return (
     <ConfirmDialog
       open={dialogProps.open}
-      onClose={closeDialog}
-      onConfirm={() => {
-        dialogProps.onConfirm();
-        closeDialog();
-      }}
+      onClose={() => dialogProps.onClose?.()}
+      onConfirm={() => dialogProps.onConfirm?.()}
       title={dialogProps.title}
       content={dialogProps.content}
     />
