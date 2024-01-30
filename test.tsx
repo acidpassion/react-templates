@@ -1,40 +1,44 @@
-// YourComponent.tsx
-import React from 'react';
-import DialogService from './DialogService';
+// UserManagementComponent.tsx
+import React, { useState } from 'react';
+import ConfirmDialog from './ConfirmDialog';
 
-const YourComponent: React.FC = () => {
-  const handleDelete = (userId: number) => {
-    // Call the dialog service to confirm the deletion
-    DialogService({
-      open: true,
-      title: 'Delete User',
-      content: `Are you sure you want to delete user with ID ${userId}?`,
-      onConfirm: () => {
-        // Logic to delete the user
-        console.log(`Deleting user with ID ${userId}`);
-      },
-      onClose: DialogService.closeDialog, // Close the dialog on cancel
-    });
+const UserManagementComponent: React.FC = () => {
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const handleDeleteClick = (userId: string) => {
+    setSelectedUserId(userId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    // Perform the delete action here using the selectedUserId
+    console.log('Deleting user with ID:', selectedUserId);
+
+    // After deleting, close the dialog
+    setDeleteDialogOpen(false);
+  };
+
+  const handleCancelDelete = () => {
+    // Cancel the delete action
+    setDeleteDialogOpen(false);
   };
 
   return (
-    <div>
-      {/* Your user listing table */}
-      <table>
-        {/* Render your user rows here */}
-        <tr>
-          <td>User 1</td>
-          <td>
-            <button onClick={() => handleDelete(1)}>Delete</button>
-          </td>
-        </tr>
-        {/* Add more user rows as needed */}
-      </table>
+    <>
+      {/* Your User Listing Table with Delete Buttons */}
+      <button onClick={() => handleDeleteClick("user123")}>Delete User</button>
 
-      {/* Include the DialogService component in your component */}
-      <DialogService open={/* your boolean state */} title="Your Title" content="Your Content" />
-    </div>
+      {/* Reusable Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        title="Confirm Delete"
+        content="Are you sure you want to delete this user?"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
+    </>
   );
 };
 
-export default YourComponent;
+export default UserManagementComponent;
