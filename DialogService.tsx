@@ -35,29 +35,47 @@ interface DialogServiceProps {
   onClose?: () => void;
 }
 
-const DialogService: React.FC<DialogServiceProps> = ({ open, title, content, onConfirm, onClose }) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
+interface DialogServiceFunctions {
+  openDialog: (dialogOptions: DialogServiceProps) => void;
+  closeDialog: () => void;
+}
+
+const DialogService: React.FC<DialogServiceFunctions> = ({ openDialog, closeDialog }) => {
+  const [dialogProps, setDialogProps] = useState<DialogServiceProps>({
+    open: false,
+    title: 'Confirmation',
+    content: 'Are you sure?',
+  });
 
   useEffect(() => {
-    // Set the internal state when the prop 'open' changes
-    setDialogOpen(open);
-  }, [open]);
+    // Cleanup function to reset dialogProps when the component unmounts
+    return () => setDialogProps({} as DialogServiceProps);
+  }, []);
 
-  const closeDialog = () => {
-    setDialogOpen(false);
-    onClose?.();
+  const openDialogFunction = (dialogOptions: DialogServiceProps) => {
+    setDialogProps({
+      ...dialogOptions,
+      open: true,
+    });
+  };
+
+  const closeDialogFunction = () => {
+    setDialogProps({
+      open: false,
+    });
+    closeDialog?.(); // Call the provided closeDialog function, if any
   };
 
   return (
     <ConfirmDialog
-      open={dialogOpen}
-      onClose={closeDialog}
+      open={dialogProps.open}
+      onClose={closeDialogFunction}
       onConfirm={() => {
-        onConfirm?.();
-        closeDialog();
+        dialogProps.onConfirm?.();
+        closeDialogFunction();
       }}
-      title={title}
-      content={content}
+      title={dialogProps.title}
+      content={dialogProps.content}
     />
   );
 };
