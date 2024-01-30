@@ -1,29 +1,47 @@
-// useConfirmationDialog.js
-import React, { useState, useCallback } from 'react';
-import ConfirmationDialog from './ConfirmationDialog'; // Create this component (see step 3)
+// useConfirmationDialog.ts
+import { useState } from 'react';
+import ConfirmationDialog from './ConfirmationDialog';
 
-const useConfirmationDialog = () => {
-  const [open, setOpen] = useState(false);
-  const [confirmationData, setConfirmationData] = useState({});
+export const useConfirmationDialog = () => {
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-  const openDialog = useCallback((data) => {
-    setConfirmationData(data);
-    setOpen(true);
-  }, []);
+  const showConfirmationDialog = () => {
+    setDialogOpen(true);
+  };
 
-  const closeDialog = useCallback(() => {
-    setOpen(false);
-  }, []);
+  const closeConfirmationDialog = () => {
+    setDialogOpen(false);
+  };
 
-  const ConfirmDialog = () => (
+  const ConfirmationDialogWrapper = ({
+    title,
+    message,
+    onConfirm,
+    onCancel,
+  }: {
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    onCancel: () => void;
+  }) => (
     <ConfirmationDialog
-      open={open}
-      onClose={closeDialog}
-      {...confirmationData}
+      open={dialogOpen}
+      title={title}
+      message={message}
+      onConfirm={() => {
+        closeConfirmationDialog();
+        onConfirm();
+      }}
+      onCancel={() => {
+        closeConfirmationDialog();
+        onCancel();
+      }}
     />
   );
 
-  return { openDialog, ConfirmDialog };
+  return {
+    showConfirmationDialog,
+    closeConfirmationDialog,
+    ConfirmationDialog: ConfirmationDialogWrapper,
+  };
 };
-
-export default useConfirmationDialog;
