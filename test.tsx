@@ -6,16 +6,14 @@ const YourComponent: React.FC = () => {
   const handleDelete = (userId: number) => {
     // Call the dialog service to confirm the deletion
     DialogService.openDialog({
+      open: true,
       title: 'Delete User',
       content: `Are you sure you want to delete user with ID ${userId}?`,
       onConfirm: () => {
         // Logic to delete the user
         console.log(`Deleting user with ID ${userId}`);
       },
-      onClose: () => {
-        // Optional: Handle close event
-        console.log('Dialog closed');
-      },
+      onClose: DialogService.closeDialog, // Close the dialog on cancel
     });
   };
 
@@ -34,7 +32,7 @@ const YourComponent: React.FC = () => {
       </table>
 
       {/* Include the DialogService component in your component */}
-      <DialogService />
+      <DialogService openDialog={(options) => DialogService.openDialog(options)} closeDialog={DialogService.closeDialog} />
     </div>
   );
 };
