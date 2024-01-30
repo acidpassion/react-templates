@@ -1,35 +1,37 @@
-// components/ConfirmationDialog.tsx
-import React from 'react';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
+// ConfirmationDialog.tsx
+import React, { FC } from 'react';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from '@mui/material';
 
 interface ConfirmationDialogProps {
   open: boolean;
-  onClose: () => void;
   title: string;
   message: string;
   onConfirm: () => void;
+  onCancel: () => void;
 }
 
-const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
+const ConfirmationDialog: FC<ConfirmationDialogProps> = ({
   open,
-  onClose,
   title,
   message,
   onConfirm,
+  onCancel,
 }) => {
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onCancel}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{message}</DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={onCancel} color="primary">
           Cancel
         </Button>
-        <Button onClick={onConfirm} color="primary" autoFocus>
+        <Button onClick={onConfirm} color="primary">
           Confirm
         </Button>
       </DialogActions>
