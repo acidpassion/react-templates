@@ -1,17 +1,51 @@
-// DialogService.js
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+// ConfirmDialog.tsx
+import React, { useState, useEffect, ReactNode } from 'react';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
 
-const ConfirmDialog = ({ open, onClose, onConfirm, title, content }) => {
+interface ConfirmDialogProps {
+  isOpen: boolean;
+  title: string;
+  content: ReactNode;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
+  isOpen,
+  title,
+  content,
+  onConfirm,
+  onCancel,
+}) => {
+  const [open, setOpen] = useState(isOpen);
+
+  useEffect(() => {
+    setOpen(isOpen);
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setOpen(false);
+    onCancel();
+  };
+
+  const handleConfirm = () => {
+    setOpen(false);
+    onConfirm();
+  };
+
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={handleClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{content}</DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={handleClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={onConfirm} color="primary" autoFocus>
+        <Button onClick={handleConfirm} color="primary" autoFocus>
           Confirm
         </Button>
       </DialogActions>
@@ -19,45 +53,4 @@ const ConfirmDialog = ({ open, onClose, onConfirm, title, content }) => {
   );
 };
 
-const DialogService = () => {
-  const [dialogProps, setDialogProps] = useState({
-    open: false,
-    title: 'Confirmation',
-    content: 'Are you sure?',
-    onConfirm: () => {},
-    onClose: () => {},
-  });
-
-  useEffect(() => {
-    // Cleanup function to reset dialogProps when the component unmounts
-    return () => setDialogProps({});
-  }, []);
-
-  const openDialog = (dialogOptions) => {
-    setDialogProps({
-      ...dialogOptions,
-      open: true,
-    });
-  };
-
-  const closeDialog = () => {
-    setDialogProps({
-      open: false,
-    });
-  };
-
-  return (
-    <ConfirmDialog
-      open={dialogProps.open}
-      onClose={closeDialog}
-      onConfirm={() => {
-        dialogProps.onConfirm();
-        closeDialog();
-      }}
-      title={dialogProps.title}
-      content={dialogProps.content}
-    />
-  );
-};
-
-export default DialogService;
+export default ConfirmDialog;
