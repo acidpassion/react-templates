@@ -1,196 +1,134 @@
-// ** Next Import
-import Link from 'next/link'
-
-// ** MUI Components
-import Box from '@mui/material/Box'
+// MUI Imports
 import Grid from '@mui/material/Grid'
+import Chip from '@mui/material/Chip'
 import Card from '@mui/material/Card'
-import Avatar from '@mui/material/Avatar'
-import Divider from '@mui/material/Divider'
-import Tooltip from '@mui/material/Tooltip'
-import CardHeader from '@mui/material/CardHeader'
-import Typography from '@mui/material/Typography'
-import AvatarGroup from '@mui/material/AvatarGroup'
 import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
+import Divider from '@mui/material/Divider'
 import LinearProgress from '@mui/material/LinearProgress'
+import AvatarGroup from '@mui/material/AvatarGroup'
+import Tooltip from '@mui/material/Tooltip'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Type Imports
+import type { ProjectsTabType } from '@/types/pages/profileTypes'
 
-// ** Types
-import { ProjectsTabType } from 'src/@fake-db/types'
+// Component Imports
+import OptionMenu from '@core/components/option-menu'
+import CustomAvatar from '@core/components/mui/Avatar'
+import Link from '@components/Link'
 
-// ** Utils Import
-import { getInitials } from 'src/@core/utils/get-initials'
-
-// ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
-import CustomAvatar from 'src/@core/components/mui/avatar'
-import OptionsMenu from 'src/@core/components/option-menu'
-
-const ProjectAvatar = ({ project }: { project: ProjectsTabType }) => {
-  const { title, avatar, avatarColor = 'primary' } = project
-
-  if (avatar.length) {
-    return <CustomAvatar src={avatar} sx={{ width: 38, height: 38 }} />
-  } else {
-    return (
-      <CustomAvatar skin='light' color={avatarColor} sx={{ width: 38, height: 38 }}>
-        {getInitials(title)}
-      </CustomAvatar>
-    )
-  }
-}
-
-const Projects = ({ data }: { data: ProjectsTabType[] }) => {
+const Projects = ({ data }: { data?: ProjectsTabType[] }) => {
   return (
     <Grid container spacing={6}>
       {data &&
-        Array.isArray(data) &&
         data.map((item, index) => {
           return (
-            <Grid key={index} item xs={12} md={6} lg={4}>
+            <Grid item key={index} xs={12} md={6} lg={4}>
               <Card>
-                <CardHeader
-                  avatar={<ProjectAvatar project={item} />}
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    justifyContent: 'space-between',
-                    '& .MuiCardHeader-avatar': { mr: 3 }
-                  }}
-                  subheader={
-                    <Typography sx={{ display: 'flex', flexDirectionL: 'column', color: 'text.secondary' }}>
-                      <Typography component='span' sx={{ mr: 1, fontWeight: 500 }}>
-                        Client:
-                      </Typography>{' '}
-                      {item.client}
-                    </Typography>
-                  }
-                  action={
-                    <OptionsMenu
-                      iconButtonProps={{ size: 'small', sx: { color: 'text.disabled' } }}
+                <CardContent className='flex flex-col gap-4'>
+                  <div className='flex items-center justify-between'>
+                    <div className='flex items-center gap-4'>
+                      <CustomAvatar src={item.avatar} size={38} />
+                      <div>
+                        <Typography variant='h5' component={Link} className='hover:text-primary'>
+                          {item.title}
+                        </Typography>
+                        <Typography>
+                          <span className='font-medium'>Client: </span>
+                          {item.client}
+                        </Typography>
+                      </div>
+                    </div>
+                    <OptionMenu
+                      iconClassName='text-textDisabled'
                       options={[
                         'Rename Project',
                         'View Details',
-                        'Add to Favorites',
-                        { divider: true, dividerProps: { sx: { my: theme => `${theme.spacing(2)} !important` } } },
-                        { text: 'Leave Project', menuItemProps: { sx: { color: 'error.main' } } }
+                        'Add to Favorite',
+                        { divider: true },
+                        {
+                          text: 'Leave Project',
+                          menuItemProps: { className: 'text-error hover:bg-[var(--mui-palette-error-lightOpacity)]' }
+                        }
                       ]}
                     />
-                  }
-                  title={
-                    <Typography
-                      href='/'
-                      variant='h5'
-                      component={Link}
-                      onClick={e => e.preventDefault()}
-                      sx={{
-                        textDecoration: 'none',
-                        '&:hover': { color: 'primary.main' }
-                      }}
-                    >
-                      {item.title}
-                    </Typography>
-                  }
-                />
-                <CardContent>
-                  <Box
-                    sx={{
-                      mb: 4,
-                      gap: 2,
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      alignItems: 'center',
-                      justifyContent: 'space-between'
-                    }}
-                  >
-                    <CustomChip
-                      rounded
-                      size='small'
-                      skin='light'
-                      sx={{ height: 60 }}
-                      label={
-                        <>
-                          <Box sx={{ display: 'flex' }}>
-                            <Typography sx={{ fontWeight: 500 }}>{item.budgetSpent}</Typography>
-                            <Typography sx={{ color: 'text.secondary' }}>{`/${item.budget}`}</Typography>
-                          </Box>
-                          <Typography sx={{ color: 'text.secondary' }}>Total Budget</Typography>
-                        </>
-                      }
-                    />
-                    <Box sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column' }}>
-                      <Box sx={{ display: 'flex' }}>
-                        <Typography sx={{ mr: 1, fontWeight: 500 }}>Start Date:</Typography>
-                        <Typography sx={{ color: 'text.secondary' }}>{item.startDate}</Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex' }}>
-                        <Typography sx={{ mr: 1, fontWeight: 500 }}>Deadline:</Typography>
-                        <Typography sx={{ color: 'text.secondary' }}>{item.deadline}</Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                  <Typography sx={{ color: 'text.secondary' }}>{item.description}</Typography>
+                  </div>
+                  <div className='flex items-center justify-between flex-wrap gap-4'>
+                    <div className='rounded bg-actionHover plb-2 pli-3'>
+                      <div className='flex'>
+                        <Typography className='font-medium' color='text.primary'>
+                          {item.budgetSpent}
+                        </Typography>
+                        <Typography>{`/${item.budget}`}</Typography>
+                      </div>
+                      <Typography>Total Budget</Typography>
+                    </div>
+                    <div className='flex flex-col'>
+                      <div className='flex'>
+                        <Typography className='font-medium' color='text.primary'>
+                          Start Date:
+                        </Typography>
+                        <Typography>{item.startDate}</Typography>
+                      </div>
+                      <div className='flex'>
+                        <Typography className='font-medium' color='text.primary'>
+                          Deadline:
+                        </Typography>
+                        <Typography>{item.deadline}</Typography>
+                      </div>
+                    </div>
+                  </div>
+                  <Typography>{item.description}</Typography>
                 </CardContent>
-                <Divider sx={{ my: '0 !important' }} />
-                <CardContent>
-                  <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Box sx={{ display: 'flex' }}>
-                      <Typography sx={{ mr: 1, fontWeight: 500 }}>All Hours:</Typography>
-                      <Typography sx={{ color: 'text.secondary' }}>{item.hours}</Typography>
-                    </Box>
-                    <CustomChip
-                      rounded
-                      size='small'
-                      skin='light'
-                      color={item.chipColor}
-                      label={`${item.daysLeft} days left`}
+                <Divider />
+                <CardContent className='flex flex-col gap-4'>
+                  <div className='flex items-center justify-between '>
+                    <div className='flex'>
+                      <Typography className='font-medium' color='text.primary'>
+                        All Hours:
+                      </Typography>
+                      <Typography>{item.hours}</Typography>
+                    </div>
+                    <Chip variant='tonal' size='small' color={item.chipColor} label={`${item.daysLeft} days left`} />
+                  </div>
+                  <div>
+                    <div className='flex items-center justify-between mbe-2'>
+                      <Typography
+                        variant='caption'
+                        className='text-textSecondary'
+                      >{`Tasks: ${item.completedTask}/${item.totalTask}`}</Typography>
+                      <Typography
+                        variant='caption'
+                        className='text-textSecondary'
+                      >{`${Math.round((item.completedTask / item.totalTask) * 100)}% Completed`}</Typography>
+                    </div>
+                    <LinearProgress
+                      color='primary'
+                      variant='determinate'
+                      value={Math.round((item.completedTask / item.totalTask) * 100)}
+                      className='bs-2'
                     />
-                  </Box>
-                  <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Typography variant='body2'>{`Tasks: ${item.completedTask}/${item.totalTask}`}</Typography>
-                    <Typography variant='body2'>
-                      {`${Math.round((item.completedTask / item.totalTask) * 100)}% Completed`}
-                    </Typography>
-                  </Box>
-                  <LinearProgress
-                    color='primary'
-                    variant='determinate'
-                    sx={{ mb: 3, height: 10 }}
-                    value={Math.round((item.completedTask / item.totalTask) * 100)}
-                  />
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <AvatarGroup className='pull-up' sx={{ mr: 2 }}>
-                        {item.avatarGroup &&
-                          item.avatarGroup.map((person, index) => {
-                            return (
-                              <Tooltip key={index} title={person.name}>
-                                <CustomAvatar src={person.avatar} alt={person.name} sx={{ height: 32, width: 32 }} />
-                              </Tooltip>
-                            )
-                          })}
-                        <Avatar sx={{ height: 32, width: 32, fontWeight: 500, fontSize: '0.75rem' }}>
-                          +{item.members}
-                        </Avatar>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <div className='flex items-center flex-grow gap-3'>
+                      <AvatarGroup className='items-center pull-up'>
+                        {item.avatarGroup.map((person, index) => {
+                          return (
+                            <Tooltip key={index} title={person.name}>
+                              <CustomAvatar src={person.avatar} alt={person.name} size={32} />
+                            </Tooltip>
+                          )
+                        })}
                       </AvatarGroup>
-                    </Box>
-                    <Box
-                      href='/'
-                      component={Link}
-                      onClick={e => e.preventDefault()}
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        textDecoration: 'none',
-                        '& svg': { mr: 1.5, color: 'text.secondary' }
-                      }}
-                    >
-                      <Icon fontSize='1.5rem' icon='tabler:message-dots' />
-                      <Typography sx={{ color: 'text.secondary' }}>{item.comments}</Typography>
-                    </Box>
-                  </Box>
+                      <Typography variant='body2' className='flex-grow'>
+                        {item.members}
+                      </Typography>
+                    </div>
+                    <div className='flex items-center gap-1'>
+                      <i className='tabler-message-dots' />
+                      <Typography>{item.comments}</Typography>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </Grid>

@@ -1,73 +1,60 @@
-// ** React Imports
+// React Imports
 import { useState } from 'react'
 
-// ** MUI Components
-import Box from '@mui/material/Box'
+// MUI Imports
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
-import FormControl from '@mui/material/FormControl'
 import InputAdornment from '@mui/material/InputAdornment'
 
-// ** Custom Component Import
-import CustomTextField from 'src/@core/components/mui/text-field'
-
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-interface State {
-  showPassword: boolean
-  showConfirmPassword: boolean
-}
+// Component Imports
+import DirectionalIcon from '@components/DirectionalIcon'
+import CustomTextField from '@core/components/mui/TextField'
 
 const StepAccountDetails = ({ handleNext }: { handleNext: () => void }) => {
-  // ** States
-  const [values, setValues] = useState<State>({
-    showPassword: false,
-    showConfirmPassword: false
-  })
+  // States
+  const [isPasswordShown, setIsPasswordShown] = useState<boolean>(false)
+  const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState<boolean>(false)
 
   const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword })
+    setIsPasswordShown(!isPasswordShown)
   }
 
   const handleClickShowConfirmPassword = () => {
-    setValues({ ...values, showConfirmPassword: !values.showConfirmPassword })
+    setIsConfirmPasswordShown(!isConfirmPasswordShown)
   }
 
   return (
     <>
-      <Box sx={{ mb: 6 }}>
-        <Typography variant='h3' sx={{ mb: 1.5 }}>
-          Account Information
-        </Typography>
-        <Typography sx={{ color: 'text.secondary' }}>Enter Your Account Details</Typography>
-      </Box>
-
-      <Grid container spacing={5}>
+      <div className='mbe-5'>
+        <Typography variant='h4'>Account Information</Typography>
+        <Typography>Enter Your Account Details</Typography>
+      </div>
+      <Grid container spacing={6}>
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
-            <CustomTextField fullWidth label='Username' placeholder='johndoe' />
-          </FormControl>
+          <CustomTextField fullWidth label='Username' placeholder='johnDoe' />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
-            <CustomTextField fullWidth type='email' label='Email' placeholder='john.doe@email.com' />
-          </FormControl>
+          <CustomTextField fullWidth type='email' label='Email' placeholder='john.deo@gmail.com' />
         </Grid>
         <Grid item xs={12} sm={6}>
           <CustomTextField
             fullWidth
             label='Password'
-            id='input-password'
             placeholder='············'
-            type={values.showPassword ? 'text' : 'password'}
+            id='outlined-adornment-password'
+            type={isPasswordShown ? 'text' : 'password'}
             InputProps={{
               endAdornment: (
                 <InputAdornment position='end'>
-                  <IconButton edge='end' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
-                    <Icon fontSize='1.25rem' icon={values.showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
+                  <IconButton
+                    edge='end'
+                    onClick={handleClickShowPassword}
+                    onMouseDown={e => e.preventDefault()}
+                    aria-label='toggle password visibility'
+                  >
+                    <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
                   </IconButton>
                 </InputAdornment>
               )
@@ -78,13 +65,19 @@ const StepAccountDetails = ({ handleNext }: { handleNext: () => void }) => {
           <CustomTextField
             fullWidth
             label='Confirm Password'
-            id='input-confirm-password'
-            type={values.showConfirmPassword ? 'text' : 'password'}
+            placeholder='············'
+            id='outlined-confirm-password'
+            type={isConfirmPasswordShown ? 'text' : 'password'}
             InputProps={{
               endAdornment: (
                 <InputAdornment position='end'>
-                  <IconButton edge='end' onMouseDown={e => e.preventDefault()} onClick={handleClickShowConfirmPassword}>
-                    <Icon fontSize='1.25rem' icon={values.showConfirmPassword ? 'tabler:eye' : 'tabler:eye-off'} />
+                  <IconButton
+                    edge='end'
+                    onClick={handleClickShowConfirmPassword}
+                    onMouseDown={e => e.preventDefault()}
+                    aria-label='toggle confirm password visibility'
+                  >
+                    <i className={isConfirmPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
                   </IconButton>
                 </InputAdornment>
               )
@@ -94,17 +87,22 @@ const StepAccountDetails = ({ handleNext }: { handleNext: () => void }) => {
         <Grid item xs={12}>
           <CustomTextField fullWidth label='Profile Link' placeholder='johndoe/profile' />
         </Grid>
-        <Grid item xs={12} sx={{ pt: theme => `${theme.spacing(6)} !important` }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Button disabled variant='tonal' sx={{ '& svg': { mr: 2 } }}>
-              <Icon fontSize='1.125rem' icon='tabler:arrow-left' />
-              Previous
-            </Button>
-            <Button variant='contained' onClick={handleNext} sx={{ '& svg': { ml: 2 } }}>
-              Next
-              <Icon fontSize='1.125rem' icon='tabler:arrow-right' />
-            </Button>
-          </Box>
+        <Grid item xs={12} className='flex justify-between'>
+          <Button
+            disabled
+            variant='tonal'
+            color='secondary'
+            startIcon={<DirectionalIcon ltrIconClass='tabler-arrow-left' rtlIconClass='tabler-arrow-right' />}
+          >
+            Previous
+          </Button>
+          <Button
+            variant='contained'
+            onClick={handleNext}
+            endIcon={<DirectionalIcon ltrIconClass='tabler-arrow-right' rtlIconClass='tabler-arrow-left' />}
+          >
+            Next
+          </Button>
         </Grid>
       </Grid>
     </>

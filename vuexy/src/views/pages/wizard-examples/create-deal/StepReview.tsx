@@ -1,129 +1,120 @@
-// ** MUI Imports
-import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
-import Table from '@mui/material/Table'
-import Switch from '@mui/material/Switch'
-import TableRow from '@mui/material/TableRow'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import Typography from '@mui/material/Typography'
-import TableContainer from '@mui/material/TableContainer'
+// MUI Imports
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
 import FormControlLabel from '@mui/material/FormControlLabel'
+import Grid from '@mui/material/Grid'
+import Switch from '@mui/material/Switch'
+import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
 
-// ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
+// Third-party Imports
+import classnames from 'classnames'
 
-const ReviewComplete = () => {
+// Component Imports
+import DirectionalIcon from '@components/DirectionalIcon'
+
+type Props = {
+  activeStep: number
+  handleNext: () => void
+  handlePrev: () => void
+  steps: { title: string; subtitle: string }[]
+}
+
+const StepReview = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
+  // Hooks
+  const theme = useTheme()
+
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12} lg={6} xl={7}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Typography variant='h4' sx={{ mb: 4 }}>
-              Almost done! 🚀
-            </Typography>
-            <Typography sx={{ mb: 1, color: 'text.secondary' }}>
-              Confirm your deal details information and submit to create it.
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <TableContainer>
-              <Table>
-                <TableBody
-                  sx={{
-                    '& .MuiTableCell-root': {
-                      borderBottom: 0,
-                      verticalAlign: 'top',
-                      '&:last-of-type': { px: '0 !important' },
-                      '&:first-of-type': { pl: '0 !important' },
-                      py: theme => `${theme.spacing(0.75)} !important`
-                    }
-                  }}
-                >
-                  <TableRow>
-                    <TableCell>
-                      <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary' }}>
-                        Deal Type
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ color: 'text.secondary' }}>Percentage</Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary' }}>
-                        Amount
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ color: 'text.secondary' }}>25%</Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary' }}>
-                        Deal Code
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <CustomChip rounded size='small' skin='light' color='warning' label='25PEROFF' />
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary' }}>
-                        Deal Title
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ color: 'text.secondary' }}>Black friday sale, 25% OFF</Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary' }}>
-                        Deal Duration
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ color: 'text.secondary' }}>2021-07-14 to 2021-07-30</Typography>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>
-          <Grid item xs={12}>
-            <FormControlLabel control={<Switch />} label='I have confirmed the deal details.' />
-          </Grid>
-        </Grid>
+      <Grid item xs={12} lg={6}>
+        <Typography variant='h4' className='mb-4'>
+          Almost done! 🚀
+        </Typography>
+        <Typography className='mb-4'>Confirm your deal details information and submit to create it.</Typography>
+        <table className='is-full border-collapse'>
+          <tbody>
+            <tr>
+              <td className='pbe-2'>
+                <Typography className='font-medium'>Deal Type</Typography>
+              </td>
+              <td className='pbe-2'>
+                <Typography>Percentage</Typography>
+              </td>
+            </tr>
+            <tr>
+              <td className='pbe-2'>
+                <Typography className='font-medium'>Amount</Typography>
+              </td>
+              <td className='pbe-2'>
+                <Typography>25% </Typography>
+              </td>
+            </tr>
+            <tr>
+              <td className='pbe-2'>
+                <Typography className='font-medium'>Deal Code</Typography>
+              </td>
+              <td className='pbe-2'>
+                <Chip variant='tonal' label='25PEROFF' color='warning' />
+              </td>
+            </tr>
+            <tr>
+              <td className='pbe-2'>
+                <Typography className='font-medium'>Deal Title</Typography>
+              </td>
+              <td className='pbe-2'>
+                <Typography>Black friday sale, 25% OFF </Typography>
+              </td>
+            </tr>
+            <tr>
+              <td className='pbe-2'>
+                <Typography className='font-medium'>Deal Duration</Typography>
+              </td>
+              <td className='pbe-2'>
+                <Typography>2021-07-14 to 2021-07-30 </Typography>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <FormControlLabel control={<Switch />} label='I have confirmed the deal details.' />
       </Grid>
-      <Grid
-        item
-        lg={6}
-        xl={5}
-        xs={12}
-        sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', '& img': { maxWidth: '100%' } }}
-      >
-        <Box
-          sx={{
-            pt: 5,
-            px: 5,
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            borderRadius: 1,
-            alignItems: 'flex-end',
-            justifyContent: 'center',
-            border: theme => `1px solid ${theme.palette.divider}`
-          }}
-        >
-          <img height={230} alt='review-illustration' src='/images/pages/create-deal-review-complete.png' />
-        </Box>
+      <Grid item lg={6} xs={12}>
+        <div className='flex justify-center items-end border rounded is-full bs-auto pbs-3'>
+          <img
+            alt='review-illustration'
+            src='/images/illustrations/characters/6.png'
+            className={classnames({ 'scale-x-[-1]': theme.direction === 'rtl' }, 'bs-[230px] lg:bs-[257px]')}
+          />
+        </div>
+      </Grid>
+      <Grid item xs={12}>
+        <div className='flex items-center justify-between'>
+          <Button
+            variant='tonal'
+            color='secondary'
+            disabled={activeStep === 0}
+            onClick={handlePrev}
+            startIcon={<DirectionalIcon ltrIconClass='tabler-arrow-left' rtlIconClass='tabler-arrow-right' />}
+          >
+            Previous
+          </Button>
+          <Button
+            variant='contained'
+            color={activeStep === steps.length - 1 ? 'success' : 'primary'}
+            onClick={handleNext}
+            endIcon={
+              activeStep === steps.length - 1 ? (
+                <i className='tabler-check' />
+              ) : (
+                <DirectionalIcon ltrIconClass='tabler-arrow-right' rtlIconClass='tabler-arrow-left' />
+              )
+            }
+          >
+            {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+          </Button>
+        </div>
       </Grid>
     </Grid>
   )
 }
 
-export default ReviewComplete
+export default StepReview

@@ -1,88 +1,47 @@
-// ** Next Import
-import Link from 'next/link'
-
-// ** MUI Imports
+// MUI Imports
+import Chip from '@mui/material/Chip'
 import Grid from '@mui/material/Grid'
-import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
-import Box, { BoxProps } from '@mui/material/Box'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-// ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
-import CustomAvatar from 'src/@core/components/mui/avatar'
-
-// Styled Box component
-const StyledBox1 = styled(Box)<BoxProps>(({ theme }) => ({
-  display: 'flex',
-  borderRadius: '5px',
-  alignItems: 'center',
-  flexDirection: 'column',
-  padding: theme.spacing(6),
-  backgroundColor: theme.palette.action.hover
-}))
-
-// Styled Box component
-const StyledBox2 = styled(Box)<BoxProps>(({ theme }) => ({
-  display: 'flex',
-  borderRadius: '5px',
-  alignItems: 'center',
-  flexDirection: 'column',
-  padding: theme.spacing(6),
-  backgroundColor: theme.palette.action.hover
-}))
+// Component Imports
+import CustomAvatar from '@core/components/mui/Avatar'
 
 const FaqFooter = () => {
   return (
-    <Box sx={{ mt: 13, textAlign: 'center' }}>
-      <CustomChip rounded size='small' skin='light' color='primary' label='Question' />
-      <Typography variant='h4' sx={{ my: 2 }}>
-        You still have a question?
-      </Typography>
-      <Typography sx={{ mb: 6, color: 'text.secondary' }}>
-        If you cannot find a question in our FAQ, you can always contact us. We will answer to you shortly!
-      </Typography>
-
-      <Grid container spacing={6}>
+    <>
+      <div className='flex justify-center items-center flex-col text-center gap-2 plb-6'>
+        <Chip label='Question' color='primary' variant='tonal' size='small' />
+        <Typography variant='h4'>You still have a question?</Typography>
+        <Typography>
+          If you cannot find a question in our FAQ, you can always contact us. We will answer you shortly!
+        </Typography>
+      </div>
+      <Grid container spacing={6} className='mbs-6'>
         <Grid item xs={12} md={6}>
-          <StyledBox1>
-            <CustomAvatar skin='light' variant='rounded' sx={{ mb: 2.5, height: 38, width: 38 }}>
-              <Icon fontSize='1.75rem' icon='tabler:phone' />
+          <div className='flex justify-center items-center flex-col gap-4 p-6 rounded bg-actionHover'>
+            <CustomAvatar variant='rounded' color='primary' skin='light' size={46}>
+              <i className='tabler-phone text-[26px]' />
             </CustomAvatar>
-            <Typography
-              href='/'
-              variant='h4'
-              component={Link}
-              onClick={e => e.preventDefault()}
-              sx={{ mb: 2.5, textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
-            >
-              + (810) 2548 2568
-            </Typography>
-            <Typography sx={{ color: 'text.secondary' }}>We are always happy to help!</Typography>
-          </StyledBox1>
+
+            <div className='flex items-center flex-col gap-1'>
+              <Typography variant='h5'>+ (810) 2548 2568</Typography>
+              <Typography>We are always happy to help!</Typography>
+            </div>
+          </div>
         </Grid>
-
         <Grid item xs={12} md={6}>
-          <StyledBox2>
-            <CustomAvatar skin='light' variant='rounded' sx={{ mb: 2.5, height: 38, width: 38 }}>
-              <Icon fontSize='1.75rem' icon='tabler:mail' />
+          <div className='flex justify-center items-center flex-col gap-4 p-6 rounded bg-actionHover'>
+            <CustomAvatar variant='rounded' color='primary' skin='light' size={46}>
+              <i className='tabler-mail text-[26px]' />
             </CustomAvatar>
-            <Typography
-              href='/'
-              variant='h4'
-              component={Link}
-              onClick={e => e.preventDefault()}
-              sx={{ mb: 2.5, textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
-            >
-              hello@help.com
-            </Typography>
-            <Typography sx={{ color: 'text.secondary' }}>Best way to get answer faster!</Typography>
-          </StyledBox2>
+            <div className='flex items-center flex-col gap-1'>
+              <Typography variant='h5'>hello@help.com</Typography>
+              <Typography>Best way to get answer faster!</Typography>
+            </div>
+          </div>
         </Grid>
       </Grid>
-    </Box>
+    </>
   )
 }
 

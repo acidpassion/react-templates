@@ -1,367 +1,194 @@
-// ** React Imports
-import { ElementType, ReactNode } from 'react'
+// React Imports
+import { useState } from 'react'
+import type { ReactNode } from 'react'
 
-// ** Next Import
+// Next Imports
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 
-// ** MUI Imports
-import Box from '@mui/material/Box'
-import List from '@mui/material/List'
-import Button from '@mui/material/Button'
+// MUI Imports
 import Drawer from '@mui/material/Drawer'
-import { styled } from '@mui/material/styles'
+import CardContent from '@mui/material/CardContent'
+import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import ListItem, { ListItemProps } from '@mui/material/ListItem'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-// ** Third Party Imports
+// Third-party Imports
+import classnames from 'classnames'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
-// ** Custom Components Imports
-import CustomBadge from 'src/@core/components/mui/badge'
+// Types Imports
+import type { Email, EmailState } from '@/types/apps/emailTypes'
+import type { ThemeColor } from '@core/types'
+import type { Locale } from '@/configs/i18n'
 
-// ** Types
-import { CustomBadgeProps } from 'src/@core/components/mui/badge/types'
-import { MailFolderType, MailLabelType, MailSidebarType } from 'src/types/apps/emailTypes'
+// Components Imports
+import ComposeMail from './ComposeMail'
+import CustomChip from '@core/components/mui/Chip'
 
-// ** Styled Components
-const ListItemStyled = styled(ListItem)<ListItemProps & { component?: ElementType; href: string }>(({ theme }) => ({
-  borderLeftWidth: '3px',
-  borderLeftStyle: 'solid',
-  paddingLeft: theme.spacing(5),
-  paddingRight: theme.spacing(5),
-  marginBottom: theme.spacing(1)
-}))
+// Util Imports
+import { getLocalizedUrl } from '@/utils/i18n'
 
-const ListBadge = styled(CustomBadge)<CustomBadgeProps>(() => ({
-  '& .MuiBadge-badge': {
-    height: '18px',
-    minWidth: '18px',
-    transform: 'none',
-    position: 'relative',
-    transformOrigin: 'none'
+// Styles Imports
+import styles from './styles.module.css'
+
+type Props = {
+  store: EmailState
+  isBelowLgScreen: boolean
+  isBelowMdScreen: boolean
+  isBelowSmScreen: boolean
+  sidebarOpen: boolean
+  setSidebarOpen: (value: boolean) => void
+  uniqueLabels: string[]
+  folder?: string
+  label: string
+}
+
+type LabelColor = {
+  color: ThemeColor
+  colorClass: string
+}
+
+// Constants
+const icons = {
+  inbox: 'tabler-mail',
+  sent: 'tabler-send',
+  draft: 'tabler-edit',
+  starred: 'tabler-star',
+  spam: 'tabler-alert-octagon',
+  trash: 'tabler-trash'
+}
+
+export const labelColors: { [key: string]: LabelColor } = {
+  personal: { color: 'success', colorClass: 'text-success' },
+  company: { color: 'primary', colorClass: 'text-primary' },
+  important: { color: 'warning', colorClass: 'text-warning' },
+  private: { color: 'error', colorClass: 'text-error' }
+}
+
+const ScrollWrapper = ({ children, isBelowLgScreen }: { children: ReactNode; isBelowLgScreen: boolean }) => {
+  if (isBelowLgScreen) {
+    return <div className='bs-full overflow-y-auto overflow-x-hidden'>{children}</div>
+  } else {
+    return <PerfectScrollbar options={{ wheelPropagation: false }}>{children}</PerfectScrollbar>
   }
-}))
+}
 
-const SidebarLeft = (props: MailSidebarType) => {
-  // ** Props
+const SidebarLeft = (props: Props) => {
+  // Props
   const {
     store,
-    hidden,
-    lgAbove,
-    dispatch,
-    leftSidebarOpen,
-    leftSidebarWidth,
-    toggleComposeOpen,
-    setMailDetailsOpen,
-    handleSelectAllMail,
-    handleLeftSidebarToggle
+    isBelowLgScreen,
+    isBelowMdScreen,
+    isBelowSmScreen,
+    sidebarOpen,
+    setSidebarOpen,
+    uniqueLabels,
+    folder,
+    label
   } = props
 
-  const RenderBadge = (
-    folder: 'inbox' | 'draft' | 'spam',
-    color: 'default' | 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info'
-  ) => {
-    if (store && store.mailMeta && store.mailMeta[folder] > 0) {
-      return <ListBadge skin='light' color={color} sx={{ ml: 2 }} badgeContent={store.mailMeta[folder]} />
-    } else {
-      return null
+  // States
+  const [openCompose, setOpenCompose] = useState(false)
+
+  // Hooks
+  const { lang: locale } = useParams()
+
+  const folderCounts = store.emails.reduce((counts: Record<string, number>, email: Email) => {
+    if (!email.isRead && email.folder !== 'trash') {
+      counts[email.folder] = (counts[email.folder] || 0) + 1
+    } else if (email.folder === 'draft') {
+      counts.draft = (counts.draft || 0) + 1
     }
-  }
 
-  const handleActiveItem = (type: 'folder' | 'label', value: MailFolderType | MailLabelType) => {
-    if (store && store.filter[type] !== value) {
-      return false
-    } else {
-      return true
-    }
-  }
-
-  const handleListItemClick = () => {
-    setMailDetailsOpen(false)
-    setTimeout(() => dispatch(handleSelectAllMail(false)), 50)
-    handleLeftSidebarToggle()
-  }
-
-  const activeInboxCondition =
-    store && handleActiveItem('folder', 'inbox') && store.filter.folder === 'inbox' && store.filter.label === ''
-
-  const ScrollWrapper = ({ children }: { children: ReactNode }) => {
-    if (hidden) {
-      return <Box sx={{ height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>{children}</Box>
-    } else {
-      return <PerfectScrollbar options={{ wheelPropagation: false }}>{children}</PerfectScrollbar>
-    }
-  }
+    return counts
+  }, {})
 
   return (
-    <Drawer
-      open={leftSidebarOpen}
-      onClose={handleLeftSidebarToggle}
-      variant={lgAbove ? 'permanent' : 'temporary'}
-      ModalProps={{
-        disablePortal: true,
-        keepMounted: true // Better open performance on mobile.
-      }}
-      sx={{
-        zIndex: 9,
-        display: 'block',
-        position: lgAbove ? 'static' : 'absolute',
-        '& .MuiDrawer-paper': {
-          boxShadow: 'none',
-          width: leftSidebarWidth,
-          zIndex: lgAbove ? 2 : 'drawer',
-          position: lgAbove ? 'static' : 'absolute'
-        },
-        '& .MuiBackdrop-root': {
-          position: 'absolute'
-        }
-      }}
-    >
-      <Box sx={{ p: 6, overflowY: 'hidden' }}>
-        <Button fullWidth variant='contained' onClick={toggleComposeOpen}>
-          Compose
-        </Button>
-      </Box>
-      <ScrollWrapper>
-        <Box sx={{ pt: 0, overflowY: 'hidden' }}>
-          <List component='div' sx={{ '& .MuiListItemIcon-root': { mr: 2 } }}>
-            <ListItemStyled
-              component={Link}
-              href='/apps/email/inbox'
-              onClick={handleListItemClick}
-              sx={{ py: 1.5, borderLeftColor: activeInboxCondition ? 'primary.main' : 'transparent' }}
-            >
-              <ListItemIcon sx={{ color: activeInboxCondition ? 'primary.main' : 'text.secondary' }}>
-                <Icon icon='tabler:mail' />
-              </ListItemIcon>
-              <ListItemText
-                primary='Inbox'
-                primaryTypographyProps={{
-                  noWrap: true,
-                  sx: { fontWeight: 500, ...(activeInboxCondition && { color: 'primary.main' }) }
-                }}
-              />
-              {RenderBadge('inbox', 'primary')}
-            </ListItemStyled>
-            <ListItemStyled
-              component={Link}
-              href='/apps/email/sent'
-              onClick={handleListItemClick}
-              sx={{
-                py: 1.5,
-                borderLeftColor: handleActiveItem('folder', 'sent') ? 'primary.main' : 'transparent'
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  color: handleActiveItem('folder', 'sent') ? 'primary.main' : 'text.secondary'
-                }}
+    <>
+      <Drawer
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        className='bs-full'
+        variant={!isBelowMdScreen ? 'permanent' : 'persistent'}
+        ModalProps={{ disablePortal: true, keepMounted: true }}
+        sx={{
+          zIndex: isBelowMdScreen && sidebarOpen ? 11 : 10,
+          position: !isBelowMdScreen ? 'static' : 'absolute',
+          '& .MuiDrawer-paper': {
+            boxShadow: 'none',
+            overflow: 'hidden',
+            width: '260px',
+            position: !isBelowMdScreen ? 'static' : 'absolute'
+          }
+        }}
+      >
+        <CardContent>
+          <Button color='primary' variant='contained' fullWidth onClick={() => setOpenCompose(true)}>
+            Compose
+          </Button>
+        </CardContent>
+        <ScrollWrapper isBelowLgScreen={isBelowLgScreen}>
+          <div className='flex flex-col gap-1 plb-4'>
+            {Object.entries(icons).map(([key, value]) => (
+              <Link
+                key={key}
+                href={getLocalizedUrl(`/apps/email/${key}`, locale as Locale)}
+                prefetch
+                className={classnames('flex items-center justify-between plb-1 pli-6 gap-2.5 min-bs-8 cursor-pointer', {
+                  [styles.activeSidebarListItem]: key === folder && !label
+                })}
               >
-                <Icon icon='tabler:send' />
-              </ListItemIcon>
-              <ListItemText
-                primary='Sent'
-                primaryTypographyProps={{
-                  noWrap: true,
-                  sx: { fontWeight: 500, ...(handleActiveItem('folder', 'sent') && { color: 'primary.main' }) }
-                }}
-              />
-            </ListItemStyled>
-            <ListItemStyled
-              component={Link}
-              href='/apps/email/draft'
-              onClick={handleListItemClick}
-              sx={{
-                py: 1.5,
-                borderLeftColor: handleActiveItem('folder', 'draft') ? 'primary.main' : 'transparent'
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  color: handleActiveItem('folder', 'draft') ? 'primary.main' : 'text.secondary'
-                }}
-              >
-                <Icon icon='tabler:file' />
-              </ListItemIcon>
-              <ListItemText
-                primary='Draft'
-                primaryTypographyProps={{
-                  noWrap: true,
-                  sx: { fontWeight: 500, ...(handleActiveItem('folder', 'draft') && { color: 'primary.main' }) }
-                }}
-              />
-              {RenderBadge('draft', 'warning')}
-            </ListItemStyled>
-            <ListItemStyled
-              component={Link}
-              href='/apps/email/starred'
-              onClick={handleListItemClick}
-              sx={{
-                py: 1.5,
-                borderLeftColor: handleActiveItem('folder', 'starred') ? 'primary.main' : 'transparent'
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  color: handleActiveItem('folder', 'starred') ? 'primary.main' : 'text.secondary'
-                }}
-              >
-                <Icon icon='tabler:star' />
-              </ListItemIcon>
-              <ListItemText
-                primary='Starred'
-                primaryTypographyProps={{
-                  noWrap: true,
-                  sx: { fontWeight: 500, ...(handleActiveItem('folder', 'starred') && { color: 'primary.main' }) }
-                }}
-              />
-            </ListItemStyled>
-            <ListItemStyled
-              component={Link}
-              href='/apps/email/spam'
-              onClick={handleListItemClick}
-              sx={{
-                py: 1.5,
-                borderLeftColor: handleActiveItem('folder', 'spam') ? 'primary.main' : 'transparent'
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  color: handleActiveItem('folder', 'spam') ? 'primary.main' : 'text.secondary'
-                }}
-              >
-                <Icon icon='tabler:info-circle' />
-              </ListItemIcon>
-              <ListItemText
-                primary='Spam'
-                primaryTypographyProps={{
-                  noWrap: true,
-                  sx: { fontWeight: 500, ...(handleActiveItem('folder', 'spam') && { color: 'primary.main' }) }
-                }}
-              />
-              {RenderBadge('spam', 'error')}
-            </ListItemStyled>
-            <ListItemStyled
-              component={Link}
-              href='/apps/email/trash'
-              onClick={handleListItemClick}
-              sx={{
-                py: 1.5,
-                borderLeftColor: handleActiveItem('folder', 'trash') ? 'primary.main' : 'transparent'
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  color: handleActiveItem('folder', 'trash') ? 'primary.main' : 'text.secondary'
-                }}
-              >
-                <Icon icon='tabler:trash' />
-              </ListItemIcon>
-              <ListItemText
-                primary='Trash'
-                primaryTypographyProps={{
-                  noWrap: true,
-                  sx: { fontWeight: 500, ...(handleActiveItem('folder', 'trash') && { color: 'primary.main' }) }
-                }}
-              />
-            </ListItemStyled>
-          </List>
-          <Typography
-            variant='body2'
-            sx={{ mx: 6, mt: 5.5, mb: 1.5, color: 'text.disabled', textTransform: 'uppercase' }}
-          >
-            Labels
-          </Typography>
-          <List component='div'>
-            <ListItemStyled
-              component={Link}
-              href='/apps/email/label/personal'
-              onClick={handleListItemClick}
-              sx={{
-                py: 0.75,
-                borderLeftColor: handleActiveItem('label', 'personal') ? 'primary.main' : 'transparent'
-              }}
-            >
-              <ListItemIcon sx={{ mr: 2.5, '& svg': { color: 'success.main' } }}>
-                <Icon icon='mdi:circle' fontSize='0.625rem' />
-              </ListItemIcon>
-              <ListItemText
-                primary='Personal'
-                primaryTypographyProps={{
-                  noWrap: true,
-                  sx: { fontWeight: 500, ...(handleActiveItem('label', 'personal') && { color: 'primary.main' }) }
-                }}
-              />
-            </ListItemStyled>
-            <ListItemStyled
-              component={Link}
-              href='/apps/email/label/company'
-              onClick={handleListItemClick}
-              sx={{
-                py: 0.75,
-                borderLeftColor: handleActiveItem('label', 'company') ? 'primary.main' : 'transparent'
-              }}
-            >
-              <ListItemIcon sx={{ mr: 2.5, '& svg': { color: 'primary.main' } }}>
-                <Icon icon='mdi:circle' fontSize='0.625rem' />
-              </ListItemIcon>
-              <ListItemText
-                primary='Company'
-                primaryTypographyProps={{
-                  noWrap: true,
-                  sx: { fontWeight: 500, ...(handleActiveItem('label', 'company') && { color: 'primary.main' }) }
-                }}
-              />
-            </ListItemStyled>
-            <ListItemStyled
-              component={Link}
-              href='/apps/email/label/important'
-              onClick={handleListItemClick}
-              sx={{
-                py: 0.75,
-                borderLeftColor: handleActiveItem('label', 'important') ? 'primary.main' : 'transparent'
-              }}
-            >
-              <ListItemIcon sx={{ mr: 2.5, '& svg': { color: 'warning.main' } }}>
-                <Icon icon='mdi:circle' fontSize='0.625rem' />
-              </ListItemIcon>
-              <ListItemText
-                primary='Important'
-                primaryTypographyProps={{
-                  noWrap: true,
-                  sx: { fontWeight: 500, ...(handleActiveItem('label', 'important') && { color: 'primary.main' }) }
-                }}
-              />
-            </ListItemStyled>
-            <ListItemStyled
-              component={Link}
-              href='/apps/email/label/private'
-              onClick={handleListItemClick}
-              sx={{
-                py: 0.75,
-                borderLeftColor: handleActiveItem('label', 'private') ? 'primary.main' : 'transparent'
-              }}
-            >
-              <ListItemIcon sx={{ mr: 2.5, '& svg': { color: 'error.main' } }}>
-                <Icon icon='mdi:circle' fontSize='0.625rem' />
-              </ListItemIcon>
-              <ListItemText
-                primary='Private'
-                primaryTypographyProps={{
-                  noWrap: true,
-                  sx: { fontWeight: 500, ...(handleActiveItem('label', 'private') && { color: 'primary.main' }) }
-                }}
-              />
-            </ListItemStyled>
-          </List>
-        </Box>
-      </ScrollWrapper>
-    </Drawer>
+                <div className='flex items-center gap-2.5'>
+                  <i className={classnames(value, 'text-xl')} />
+                  <Typography className='capitalize' color='inherit'>
+                    {key}
+                  </Typography>
+                </div>
+                {folderCounts[key] && (
+                  <CustomChip
+                    label={folderCounts[key]}
+                    size='small'
+                    round='true'
+                    variant='tonal'
+                    color={
+                      key === 'inbox' ? 'primary' : key === 'draft' ? 'warning' : key === 'spam' ? 'error' : 'default'
+                    }
+                  />
+                )}
+              </Link>
+            ))}
+          </div>
+          <div className='flex flex-col gap-4 plb-4'>
+            <Typography variant='caption' className='uppercase pli-6'>
+              Labels
+            </Typography>
+            <div className='flex flex-col gap-3'>
+              {uniqueLabels.map(labelName => (
+                <Link
+                  key={labelName}
+                  href={getLocalizedUrl(`/apps/email/label/${labelName}`, locale as Locale)}
+                  prefetch
+                  className={classnames('flex items-center gap-x-2 pli-6 cursor-pointer', {
+                    [styles.activeSidebarListItem]: labelName === label
+                  })}
+                >
+                  <i className={classnames('tabler-circle-filled text-xs', labelColors[labelName].colorClass)} />
+                  <Typography className='capitalize' color='inherit'>
+                    {labelName}
+                  </Typography>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </ScrollWrapper>
+      </Drawer>
+      <ComposeMail
+        openCompose={openCompose}
+        setOpenCompose={setOpenCompose}
+        isBelowSmScreen={isBelowSmScreen}
+        isBelowMdScreen={isBelowMdScreen}
+      />
+    </>
   )
 }
 

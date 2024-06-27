@@ -1,30 +1,33 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// MUI Imports
+import type { Theme } from '@mui/material/styles'
 
-// ** Util Import
-import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
-
-const Tooltip = () => {
-  return {
-    MuiTooltip: {
-      styleOverrides: {
-        tooltip: ({ theme }: OwnerStateThemeType) => ({
-          padding: theme.spacing(1, 3),
-          fontSize: theme.typography.body1.fontSize,
-          backgroundColor:
-            theme.palette.mode === 'light'
-              ? `rgba(${theme.palette.customColors.main}, 0.9)`
-              : hexToRGBA(theme.palette.customColors.trackBg, 0.9)
-        }),
-        arrow: ({ theme }: OwnerStateThemeType) => ({
-          color:
-            theme.palette.mode === 'light'
-              ? `rgba(${theme.palette.customColors.main}, 0.9)`
-              : hexToRGBA(theme.palette.customColors.trackBg, 0.9)
-        })
+const tooltip: Theme['components'] = {
+  MuiTooltip: {
+    styleOverrides: {
+      tooltip: ({ theme }) => ({
+        borderRadius: 'var(--mui-shape-customBorderRadius-sm)',
+        fontSize: theme.typography.subtitle2.fontSize,
+        lineHeight: 1.539,
+        color: 'var(--mui-palette-customColors-tooltipText)',
+        paddingInline: theme.spacing(3),
+        paddingBlock: 5
+      }),
+      popper: {
+        '&[data-popper-placement*="bottom"] .MuiTooltip-tooltip': {
+          marginTop: '6px !important'
+        },
+        '&[data-popper-placement*="top"] .MuiTooltip-tooltip': {
+          marginBottom: '6px !important'
+        },
+        '&[data-popper-placement*="left"] .MuiTooltip-tooltip': {
+          marginRight: '6px !important'
+        },
+        '&[data-popper-placement*="right"] .MuiTooltip-tooltip': {
+          marginLeft: '6px !important'
+        }
       }
     }
   }
 }
 
-export default Tooltip
+export default tooltip

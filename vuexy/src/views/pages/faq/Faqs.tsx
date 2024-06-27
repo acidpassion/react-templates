@@ -1,149 +1,122 @@
-// ** React Imports
-import { SyntheticEvent } from 'react'
+// React Imports
+import { useMemo, useState } from 'react'
+import type { SyntheticEvent } from 'react'
 
-// ** MUI Imports
+// MUI Imports
+import Grid from '@mui/material/Grid'
 import Tab from '@mui/material/Tab'
 import TabPanel from '@mui/lab/TabPanel'
 import TabContext from '@mui/lab/TabContext'
-import { styled } from '@mui/material/styles'
 import Accordion from '@mui/material/Accordion'
 import Typography from '@mui/material/Typography'
-import Box, { BoxProps } from '@mui/material/Box'
-import MuiTabList, { TabListProps } from '@mui/lab/TabList'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Third-party Imports
+import classnames from 'classnames'
 
-// ** Custom Components Imports
-import CustomAvatar from 'src/@core/components/mui/avatar'
+// Type Imports
+import type { FaqType } from '@/types/pages/faqTypes'
 
-// ** Types
-import { FaqType } from 'src/@fake-db/types'
+// Component Imports
+import CustomAvatar from '@core/components/mui/Avatar'
+import CustomTabList from '@core/components/mui/TabList'
 
-interface Props {
-  activeTab: string
-  data: { faqData: FaqType }
-  handleChange: (event: SyntheticEvent, newValue: string) => void
+type props = {
+  faqData?: FaqType[]
+  searchValue: string
 }
 
-// Styled TabList component
-const MuiBox = styled(Box)<BoxProps>(({ theme }) => ({
-  display: 'flex',
-  marginTop: theme.spacing(6),
-  [theme.breakpoints.down('md')]: {
-    flexDirection: 'column'
-  }
-}))
+const FAQ = ({ faqData, searchValue }: props) => {
+  // States
+  const [activeTab, setActiveTab] = useState('payment')
 
-const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
-  borderRight: 0,
-  '&, & .MuiTabs-scroller': {
-    boxSizing: 'content-box',
-    padding: theme.spacing(1.25, 1.25, 2),
-    margin: `${theme.spacing(-1.25, -1.25, -2)} !important`
-  },
-  '& .MuiTabs-indicator': {
-    display: 'none'
-  },
-  '& .Mui-selected': {
-    boxShadow: theme.shadows[2],
-    backgroundColor: theme.palette.primary.main,
-    color: `${theme.palette.common.white} !important`
-  },
-  '& .MuiTab-root': {
-    minWidth: 280,
-    lineHeight: 1,
-    textAlign: 'center',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    color: theme.palette.text.primary,
-    borderRadius: theme.shape.borderRadius,
-    '&:hover': {
-      color: theme.palette.primary.main
-    },
-    '& svg': {
-      marginBottom: 0,
-      marginRight: theme.spacing(2)
-    },
-    [theme.breakpoints.down('md')]: {
-      maxWidth: '100%'
+  // Hooks
+  const filteredData = useMemo(() => {
+    let returnVal = faqData
+
+    if (searchValue) {
+      returnVal =
+        faqData
+          ?.filter(category =>
+            category.questionsAnswers.some(item => item.question.toLowerCase().includes(searchValue.toLowerCase()))
+          )
+          .map(category => ({
+            ...category,
+            questionsAnswers: category.questionsAnswers.filter(item =>
+              item.question.toLowerCase().includes(searchValue.toLowerCase())
+            )
+          })) ?? []
     }
-  }
-}))
 
-const Faqs = ({ data, activeTab, handleChange }: Props) => {
-  const renderTabContent = () => {
-    return Object.values(data.faqData).map(tab => {
-      return (
-        <TabPanel key={tab.id} value={tab.id} sx={{ p: 6.5, pt: 0, width: '100%' }}>
-          <Box key={tab.id}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <CustomAvatar skin='light' variant='rounded' sx={{ height: 48, width: 48 }}>
-                <Icon icon={tab.icon} fontSize='2.25rem' />
-              </CustomAvatar>
-              <Box sx={{ ml: 4 }}>
-                <Typography variant='h4'>{tab.title}</Typography>
-                <Typography sx={{ color: 'text.secondary' }}>{tab.subtitle}</Typography>
-              </Box>
-            </Box>
-            <Box sx={{ mt: 6 }}>
-              {tab.qandA.map(item => {
-                return (
-                  <Accordion key={item.id}>
-                    <AccordionSummary expandIcon={<Icon fontSize='1.25rem' icon='tabler:chevron-down' />}>
-                      <Typography sx={{ fontWeight: '500' }}>{item.question}</Typography>
+    setActiveTab(returnVal?.[0]?.id ?? '')
+
+    return returnVal
+  }, [faqData, searchValue])
+
+  const handleChange = (event: SyntheticEvent, newValue: string) => {
+    setActiveTab(newValue)
+  }
+
+  return filteredData && filteredData.length > 0 ? (
+    <TabContext value={activeTab}>
+      <Grid container spacing={6}>
+        <Grid item xs={12} sm={5} md={4} xl={3} className='flex flex-col items-center gap-4'>
+          <CustomTabList orientation='vertical' onChange={handleChange} className='is-full' pill='true'>
+            {filteredData?.map((faq, index) => (
+              <Tab
+                key={index}
+                label={faq.title}
+                value={faq.id}
+                icon={<i className={classnames(faq.icon, '!mbe-0 mie-1.5')} />}
+                className='flex-row justify-start !min-is-full'
+              />
+            ))}
+          </CustomTabList>
+          <img
+            src='/images/illustrations/characters-with-objects/1.png'
+            className='max-md:hidden is-[230px]'
+            alt='john image'
+          />
+        </Grid>
+        <Grid item xs={12} sm={7} md={8} xl={9}>
+          {filteredData?.map((faq, index) => (
+            <TabPanel key={index} value={faq.id} className='p-0'>
+              <div className='flex items-center gap-4 mbe-4'>
+                <CustomAvatar skin='light' color='primary' variant='rounded' size={50}>
+                  <i className={classnames(faq.icon, 'text-3xl')} />
+                </CustomAvatar>
+                <div>
+                  <Typography variant='h5'>{faq.title}</Typography>
+                  <Typography>{faq.subtitle}</Typography>
+                </div>
+              </div>
+              <div>
+                {faq.questionsAnswers.map((items, index) => (
+                  <Accordion key={index}>
+                    <AccordionSummary
+                      expandIcon={<i className='tabler-chevron-right' />}
+                      aria-controls='panel1a-content'
+                    >
+                      <Typography>{items.question}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      <Typography sx={{ color: 'text.secondary' }}>{item.answer}</Typography>
+                      <Typography>{items.answer}</Typography>
                     </AccordionDetails>
                   </Accordion>
-                )
-              })}
-            </Box>
-          </Box>
-        </TabPanel>
-      )
-    })
-  }
-
-  const renderTabs = () => {
-    if (data !== null) {
-      return Object.values(data.faqData).map(tab => {
-        if (tab.qandA.length) {
-          return <Tab key={tab.id} value={tab.id} label={tab.title} icon={<Icon icon={tab.icon} />} />
-        } else {
-          return null
-        }
-      })
-    } else {
-      return null
-    }
-  }
-
-  return (
-    <MuiBox>
-      <TabContext value={activeTab}>
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <TabList orientation='vertical' onChange={handleChange}>
-            {renderTabs()}
-          </TabList>
-          <Box
-            sx={{
-              mt: 5.5,
-              display: 'flex',
-              justifyContent: 'center',
-              '& img': { maxWidth: '100%', display: { xs: 'none', md: 'block' } }
-            }}
-          >
-            <img src='/images/pages/faq-illustration.png' alt='illustration' width='230' />
-          </Box>
-        </Box>
-        {renderTabContent()}
-      </TabContext>
-    </MuiBox>
+                ))}
+              </div>
+            </TabPanel>
+          ))}
+        </Grid>
+      </Grid>
+    </TabContext>
+  ) : (
+    <div className='flex justify-center items-center'>
+      <i className='tabler-alert-circle' />
+      <Typography>No results found</Typography>
+    </div>
   )
 }
 
-export default Faqs
+export default FAQ

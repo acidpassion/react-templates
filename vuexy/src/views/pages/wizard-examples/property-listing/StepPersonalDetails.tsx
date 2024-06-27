@@ -1,161 +1,161 @@
-// ** React Imports
-import { useState, ChangeEvent } from 'react'
+// React Imports
+import { useState } from 'react'
+import type { ChangeEvent } from 'react'
 
-// ** MUI Imports
+// MUI Imports
 import Grid from '@mui/material/Grid'
-import { useTheme } from '@mui/material/styles'
+import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
 import InputAdornment from '@mui/material/InputAdornment'
 
-// ** Type Imports
-import { CustomRadioIconsData, CustomRadioIconsProps } from 'src/@core/components/custom-radio/types'
+// Third-party Imports
+import classnames from 'classnames'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Type Imports
+import type { CustomInputVerticalData } from '@core/components/custom-inputs/types'
 
-// ** Custom Components Imports
-import CustomTextField from 'src/@core/components/mui/text-field'
-import CustomRadioIcons from 'src/@core/components/custom-radio/icons'
+// Component Imports
+import CustomInputVertical from '@core/components/custom-inputs/Vertical'
+import DirectionalIcon from '@components/DirectionalIcon'
+import CustomTextField from '@core/components/mui/TextField'
 
-interface IconType {
-  icon: CustomRadioIconsProps['icon']
-  iconProps: CustomRadioIconsProps['iconProps']
+type Props = {
+  activeStep: number
+  handleNext: () => void
+  handlePrev: () => void
+  steps: { title: string; subtitle: string }[]
 }
 
-const data: CustomRadioIconsData[] = [
+// Vars
+const data: CustomInputVerticalData[] = [
   {
+    title: 'I am the Builder',
     value: 'builder',
-    isSelected: true,
-    content: 'List property as Builder, list your project and get highest reach.',
-    title: (
-      <Typography variant='h6' sx={{ mb: 1 }}>
-        I am the Builder
-      </Typography>
-    )
+    content: 'List property as Builder, list your project and get highest reach very fast.',
+    asset: 'tabler-building',
+    isSelected: true
   },
   {
+    title: 'I am the Owner',
     value: 'owner',
     content: 'Submit property as an Individual. Lease, Rent or Sell at the best price.',
-    title: (
-      <Typography variant='h6' sx={{ mb: 1 }}>
-        I am the Owner
-      </Typography>
-    )
+    asset: 'tabler-diamond'
   },
   {
+    title: 'I am the broker',
     value: 'broker',
     content: 'Earn highest commission by listing your clients properties at the best price.',
-    title: (
-      <Typography variant='h6' sx={{ mb: 1 }}>
-        I am the Broker
-      </Typography>
-    )
+    asset: 'tabler-briefcase'
   }
 ]
 
-const StepPersonalDetails = () => {
-  const initialIconSelected: string = data.filter(item => item.isSelected)[
+const StepPersonalDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
+  // Vars
+  const initialSelectedOption: string = data.filter(item => item.isSelected)[
     data.filter(item => item.isSelected).length - 1
   ].value
 
-  // ** States
-  const [showValues, setShowValues] = useState<boolean>(false)
-  const [selectedRadio, setSelectedRadio] = useState<string>(initialIconSelected)
+  // States
+  const [selectedOption, setSelectedOption] = useState<string>(initialSelectedOption)
+  const [isPasswordShown, setIsPasswordShown] = useState<boolean>(false)
 
-  // ** Hook
-  const theme = useTheme()
+  const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
-  const icons: IconType[] = [
-    {
-      icon: 'tabler:building',
-      iconProps: { fontSize: '2.5rem', style: { marginBottom: 8 }, color: theme.palette.text.secondary }
-    },
-    {
-      icon: 'tabler:diamond',
-      iconProps: { fontSize: '2.5rem', style: { marginBottom: 8 }, color: theme.palette.text.secondary }
-    },
-    {
-      icon: 'tabler:briefcase',
-      iconProps: { fontSize: '2.5rem', style: { marginBottom: 8 }, color: theme.palette.text.secondary }
-    }
-  ]
-
-  const handleTogglePasswordView = () => {
-    setShowValues(!showValues)
-  }
-
-  const handleRadioChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
+  const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
     if (typeof prop === 'string') {
-      setSelectedRadio(prop)
+      setSelectedOption(prop)
     } else {
-      setSelectedRadio((prop.target as HTMLInputElement).value)
+      setSelectedOption((prop.target as HTMLInputElement).value)
     }
   }
 
   return (
-    <>
-      <Grid container sx={{ mb: 6 }} spacing={4}>
-        {data.map((item, index) => (
-          <CustomRadioIcons
+    <Grid container spacing={6}>
+      {data.map((item, index) => {
+        let asset
+
+        if (item.asset && typeof item.asset === 'string') {
+          asset = <i className={classnames(item.asset, 'text-[28px]')} />
+        }
+
+        return (
+          <CustomInputVertical
+            type='radio'
             key={index}
-            data={data[index]}
-            name='custom-radios'
-            icon={icons[index].icon}
-            selected={selectedRadio}
             gridProps={{ sm: 4, xs: 12 }}
-            handleChange={handleRadioChange}
-            iconProps={icons[index].iconProps}
+            selected={selectedOption}
+            name='custom-radios-basic'
+            handleChange={handleOptionChange}
+            data={typeof item.asset === 'string' ? { ...item, asset } : item}
           />
-        ))}
+        )
+      })}
+      <Grid item xs={12} md={6}>
+        <CustomTextField fullWidth label='First Name' placeholder='John' />
       </Grid>
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
-          <CustomTextField fullWidth label='First Name' placeholder='John' />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <CustomTextField fullWidth label='Last Name' placeholder='Doe' />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <CustomTextField fullWidth label='Username' placeholder='john.doe' />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <CustomTextField
-            fullWidth
-            label='Password'
-            placeholder='············'
-            type={showValues ? 'text' : 'password'}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position='end'>
-                  <IconButton
-                    edge='end'
-                    onClick={handleTogglePasswordView}
-                    onMouseDown={e => e.preventDefault()}
-                    aria-label='toggle password visibility'
-                  >
-                    <Icon fontSize='1.25rem' icon={showValues ? 'tabler:eye' : 'tabler:eye-off'} />
-                  </IconButton>
-                </InputAdornment>
+      <Grid item xs={12} md={6}>
+        <CustomTextField fullWidth label='Last Name' placeholder='Doe' />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <CustomTextField fullWidth label='Username' placeholder='john.doe' />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <CustomTextField
+          fullWidth
+          label='Password'
+          placeholder='············'
+          id='personal-details-password'
+          type={isPasswordShown ? 'text' : 'password'}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position='end'>
+                <IconButton
+                  edge='end'
+                  onClick={handleClickShowPassword}
+                  onMouseDown={e => e.preventDefault()}
+                  aria-label='toggle password visibility'
+                >
+                  <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <CustomTextField fullWidth label='Email' placeholder='john.doe@gmail.com' />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <CustomTextField fullWidth label='Contact' placeholder='202 555 0111' />
+      </Grid>
+      <Grid item xs={12}>
+        <div className='flex items-center justify-between'>
+          <Button
+            variant='tonal'
+            color='secondary'
+            disabled={activeStep === 0}
+            onClick={handlePrev}
+            startIcon={<DirectionalIcon ltrIconClass='tabler-arrow-left' rtlIconClass='tabler-arrow-right' />}
+          >
+            Previous
+          </Button>
+          <Button
+            variant='contained'
+            color={activeStep === steps.length - 1 ? 'success' : 'primary'}
+            onClick={handleNext}
+            endIcon={
+              activeStep === steps.length - 1 ? (
+                <i className='tabler-check' />
+              ) : (
+                <DirectionalIcon ltrIconClass='tabler-arrow-right' rtlIconClass='tabler-arrow-left' />
               )
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <CustomTextField fullWidth type='email' label='Email' placeholder='john.doe@email.com' />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <CustomTextField
-            fullWidth
-            label='Contact'
-            placeholder='202 555 0111'
-            InputProps={{
-              startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment>
-            }}
-          />
-        </Grid>
+            }
+          >
+            {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+          </Button>
+        </div>
       </Grid>
-    </>
+    </Grid>
   )
 }
 

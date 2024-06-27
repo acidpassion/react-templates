@@ -1,53 +1,71 @@
-// ** Type Imports
-import { OwnerStateThemeType } from './'
-import { Skin } from 'src/@core/layouts/types'
+//MUI Imports
+import type { Theme } from '@mui/material/styles'
 
-const Dialog = (skin: Skin) => {
-  return {
-    MuiDialog: {
-      styleOverrides: {
-        paper: ({ theme }: OwnerStateThemeType) => ({
-          boxShadow: theme.shadows[skin === 'bordered' ? 0 : 18],
-          ...(skin === 'bordered' && { border: `1px solid ${theme.palette.divider}` }),
-          '&:not(.MuiDialog-paperFullScreen)': {
-            [theme.breakpoints.down('sm')]: {
-              margin: theme.spacing(4),
-              width: `calc(100% - ${theme.spacing(8)})`,
-              maxWidth: `calc(100% - ${theme.spacing(8)}) !important`
+//Type Imports
+import type { Skin } from '@core/types'
+
+const dialog = (skin: Skin): Theme['components'] => ({
+  MuiDialog: {
+    styleOverrides: {
+      paper: ({ theme }) => ({
+        borderRadius: 'var(--mui-shape-customBorderRadius-lg)',
+        ...(skin !== 'bordered'
+          ? {
+              boxShadow: 'var(--mui-customShadows-lg)'
             }
-          },
-          '& > .MuiList-root': {
-            paddingLeft: theme.spacing(1),
-            paddingRight: theme.spacing(1)
+          : {
+              boxShadow: 'none'
+            }),
+        [theme.breakpoints.down('sm')]: {
+          '&:not(.MuiDialog-paperFullScreen)': {
+            margin: theme.spacing(6)
           }
-        })
-      }
-    },
-    MuiDialogTitle: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          padding: theme.spacing(5, 6, 1)
-        })
-      }
-    },
-    MuiDialogContent: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          padding: `${theme.spacing(5, 6)} !important`
-        })
-      }
-    },
-    MuiDialogActions: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          padding: theme.spacing(1, 6, 5),
-          '&.dialog-actions-dense': {
-            padding: theme.spacing(1, 2.5, 2.5)
-          }
-        })
+        }
+      }),
+      paperFullScreen: {
+        borderRadius: 0
       }
     }
+  },
+  MuiDialogTitle: {
+    defaultProps: {
+      variant: 'h5'
+    },
+    styleOverrides: {
+      root: ({ theme }) => ({
+        padding: theme.spacing(6),
+        '& + .MuiDialogActions-root': {
+          paddingTop: 0
+        }
+      })
+    }
+  },
+  MuiDialogContent: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        padding: theme.spacing(6),
+        '& + .MuiDialogContent-root, & + .MuiDialogActions-root': {
+          paddingTop: 0
+        }
+      })
+    }
+  },
+  MuiDialogActions: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        padding: theme.spacing(6),
+        '& .MuiButtonBase-root:not(:first-of-type)': {
+          marginInlineStart: theme.spacing(4)
+        },
+        '&:where(.dialog-actions-dense)': {
+          padding: theme.spacing(3),
+          '& .MuiButton-text': {
+            paddingInline: theme.spacing(3)
+          }
+        }
+      })
+    }
   }
-}
+})
 
-export default Dialog
+export default dialog

@@ -1,123 +1,100 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// MUI Imports
+import type { Theme } from '@mui/material/styles'
 
-// ** Util Import
-import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
-
-const Slider = () => {
-  return {
-    MuiSlider: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          '&:not(.MuiSlider-vertical)': {
-            height: 6
-          },
-          '&.MuiSlider-vertical': {
-            width: 6
-          },
-          '&.MuiSlider-colorPrimary': {
-            '& .MuiSlider-thumb.Mui-active': {
-              boxShadow: `0 0 0 10px ${hexToRGBA(theme.palette.primary.main, 0.16)}`
-            },
-            '& .MuiSlider-thumbSizeSmall:hover, &.MuiSlider-sizeSmall .MuiSlider-thumb.Mui-focusVisible': {
-              boxShadow: `0 0 0 6px ${hexToRGBA(theme.palette.primary.main, 0.16)}`
-            },
-            '& .MuiSlider-thumbSizeSmall.Mui-active': {
-              boxShadow: `0 0 0 8px ${hexToRGBA(theme.palette.primary.main, 0.16)} !important`
+const slider: Theme['components'] = {
+  MuiSlider: {
+    styleOverrides: {
+      root: ({ ownerState }) => ({
+        boxSizing: 'border-box',
+        ...(ownerState.orientation === 'horizontal'
+          ? ownerState.size !== 'small'
+            ? { blockSize: 6 }
+            : { blockSize: 4 }
+          : ownerState.size !== 'small'
+            ? { inlineSize: 6 }
+            : { inlineSize: 4 }),
+        '&.Mui-disabled': {
+          opacity: 0.45,
+          color: `var(--mui-palette-${ownerState.color}-main)`
+        }
+      }),
+      thumb: ({ ownerState }) => ({
+        ...(ownerState.size === 'small'
+          ? {
+              blockSize: 14,
+              inlineSize: 14,
+              border: '2px solid currentColor',
+              '&:hover, &.Mui-focusVisible': {
+                boxShadow: `0 0 0 7px var(--mui-palette-${ownerState.color}-lightOpacity)`
+              },
+              '&.Mui-active.Mui-focusVisible': {
+                boxShadow: `0 0 0 10px var(--mui-palette-${ownerState.color}-lightOpacity)`
+              }
             }
-          },
-          '&.MuiSlider-colorSecondary': {
-            '& .MuiSlider-thumb.Mui-active': {
-              boxShadow: `0 0 0 10px ${hexToRGBA(theme.palette.secondary.main, 0.16)}`
-            },
-            '& .MuiSlider-thumbSizeSmall:hover, &.MuiSlider-sizeSmall .MuiSlider-thumb.Mui-focusVisible': {
-              boxShadow: `0 0 0 6px ${hexToRGBA(theme.palette.secondary.main, 0.16)}`
-            },
-            '& .MuiSlider-thumbSizeSmall.Mui-active': {
-              boxShadow: `0 0 0 8px ${hexToRGBA(theme.palette.secondary.main, 0.16)} !important`
-            }
-          }
+          : {
+              blockSize: 22,
+              inlineSize: 22,
+              border: '4px solid currentColor'
+            }),
+        backgroundColor: 'var(--mui-palette-common-white)',
+        ...(!ownerState.disabled && {
+          boxShadow: 'var(--mui-customShadows-sm)'
         }),
-        rail: ({ theme }: OwnerStateThemeType) => ({
-          opacity: 1,
-          backgroundColor: theme.palette.action.selected
-        }),
-        track: {
-          border: 0
+        '&:before': {
+          boxShadow: 'none'
         },
-        thumb: ({ theme }: OwnerStateThemeType) => ({
-          width: 14,
-          height: 14,
-          '&:before': {
-            boxShadow: theme.shadows[3],
-            border: `2px solid ${theme.palette.background.paper}`
-          },
-          '&:not(.Mui-active):after': {
-            width: 30,
-            height: 30
-          },
-          '&.Mui-active': {
-            width: 19,
-            height: 19,
-            '&:before': {
-              borderWidth: 3
-            },
-            '&:after': {
-              width: 38,
-              height: 38
-            }
-          }
-        }),
-        sizeSmall: {
-          '&:not(.MuiSlider-vertical)': {
-            height: 4
-          },
-          '&.MuiSlider-vertical': {
-            width: 4
-          }
+        '&:after': {
+          ...(ownerState.size === 'small'
+            ? {
+                blockSize: 28,
+                inlineSize: 28
+              }
+            : {
+                blockSize: 38,
+                inlineSize: 38
+              })
         },
-        thumbSizeSmall: ({ theme }: OwnerStateThemeType) => ({
-          width: 12,
-          height: 12,
-          '&:before': {
-            boxShadow: theme.shadows[2]
-          },
-          '&:not(.Mui-active):after': {
-            width: 24,
-            height: 24
-          },
-          '&.Mui-active': {
-            width: 14,
-            height: 14,
-            '&:before': {
-              borderWidth: 2
-            },
-            '&:after': {
-              width: 30,
-              height: 30
-            }
-          }
-        }),
-        valueLabel: ({ theme }: OwnerStateThemeType) => ({
-          borderRadius: 4,
-          padding: theme.spacing(1, 2),
-          backgroundColor:
-            theme.palette.mode === 'light'
-              ? `rgba(${theme.palette.customColors.main}, 0.9)`
-              : hexToRGBA(theme.palette.customColors.trackBg, 0.9),
-          '&:before': {
-            display: 'none'
-          },
-          '& .MuiSlider-valueLabelCircle': {
-            lineHeight: 'normal'
-          }
-        }),
-        markLabel: ({ theme }: OwnerStateThemeType) => ({
-          color: theme.palette.text.disabled
+        '&:hover, &.Mui-focusVisible': {
+          boxShadow: `0 0 0 8px var(--mui-palette-${ownerState.color}-lightOpacity)`
+        },
+        '&.Mui-active.Mui-focusVisible': {
+          boxShadow: `0 0 0 13px var(--mui-palette-${ownerState.color}-lightOpacity)`
+        }
+      }),
+      rail: ({ ownerState }) => ({
+        opacity: 1,
+        color: `var(--mui-palette-${ownerState.color}-lightOpacity)`,
+        ...(ownerState.track === 'inverted' && {
+          backgroundColor: `var(--mui-palette-${ownerState.color}-main)`
         })
-      }
+      }),
+      valueLabel: ({ theme, ownerState }) => ({
+        ...(ownerState.size === 'small'
+          ? {
+              ...theme.typography.caption,
+              padding: theme.spacing(0.5, 2),
+              borderRadius: 'var(--mui-shape-customBorderRadius-sm)'
+            }
+          : {
+              ...theme.typography.body2,
+              fontWeight: theme.typography.fontWeightMedium,
+              padding: theme.spacing(0.5, 2.5),
+              borderRadius: 'var(--mui-shape-borderRadius)'
+            }),
+        color: 'var(--mui-palette-customColors-tooltipText)',
+        backgroundColor: 'var(--mui-palette-Tooltip-bg)',
+        '&:before': {
+          display: 'none'
+        }
+      }),
+      track: ({ theme, ownerState }) => ({
+        ...(ownerState.track === 'inverted' && {
+          backgroundColor: `color-mix(in srgb, ${theme.palette[ownerState.color || 'primary'].main} 16%, var(--mui-palette-background-paper))`,
+          borderColor: `color-mix(in srgb, ${theme.palette[ownerState.color || 'primary'].main} 16%, var(--mui-palette-background-paper))`
+        })
+      })
     }
   }
 }
 
-export default Slider
+export default slider

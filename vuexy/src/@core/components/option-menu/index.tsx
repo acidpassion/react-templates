@@ -1,42 +1,44 @@
-// ** React Imports
-import { MouseEvent, useState, ReactNode } from 'react'
+'use client'
 
-// ** Next Import
+// React Imports
+import { useRef, useState } from 'react'
+import type { ReactElement, ReactNode, SyntheticEvent } from 'react'
+
+// Next Imports
 import Link from 'next/link'
 
-// ** MUI Imports
+// MUI Imports
+import Tooltip from '@mui/material/Tooltip'
 import Box from '@mui/material/Box'
-import Menu from '@mui/material/Menu'
-import Divider from '@mui/material/Divider'
+import Popper from '@mui/material/Popper'
 import MenuItem from '@mui/material/MenuItem'
+import MenuList from '@mui/material/MenuList'
+import ClickAwayListener from '@mui/material/ClickAwayListener'
+import Fade from '@mui/material/Fade'
+import Paper from '@mui/material/Paper'
 import IconButton from '@mui/material/IconButton'
+import Divider from '@mui/material/Divider'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Third-party Imports
+import classnames from 'classnames'
 
-// ** Type Imports
-import { OptionType, OptionsMenuType, OptionMenuItemType } from './types'
+// Type Imports
+import type { OptionsMenuType, OptionType, OptionMenuItemType } from './types'
 
-// ** Hook Import
-import { useSettings } from 'src/@core/hooks/useSettings'
+// Hook Imports
+import { useSettings } from '@core/hooks/useSettings'
+
+const IconButtonWrapper = (props: Pick<OptionsMenuType, 'tooltipProps'> & { children: ReactElement }) => {
+  // Props
+  const { tooltipProps, children } = props
+
+  return tooltipProps?.title ? <Tooltip {...tooltipProps}>{children}</Tooltip> : children
+}
 
 const MenuItemWrapper = ({ children, option }: { children: ReactNode; option: OptionMenuItemType }) => {
   if (option.href) {
     return (
-      <Box
-        component={Link}
-        href={option.href}
-        {...option.linkProps}
-        sx={{
-          px: 4,
-          py: 1.5,
-          width: '100%',
-          display: 'flex',
-          color: 'inherit',
-          alignItems: 'center',
-          textDecoration: 'none'
-        }}
-      >
+      <Box component={Link} href={option.href} {...option.linkProps}>
         {children}
       </Box>
     )
@@ -45,72 +47,95 @@ const MenuItemWrapper = ({ children, option }: { children: ReactNode; option: Op
   }
 }
 
-const OptionsMenu = (props: OptionsMenuType) => {
-  // ** Props
-  const { icon, options, menuProps, iconProps, leftAlignMenu, iconButtonProps } = props
+const OptionMenu = (props: OptionsMenuType) => {
+  // Props
+  const { tooltipProps, icon, iconClassName, options, leftAlignMenu, iconButtonProps } = props
 
-  // ** State
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  // States
+  const [open, setOpen] = useState(false)
 
-  // ** Hook & Var
+  // Refs
+  const anchorRef = useRef<HTMLButtonElement>(null)
+
+  // Hooks
   const { settings } = useSettings()
-  const { direction } = settings
 
-  const handleClick = (event: MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
+  const handleToggle = () => {
+    setOpen(prevOpen => !prevOpen)
   }
 
-  const handleClose = () => {
-    setAnchorEl(null)
+  const handleClose = (event: Event | SyntheticEvent) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
+      return
+    }
+
+    setOpen(false)
   }
 
   return (
     <>
-      <IconButton aria-haspopup='true' onClick={handleClick} {...iconButtonProps}>
-        {icon ? icon : <Icon icon='tabler:dots-vertical' {...iconProps} />}
-      </IconButton>
-      <Menu
-        keepMounted
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        open={Boolean(anchorEl)}
-        {...(!leftAlignMenu && {
-          anchorOrigin: { vertical: 'bottom', horizontal: direction === 'ltr' ? 'right' : 'left' },
-          transformOrigin: { vertical: 'top', horizontal: direction === 'ltr' ? 'right' : 'left' }
-        })}
-        {...menuProps}
+      <IconButtonWrapper tooltipProps={tooltipProps}>
+        <IconButton ref={anchorRef} size='small' onClick={handleToggle} {...iconButtonProps}>
+          {typeof icon === 'string' ? (
+            <i className={classnames(icon, iconClassName)} />
+          ) : (icon as ReactNode) ? (
+            icon
+          ) : (
+            <i className={classnames('tabler-dots-vertical', iconClassName)} />
+          )}
+        </IconButton>
+      </IconButtonWrapper>
+      <Popper
+        open={open}
+        anchorEl={anchorRef.current}
+        placement={leftAlignMenu ? 'bottom-start' : 'bottom-end'}
+        transition
+        disablePortal
+        sx={{ zIndex: 1 }}
       >
-        {options.map((option: OptionType, index: number) => {
-          if (typeof option === 'string') {
-            return (
-              <MenuItem key={index} onClick={handleClose}>
-                {option}
-              </MenuItem>
-            )
-          } else if ('divider' in option) {
-            return option.divider && <Divider key={index} {...option.dividerProps} />
-          } else {
-            return (
-              <MenuItem
-                key={index}
-                {...option.menuItemProps}
-                {...(option.href && { sx: { p: 0 } })}
-                onClick={e => {
-                  handleClose()
-                  option.menuItemProps && option.menuItemProps.onClick ? option.menuItemProps.onClick(e) : null
-                }}
-              >
-                <MenuItemWrapper option={option}>
-                  {option.icon ? option.icon : null}
-                  {option.text}
-                </MenuItemWrapper>
-              </MenuItem>
-            )
-          }
-        })}
-      </Menu>
+        {({ TransitionProps }) => (
+          <Fade {...TransitionProps}>
+            <Paper className={settings.skin === 'bordered' ? 'border shadow-none' : 'shadow-lg'}>
+              <ClickAwayListener onClickAway={handleClose}>
+                <MenuList autoFocusItem={open}>
+                  {options.map((option: OptionType, index: number) => {
+                    if (typeof option === 'string') {
+                      return (
+                        <MenuItem key={index} onClick={handleClose}>
+                          {option}
+                        </MenuItem>
+                      )
+                    } else if ('divider' in option) {
+                      return option.divider && <Divider key={index} {...option.dividerProps} />
+                    } else {
+                      return (
+                        <MenuItem
+                          key={index}
+                          {...option.menuItemProps}
+                          {...(option.href && { className: 'p-0' })}
+                          onClick={e => {
+                            handleClose(e)
+                            option.menuItemProps && option.menuItemProps.onClick
+                              ? option.menuItemProps.onClick(e)
+                              : null
+                          }}
+                        >
+                          <MenuItemWrapper option={option}>
+                            {(typeof option.icon === 'string' ? <i className={option.icon} /> : option.icon) || null}
+                            {option.text}
+                          </MenuItemWrapper>
+                        </MenuItem>
+                      )
+                    }
+                  })}
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Fade>
+        )}
+      </Popper>
     </>
   )
 }
 
-export default OptionsMenu
+export default OptionMenu

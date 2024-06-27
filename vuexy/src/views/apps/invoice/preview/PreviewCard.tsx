@@ -1,305 +1,219 @@
-// ** MUI Imports
-import Grid from '@mui/material/Grid'
+// MUI Imports
 import Card from '@mui/material/Card'
-import Table from '@mui/material/Table'
-import Divider from '@mui/material/Divider'
-import TableRow from '@mui/material/TableRow'
-import TableHead from '@mui/material/TableHead'
-import TableBody from '@mui/material/TableBody'
-import Typography from '@mui/material/Typography'
-import Box, { BoxProps } from '@mui/material/Box'
 import CardContent from '@mui/material/CardContent'
-import { styled, useTheme } from '@mui/material/styles'
-import TableContainer from '@mui/material/TableContainer'
-import TableCell, { TableCellBaseProps } from '@mui/material/TableCell'
+import Typography from '@mui/material/Typography'
+import Grid from '@mui/material/Grid'
+import Divider from '@mui/material/Divider'
 
-// ** Configs
-import themeConfig from 'src/configs/themeConfig'
+// Type Imports
+import type { InvoiceType } from '@/types/apps/invoiceTypes'
 
-// ** Types
-import { SingleInvoiceType } from 'src/types/apps/invoiceTypes'
+// Component Imports
+import Logo from '@components/layout/shared/Logo'
 
-interface Props {
-  data: SingleInvoiceType
-}
+// Style Imports
+import tableStyles from '@core/styles/table.module.css'
+import './print.css'
 
-const MUITableCell = styled(TableCell)<TableCellBaseProps>(({ theme }) => ({
-  borderBottom: 0,
-  paddingLeft: '0 !important',
-  paddingRight: '0 !important',
-  '&:not(:last-child)': {
-    paddingRight: `${theme.spacing(2)} !important`
+// Vars
+const data = [
+  {
+    Item: 'Premium Branding Package',
+    Description: 'Branding & Promotion',
+    Hours: 48,
+    Qty: 1,
+    Total: '$32'
+  },
+  {
+    Item: 'Social Media',
+    Description: 'Social media templates',
+    Hours: 42,
+    Qty: 1,
+    Total: '$28'
+  },
+  {
+    Item: 'Web Design',
+    Description: 'Web designing package',
+    Hours: 46,
+    Qty: 1,
+    Total: '$24'
+  },
+  {
+    Item: 'SEO',
+    Description: 'Search engine optimization',
+    Hours: 40,
+    Qty: 1,
+    Total: '$22'
   }
-}))
+]
 
-const CalcWrapper = styled(Box)<BoxProps>(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  '&:not(:last-of-type)': {
-    marginBottom: theme.spacing(2)
-  }
-}))
-
-const PreviewCard = ({ data }: Props) => {
-  // ** Hook
-  const theme = useTheme()
-
-  if (data) {
-    return (
-      <Card>
-        <CardContent sx={{ p: [`${theme.spacing(6)} !important`, `${theme.spacing(10)} !important`] }}>
-          <Grid container>
-            <Grid item sm={6} xs={12} sx={{ mb: { sm: 0, xs: 4 } }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ mb: 6, display: 'flex', alignItems: 'center' }}>
-                  <svg width={34} viewBox='0 0 32 22' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                    <path
-                      fillRule='evenodd'
-                      clipRule='evenodd'
-                      fill={theme.palette.primary.main}
-                      d='M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z'
-                    />
-                    <path
-                      fill='#161616'
-                      opacity={0.06}
-                      fillRule='evenodd'
-                      clipRule='evenodd'
-                      d='M7.69824 16.4364L12.5199 3.23696L16.5541 7.25596L7.69824 16.4364Z'
-                    />
-                    <path
-                      fill='#161616'
-                      opacity={0.06}
-                      fillRule='evenodd'
-                      clipRule='evenodd'
-                      d='M8.07751 15.9175L13.9419 4.63989L16.5849 7.28475L8.07751 15.9175Z'
-                    />
-                    <path
-                      fillRule='evenodd'
-                      clipRule='evenodd'
-                      fill={theme.palette.primary.main}
-                      d='M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z'
-                    />
-                  </svg>
-                  <Typography variant='h4' sx={{ ml: 2.5, fontWeight: 700, lineHeight: '24px' }}>
-                    {themeConfig.templateName}
-                  </Typography>
-                </Box>
-                <div>
-                  <Typography sx={{ mb: 2, color: 'text.secondary' }}>Office 149, 450 South Brand Brooklyn</Typography>
-                  <Typography sx={{ mb: 2, color: 'text.secondary' }}>San Diego County, CA 91905, USA</Typography>
-                  <Typography sx={{ color: 'text.secondary' }}>+1 (123) 456 7891, +44 (876) 543 2198</Typography>
+const PreviewCard = ({ invoiceData, id }: { invoiceData?: InvoiceType; id: string }) => {
+  return (
+    <Card className='previewCard'>
+      <CardContent className='sm:!p-12'>
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <div className='p-6 bg-actionHover rounded'>
+              <div className='flex justify-between gap-y-4 flex-col sm:flex-row'>
+                <div className='flex flex-col gap-6'>
+                  <div className='flex items-center gap-2.5'>
+                    <Logo />
+                  </div>
+                  <div>
+                    <Typography color='text.primary'>Office 149, 450 South Brand Brooklyn</Typography>
+                    <Typography color='text.primary'>San Diego County, CA 91905, USA</Typography>
+                    <Typography color='text.primary'>+1 (123) 456 7891, +44 (876) 543 2198</Typography>
+                  </div>
                 </div>
-              </Box>
-            </Grid>
-            <Grid item sm={6} xs={12}>
-              <Box sx={{ display: 'flex', justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
-                <Table sx={{ maxWidth: '210px' }}>
-                  <TableBody sx={{ '& .MuiTableCell-root': { py: `${theme.spacing(1.5)} !important` } }}>
-                    <TableRow>
-                      <MUITableCell>
-                        <Typography variant='h4'>Invoice</Typography>
-                      </MUITableCell>
-                      <MUITableCell>
-                        <Typography variant='h4'>{`#${data.invoice.id}`}</Typography>
-                      </MUITableCell>
-                    </TableRow>
-                    <TableRow>
-                      <MUITableCell>
-                        <Typography sx={{ color: 'text.secondary' }}>Date Issued:</Typography>
-                      </MUITableCell>
-                      <MUITableCell>
-                        <Typography sx={{ color: 'text.secondary' }}>{data.invoice.issuedDate}</Typography>
-                      </MUITableCell>
-                    </TableRow>
-                    <TableRow>
-                      <MUITableCell>
-                        <Typography sx={{ color: 'text.secondary' }}>Date Due:</Typography>
-                      </MUITableCell>
-                      <MUITableCell>
-                        <Typography sx={{ color: 'text.secondary' }}>{data.invoice.dueDate}</Typography>
-                      </MUITableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </Box>
-            </Grid>
-          </Grid>
-        </CardContent>
-
-        <Divider />
-
-        <CardContent sx={{ p: [`${theme.spacing(6)} !important`, `${theme.spacing(10)} !important`] }}>
-          <Grid container>
-            <Grid item xs={12} sm={6} sx={{ mb: { lg: 0, xs: 4 } }}>
-              <Typography variant='h6' sx={{ mb: 6 }}>
-                Invoice To:
-              </Typography>
-              <Typography sx={{ mb: 1.5, color: 'text.secondary' }}>{data.invoice.name}</Typography>
-              <Typography sx={{ mb: 1.5, color: 'text.secondary' }}>{data.invoice.company}</Typography>
-              <Typography sx={{ mb: 1.5, color: 'text.secondary' }}>{data.invoice.address}</Typography>
-              <Typography sx={{ mb: 1.5, color: 'text.secondary' }}>{data.invoice.contact}</Typography>
-              <Typography sx={{ mb: 1.5, color: 'text.secondary' }}>{data.invoice.companyEmail}</Typography>
-            </Grid>
-            <Grid item xs={12} sm={6} sx={{ display: 'flex', justifyContent: ['flex-start', 'flex-end'] }}>
-              <div>
-                <Typography variant='h6' sx={{ mb: 6 }}>
-                  Bill To:
-                </Typography>
-                <TableContainer>
-                  <Table>
-                    <TableBody sx={{ '& .MuiTableCell-root': { py: `${theme.spacing(0.75)} !important` } }}>
-                      <TableRow>
-                        <MUITableCell>
-                          <Typography sx={{ color: 'text.secondary' }}>Total Due:</Typography>
-                        </MUITableCell>
-                        <MUITableCell>
-                          <Typography sx={{ fontWeight: 500, color: 'text.secondary' }}>
-                            {data.paymentDetails.totalDue}
-                          </Typography>
-                        </MUITableCell>
-                      </TableRow>
-                      <TableRow>
-                        <MUITableCell>
-                          <Typography sx={{ color: 'text.secondary' }}>Bank name:</Typography>
-                        </MUITableCell>
-                        <MUITableCell>
-                          <Typography sx={{ color: 'text.secondary' }}>{data.paymentDetails.bankName}</Typography>
-                        </MUITableCell>
-                      </TableRow>
-                      <TableRow>
-                        <MUITableCell>
-                          <Typography sx={{ color: 'text.secondary' }}>Country:</Typography>
-                        </MUITableCell>
-                        <MUITableCell>
-                          <Typography sx={{ color: 'text.secondary' }}>{data.paymentDetails.country}</Typography>
-                        </MUITableCell>
-                      </TableRow>
-                      <TableRow>
-                        <MUITableCell>
-                          <Typography sx={{ color: 'text.secondary' }}>IBAN:</Typography>
-                        </MUITableCell>
-                        <MUITableCell>
-                          <Typography sx={{ color: 'text.secondary' }}>{data.paymentDetails.iban}</Typography>
-                        </MUITableCell>
-                      </TableRow>
-                      <TableRow>
-                        <MUITableCell>
-                          <Typography sx={{ color: 'text.secondary' }}>SWIFT code:</Typography>
-                        </MUITableCell>
-                        <MUITableCell>
-                          <Typography sx={{ color: 'text.secondary' }}>{data.paymentDetails.swiftCode}</Typography>
-                        </MUITableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                <div className='flex flex-col gap-6'>
+                  <Typography variant='h5'>{`Invoice #${id}`}</Typography>
+                  <div className='flex flex-col gap-1'>
+                    <Typography color='text.primary'>{`Date Issued: ${invoiceData?.issuedDate}`}</Typography>
+                    <Typography color='text.primary'>{`Date Due: ${invoiceData?.dueDate}`}</Typography>
+                  </div>
+                </div>
               </div>
+            </div>
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container spacing={6}>
+              <Grid item xs={12} sm={6}>
+                <div className='flex flex-col gap-4'>
+                  <Typography className='font-medium' color='text.primary'>
+                    Invoice To:
+                  </Typography>
+                  <div>
+                    <Typography>{invoiceData?.name}</Typography>
+                    <Typography>{invoiceData?.company}</Typography>
+                    <Typography>{invoiceData?.address}</Typography>
+                    <Typography>{invoiceData?.contact}</Typography>
+                    <Typography>{invoiceData?.companyEmail}</Typography>
+                  </div>
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <div className='flex flex-col gap-4'>
+                  <Typography className='font-medium' color='text.primary'>
+                    Bill To:
+                  </Typography>
+                  <div>
+                    <div className='flex items-center gap-4'>
+                      <Typography className='min-is-[100px]'>Total Due:</Typography>
+                      <Typography>$12,110.55</Typography>
+                    </div>
+                    <div className='flex items-center gap-4'>
+                      <Typography className='min-is-[100px]'>Bank name:</Typography>
+                      <Typography>American Bank</Typography>
+                    </div>
+                    <div className='flex items-center gap-4'>
+                      <Typography className='min-is-[100px]'>Country:</Typography>
+                      <Typography>United States</Typography>
+                    </div>
+                    <div className='flex items-center gap-4'>
+                      <Typography className='min-is-[100px]'>IBAN:</Typography>
+                      <Typography>ETD95476213874685</Typography>
+                    </div>
+                    <div className='flex items-center gap-4'>
+                      <Typography className='min-is-[100px]'>SWIFT code:</Typography>
+                      <Typography>BR91905</Typography>
+                    </div>
+                  </div>
+                </div>
+              </Grid>
             </Grid>
           </Grid>
-        </CardContent>
-
-        <Divider />
-
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Item</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell>hours</TableCell>
-                <TableCell>qty</TableCell>
-                <TableCell>Total</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody
-              sx={{
-                '& .MuiTableCell-root': {
-                  py: `${theme.spacing(2.5)} !important`,
-                  fontSize: theme.typography.body1.fontSize
-                }
-              }}
-            >
-              <TableRow>
-                <TableCell>Premium Branding Package</TableCell>
-                <TableCell>Branding & Promotion</TableCell>
-                <TableCell>48</TableCell>
-                <TableCell>1</TableCell>
-                <TableCell>$32</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Social Media</TableCell>
-                <TableCell>Social media templates</TableCell>
-                <TableCell>42</TableCell>
-                <TableCell>1</TableCell>
-                <TableCell>$28</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Web Design</TableCell>
-                <TableCell>Web designing package</TableCell>
-                <TableCell>46</TableCell>
-                <TableCell>1</TableCell>
-                <TableCell>$24</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>SEO</TableCell>
-                <TableCell>Search engine optimization</TableCell>
-                <TableCell>40</TableCell>
-                <TableCell>1</TableCell>
-                <TableCell>$22</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        <CardContent sx={{ p: [`${theme.spacing(6)} !important`, `${theme.spacing(10)} !important`] }}>
-          <Grid container>
-            <Grid item xs={12} sm={7} lg={9} sx={{ order: { sm: 1, xs: 2 } }}>
-              <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
-                <Typography sx={{ mr: 2, fontWeight: 500, color: 'text.secondary' }}>Salesperson:</Typography>
-                <Typography sx={{ color: 'text.secondary' }}>Tommy Shelby</Typography>
-              </Box>
-
-              <Typography sx={{ color: 'text.secondary' }}>Thanks for your business</Typography>
-            </Grid>
-            <Grid item xs={12} sm={5} lg={3} sx={{ mb: { sm: 0, xs: 4 }, order: { sm: 2, xs: 1 } }}>
-              <CalcWrapper>
-                <Typography sx={{ color: 'text.secondary' }}>Subtotal:</Typography>
-                <Typography sx={{ fontWeight: 500, color: 'text.secondary' }}>$1800</Typography>
-              </CalcWrapper>
-              <CalcWrapper>
-                <Typography sx={{ color: 'text.secondary' }}>Discount:</Typography>
-                <Typography sx={{ fontWeight: 500, color: 'text.secondary' }}>$28</Typography>
-              </CalcWrapper>
-              <CalcWrapper sx={{ mb: '0 !important' }}>
-                <Typography sx={{ color: 'text.secondary' }}>Tax:</Typography>
-                <Typography sx={{ fontWeight: 500, color: 'text.secondary' }}>21%</Typography>
-              </CalcWrapper>
-              <Divider sx={{ my: `${theme.spacing(2)} !important` }} />
-              <CalcWrapper>
-                <Typography sx={{ color: 'text.secondary' }}>Total:</Typography>
-                <Typography sx={{ fontWeight: 500, color: 'text.secondary' }}>$1690</Typography>
-              </CalcWrapper>
-            </Grid>
+          <Grid item xs={12}>
+            <div className='overflow-x-auto border rounded'>
+              <table className={tableStyles.table}>
+                <thead className='border-bs-0'>
+                  <tr>
+                    <th className='!bg-transparent'>Item</th>
+                    <th className='!bg-transparent'>Description</th>
+                    <th className='!bg-transparent'>Hours</th>
+                    <th className='!bg-transparent'>Qty</th>
+                    <th className='!bg-transparent'>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.map((item, index) => (
+                    <tr key={index}>
+                      <td>
+                        <Typography color='text.primary'>{item.Item}</Typography>
+                      </td>
+                      <td>
+                        <Typography color='text.primary'>{item.Description}</Typography>
+                      </td>
+                      <td>
+                        <Typography color='text.primary'>{item.Hours}</Typography>
+                      </td>
+                      <td>
+                        <Typography color='text.primary'>{item.Qty}</Typography>
+                      </td>
+                      <td>
+                        <Typography color='text.primary'>{item.Total}</Typography>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </Grid>
-        </CardContent>
-
-        <Divider />
-
-        <CardContent sx={{ px: [6, 10] }}>
-          <Typography sx={{ color: 'text.secondary' }}>
-            <Typography component='span' sx={{ mr: 1.5, fontWeight: 500, color: 'inherit' }}>
-              Note:
+          <Grid item xs={12}>
+            <div className='flex justify-between flex-col gap-y-4 sm:flex-row'>
+              <div className='flex flex-col gap-1 order-2 sm:order-[unset]'>
+                <div className='flex items-center gap-2'>
+                  <Typography className='font-medium' color='text.primary'>
+                    Salesperson:
+                  </Typography>
+                  <Typography>Tommy Shelby</Typography>
+                </div>
+                <Typography>Thanks for your business</Typography>
+              </div>
+              <div className='min-is-[200px]'>
+                <div className='flex items-center justify-between'>
+                  <Typography>Subtotal:</Typography>
+                  <Typography className='font-medium' color='text.primary'>
+                    $1800
+                  </Typography>
+                </div>
+                <div className='flex items-center justify-between'>
+                  <Typography>Discount:</Typography>
+                  <Typography className='font-medium' color='text.primary'>
+                    $28
+                  </Typography>
+                </div>
+                <div className='flex items-center justify-between'>
+                  <Typography>Tax:</Typography>
+                  <Typography className='font-medium' color='text.primary'>
+                    21%
+                  </Typography>
+                </div>
+                <Divider className='mlb-2' />
+                <div className='flex items-center justify-between'>
+                  <Typography>Total:</Typography>
+                  <Typography className='font-medium' color='text.primary'>
+                    $1690
+                  </Typography>
+                </div>
+              </div>
+            </div>
+          </Grid>
+          <Grid item xs={12}>
+            <Divider className='border-dashed' />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography>
+              <Typography component='span' className='font-medium' color='text.primary'>
+                Note:
+              </Typography>{' '}
+              It was a pleasure working with you and your team. We hope you will keep us in mind for future freelance
+              projects. Thank You!
             </Typography>
-            It was a pleasure working with you and your team. We hope you will keep us in mind for future freelance
-            projects. Thank You!
-          </Typography>
-        </CardContent>
-      </Card>
-    )
-  } else {
-    return null
-  }
+          </Grid>
+        </Grid>
+      </CardContent>
+    </Card>
+  )
 }
 
 export default PreviewCard

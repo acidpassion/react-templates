@@ -1,101 +1,121 @@
-// ** React Imports
-import { ChangeEvent, forwardRef, useState } from 'react'
+'use client'
 
-// ** MUI Imports
+// React Imports
+import { useState } from 'react'
+
+// MUI Imports
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
-import CardHeader from '@mui/material/CardHeader'
-import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
 import CardActions from '@mui/material/CardActions'
 import InputAdornment from '@mui/material/InputAdornment'
-import { SelectChangeEvent } from '@mui/material/Select'
+import IconButton from '@mui/material/IconButton'
 
-// ** Custom Component Import
-import CustomTextField from 'src/@core/components/mui/text-field'
+// Components Imports
+import CustomTextField from '@core/components/mui/TextField'
 
-// ** Third Party Imports
-import DatePicker from 'react-datepicker'
+// Styled Component Imports
+import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-// ** Types
-import { DateType } from 'src/types/forms/reactDatepickerTypes'
-
-interface State {
+type FormDataType = {
+  username: string
+  email: string
   password: string
-  password2: string
-  showPassword: boolean
-  showPassword2: boolean
+  isPasswordShown: boolean
+  confirmPassword: string
+  isConfirmPasswordShown: boolean
+  firstName: string
+  lastName: string
+  country: string
+  language: string[]
+  date: Date | null
+  phoneNumber: string
 }
 
-const CustomInput = forwardRef((props, ref) => {
-  return <CustomTextField fullWidth {...props} inputRef={ref} label='Birth Date' autoComplete='off' />
-})
-
 const FormLayoutsSeparator = () => {
-  // ** States
-  const [date, setDate] = useState<DateType>(null)
-  const [language, setLanguage] = useState<string[]>([])
-  const [values, setValues] = useState<State>({
+  // States
+  const [formData, setFormData] = useState<FormDataType>({
+    username: '',
+    email: '',
     password: '',
-    password2: '',
-    showPassword: false,
-    showPassword2: false
+    isPasswordShown: false,
+    confirmPassword: '',
+    isConfirmPasswordShown: false,
+    firstName: '',
+    lastName: '',
+    country: '',
+    language: [],
+    date: null,
+    phoneNumber: ''
   })
 
-  // Handle Password
-  const handlePasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value })
-  }
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword })
-  }
+  const handleClickShowPassword = () => setFormData(show => ({ ...show, isPasswordShown: !show.isPasswordShown }))
 
-  // Handle Confirm Password
-  const handleConfirmChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value })
-  }
-  const handleClickShowConfirmPassword = () => {
-    setValues({ ...values, showPassword2: !values.showPassword2 })
-  }
+  const handleClickShowConfirmPassword = () =>
+    setFormData(show => ({ ...show, isConfirmPasswordShown: !show.isConfirmPasswordShown }))
 
-  // Handle Select
-  const handleSelectChange = (event: SelectChangeEvent<string[]>) => {
-    setLanguage(event.target.value as string[])
+  const handleReset = () => {
+    setFormData({
+      username: '',
+      email: '',
+      password: '',
+      isPasswordShown: false,
+      confirmPassword: '',
+      isConfirmPasswordShown: false,
+      firstName: '',
+      lastName: '',
+      country: '',
+      language: [],
+      date: null,
+      phoneNumber: ''
+    })
   }
 
   return (
     <Card>
       <CardHeader title='Multi Column with Form Separator' />
-      <Divider sx={{ m: '0 !important' }} />
+      <Divider />
       <form onSubmit={e => e.preventDefault()}>
         <CardContent>
-          <Grid container spacing={5}>
+          <Grid container spacing={6}>
             <Grid item xs={12}>
-              <Typography variant='body2' sx={{ fontWeight: 600 }}>
+              <Typography variant='body2' className='font-medium'>
                 1. Account Details
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <CustomTextField fullWidth label='Username' placeholder='carterLeonard' />
+              <CustomTextField
+                fullWidth
+                label='UserName'
+                placeholder='johnDoe '
+                value={formData.username}
+                onChange={e => setFormData({ ...formData, username: e.target.value })}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <CustomTextField fullWidth type='email' label='Email' placeholder='carterleonard@gmail.com' />
+              <CustomTextField
+                fullWidth
+                type='email'
+                label='Email'
+                value={formData.email}
+                placeholder='johndoe@gmail.com'
+                onChange={e => setFormData({ ...formData, email: e.target.value })}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
                 label='Password'
-                value={values.password}
-                id='form-layouts-separator-password'
-                onChange={handlePasswordChange('password')}
-                type={values.showPassword ? 'text' : 'password'}
+                placeholder='············'
+                id='form-layout-separator-password'
+                type={formData.isPasswordShown ? 'text' : 'password'}
+                value={formData.password}
+                onChange={e => setFormData({ ...formData, password: e.target.value })}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position='end'>
@@ -105,7 +125,7 @@ const FormLayoutsSeparator = () => {
                         onMouseDown={e => e.preventDefault()}
                         aria-label='toggle password visibility'
                       >
-                        <Icon fontSize='1.25rem' icon={values.showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
+                        <i className={formData.isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
                       </IconButton>
                     </InputAdornment>
                   )
@@ -115,21 +135,22 @@ const FormLayoutsSeparator = () => {
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
-                value={values.password2}
                 label='Confirm Password'
-                id='form-layouts-separator-password-2'
-                onChange={handleConfirmChange('password2')}
-                type={values.showPassword2 ? 'text' : 'password'}
+                placeholder='············'
+                id='form-layout-separator-confirm-password'
+                type={formData.isConfirmPasswordShown ? 'text' : 'password'}
+                value={formData.confirmPassword}
+                onChange={e => setFormData({ ...formData, confirmPassword: e.target.value })}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position='end'>
                       <IconButton
                         edge='end'
-                        onMouseDown={e => e.preventDefault()}
-                        aria-label='toggle password visibility'
                         onClick={handleClickShowConfirmPassword}
+                        onMouseDown={e => e.preventDefault()}
+                        aria-label='toggle confirm password visibility'
                       >
-                        <Icon fontSize='1.25rem' icon={values.showPassword2 ? 'tabler:eye' : 'tabler:eye-off'} />
+                        <i className={formData.isConfirmPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
                       </IconButton>
                     </InputAdornment>
                   )
@@ -137,21 +158,40 @@ const FormLayoutsSeparator = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <Divider sx={{ mb: '0 !important' }} />
+              <Divider />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant='body2' sx={{ fontWeight: 600 }}>
+              <Typography variant='body2' className='font-medium'>
                 2. Personal Info
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <CustomTextField fullWidth label='First Name' placeholder='Leonard' />
+              <CustomTextField
+                fullWidth
+                label='First Name'
+                placeholder='John'
+                value={formData.firstName}
+                onChange={e => setFormData({ ...formData, firstName: e.target.value })}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <CustomTextField fullWidth label='Last Name' placeholder='Carter' />
+              <CustomTextField
+                fullWidth
+                label='Last Name'
+                placeholder='Doe'
+                value={formData.lastName}
+                onChange={e => setFormData({ ...formData, lastName: e.target.value })}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <CustomTextField select fullWidth label='Country' id='form-layouts-separator-select' defaultValue=''>
+              <CustomTextField
+                select
+                fullWidth
+                label='Country'
+                value={formData.country}
+                onChange={e => setFormData({ ...formData, country: e.target.value })}
+              >
+                <MenuItem value=''>Select Country</MenuItem>
                 <MenuItem value='UK'>UK</MenuItem>
                 <MenuItem value='USA'>USA</MenuItem>
                 <MenuItem value='Australia'>Australia</MenuItem>
@@ -162,13 +202,11 @@ const FormLayoutsSeparator = () => {
               <CustomTextField
                 select
                 fullWidth
-                defaultValue=''
                 label='Language'
-                id='form-layouts-separator-multiple-select'
+                value={formData.language}
                 SelectProps={{
                   multiple: true,
-                  value: language,
-                  onChange: e => handleSelectChange(e as SelectChangeEvent<string[]>)
+                  onChange: e => setFormData({ ...formData, language: e.target.value as string[] })
                 }}
               >
                 <MenuItem value='English'>English</MenuItem>
@@ -181,27 +219,40 @@ const FormLayoutsSeparator = () => {
               </CustomTextField>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <DatePicker
-                selected={date}
+              <AppReactDatepicker
+                selected={formData.date}
                 showYearDropdown
                 showMonthDropdown
-                placeholderText='MM-DD-YYYY'
-                customInput={<CustomInput />}
-                id='form-layouts-separator-date'
-                onChange={(date: Date) => setDate(date)}
+                onChange={(date: Date) => setFormData({ ...formData, date })}
+                placeholderText='MM/DD/YYYY'
+                customInput={<CustomTextField fullWidth label='Birth Date' placeholder='MM-DD-YYYY' />}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <CustomTextField fullWidth type='number' label='Phone No.' placeholder='123-456-7890' />
+              <CustomTextField
+                fullWidth
+                label='Phone Number'
+                type='number'
+                placeholder='123-456-7890'
+                value={formData.phoneNumber}
+                onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })}
+              />
             </Grid>
           </Grid>
         </CardContent>
-        <Divider sx={{ m: '0 !important' }} />
+        <Divider />
         <CardActions>
-          <Button type='submit' sx={{ mr: 2 }} variant='contained'>
+          <Button type='submit' variant='contained' className='mie-2'>
             Submit
           </Button>
-          <Button type='reset' color='secondary' variant='tonal'>
+          <Button
+            type='reset'
+            variant='tonal'
+            color='secondary'
+            onClick={() => {
+              handleReset()
+            }}
+          >
             Reset
           </Button>
         </CardActions>

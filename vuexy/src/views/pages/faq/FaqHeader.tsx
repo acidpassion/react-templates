@@ -1,76 +1,55 @@
-// ** React Imports
-import { ChangeEvent } from 'react'
-
-// ** MUI Imports
-import { styled } from '@mui/material/styles'
+// MUI Imports
+import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
-import MuiCard, { CardProps } from '@mui/material/Card'
-import { TextFieldProps } from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
+import { styled } from '@mui/material/styles'
+import type { TextFieldProps } from '@mui/material/TextField'
 
-// ** Custom Component Import
-import CustomTextField from 'src/@core/components/mui/text-field'
+// Third-party Imports
+import classnames from 'classnames'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-interface Props {
-  searchTerm: string
-  setSearchTerm: (value: string) => void
-}
-
-// Styled Card component
-const Card = styled(MuiCard)<CardProps>(() => ({
-  border: 0,
-  boxShadow: 'none',
-  backgroundSize: 'cover',
-  backgroundColor: 'transparent',
-  backgroundImage: 'url(/images/pages/header-bg.png)'
-}))
+// Styles imports
+import styles from './styles.module.css'
+import CustomTextField from '@core/components/mui/TextField'
 
 // Styled CustomTextField component
 const CustomTextFieldStyled = styled(CustomTextField)<TextFieldProps>(({ theme }) => ({
   '& .MuiInputBase-root.MuiFilledInput-root': {
     width: '100%',
-    backgroundColor: `${theme.palette.background.paper} !important`
+    backgroundColor: 'var(--mui-palette-background-paper) !important'
   },
   [theme.breakpoints.up('sm')]: {
     width: '55%'
   }
 }))
 
-const FaqHeader = (props: Props) => {
-  // ** Props
-  const { searchTerm, setSearchTerm } = props
+type Props = {
+  searchValue: string
+  setSearchValue: (value: string) => void
+}
 
-  const handleFaqFilter = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-  }
-
+const FaqHeader = ({ searchValue, setSearchValue }: Props) => {
   return (
-    <Card>
-      <CardContent sx={{ pt: 24, textAlign: 'center', pb: theme => `${theme.spacing(24)} !important` }}>
-        <Typography sx={{ mb: 4, fontWeight: 500, fontSize: '1.625rem', lineHeight: 1.385 }}>
+    <Card className={classnames('shadow-none bg-transparent bg-cover', styles.bgImage)} elevation={0}>
+      <CardContent className='flex flex-col items-center is-full text-center !plb-[5.8125rem] pli-5'>
+        <Typography variant='h4' className='mbe-2.5'>
           Hello, how can we help?
         </Typography>
-
+        <Typography className='mbe-4'>or choose a category to quickly find the help you need</Typography>
         <CustomTextFieldStyled
-          size='medium'
-          value={searchTerm}
-          placeholder='Search a question....'
-          onChange={e => handleFaqFilter(e)}
+          className='is-full sm:max-is-[55%] md:max-is-[600px]'
+          placeholder='search articles...'
+          value={searchValue}
+          onChange={e => setSearchValue(e.target.value)}
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>
-                <Icon fontSize='1.25rem' icon='tabler:search' />
+                <i className='tabler-search' />
               </InputAdornment>
             )
           }}
         />
-        <Typography sx={{ mt: 4, color: 'text.secondary' }}>
-          or choose a category to quickly find the help you need
-        </Typography>
       </CardContent>
     </Card>
   )

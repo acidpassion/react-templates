@@ -1,73 +1,81 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// MUI Imports
+import type { Theme } from '@mui/material/styles'
 
-// ** Util Import
-import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
-
-const List = () => {
-  return {
-    MuiListItemButton: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          paddingLeft: theme.spacing(5),
-          paddingRight: theme.spacing(5),
-          '&:hover': {
-            backgroundColor: hexToRGBA(theme.palette.primary.main, 0.08),
-            '& .MuiListItemIcon-root, & .MuiListItemText-primary, & .MuiListItemText-secondary, & .MuiListItemSecondaryAction-root .MuiIconButton-root':
-              {
-                color: theme.palette.primary.main
-              }
-          },
-          '&.Mui-selected, &.Mui-selected:hover': {
-            color: theme.palette.common.white,
-            backgroundColor: theme.palette.primary.main,
-            '& .MuiListItemIcon-root, & .MuiListItemText-primary, & .MuiListItemText-secondary, & .MuiListItemSecondaryAction-root .MuiIconButton-root':
-              {
-                color: theme.palette.common.white
-              }
-          }
+const list: Theme['components'] = {
+  MuiListItem: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        gap: theme.spacing(3)
+      }),
+      padding: ({ theme, ownerState }) => ({
+        ...(!ownerState.dense && {
+          paddingBlock: theme.spacing(2),
+          paddingInlineStart: theme.spacing(5)
         })
+      })
+    }
+  },
+  MuiListItemAvatar: {
+    styleOverrides: {
+      root: {
+        minInlineSize: 'unset'
       }
-    },
-    MuiListItemIcon: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          minWidth: '0 !important',
-          marginRight: theme.spacing(2.25),
-          color: theme.palette.text.primary
-        })
+    }
+  },
+  MuiListItemIcon: {
+    styleOverrides: {
+      root: {
+        minInlineSize: 0,
+        color: 'var(--mui-palette-text-primary)',
+        fontSize: '1.375rem',
+        '& > svg, & > i': {
+          fontSize: 'inherit'
+        }
       }
-    },
-    MuiListItemAvatar: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          minWidth: 0,
-          marginRight: theme.spacing(4)
-        })
-      }
-    },
-    MuiListItemText: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          marginTop: theme.spacing(0.5),
-          marginBottom: theme.spacing(0.5)
+    }
+  },
+  MuiListItemButton: {
+    styleOverrides: {
+      root: ({ theme, ownerState }) => ({
+        gap: theme.spacing(2),
+        ...(!ownerState.dense && {
+          paddingBlock: theme.spacing(2)
         }),
-        dense: ({ theme }: OwnerStateThemeType) => ({
-          '& .MuiListItemText-primary': {
-            color: theme.palette.text.primary
+        paddingInlineStart: theme.spacing(5),
+        '&.Mui-selected': {
+          backgroundColor: 'var(--mui-palette-primary-lightOpacity)',
+          '&:hover, &.Mui-focused, &.Mui-focusVisible': {
+            backgroundColor: 'var(--mui-palette-primary-mainOpacity)'
+          },
+          '& .MuiTypography-root': {
+            color: 'var(--mui-palette-primary-main)'
+          },
+          '& + .MuiListItemSecondaryAction-root .MuiIconButton-root': {
+            color: 'var(--mui-palette-primary-main)'
           }
-        })
+        }
+      })
+    }
+  },
+  MuiListItemText: {
+    styleOverrides: {
+      root: {
+        margin: 0
+      },
+      primary: {
+        color: 'var(--mui-palette-text-primary)'
       }
-    },
-    MuiListSubheader: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          textTransform: 'uppercase',
-          color: theme.palette.text.disabled
-        })
-      }
+    }
+  },
+  MuiListSubheader: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        ...theme.typography.subtitle2,
+        paddingBlock: 10,
+        paddingInline: theme.spacing(5)
+      })
     }
   }
 }
 
-export default List
+export default list

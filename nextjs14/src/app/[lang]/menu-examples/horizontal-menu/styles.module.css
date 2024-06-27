@@ -1,9 +1,0 @@
-.customStyles {
-  border-block-end: 1px solid #efefef;
-  min-block-size: 65px;
-
-  & > i,
-  & > svg {
-    margin-inline-start: 20px;
-  }
-}

@@ -1,17 +1,26 @@
-// ** Type Imports
-import { OwnerStateThemeType } from './'
-import { Skin } from 'src/@core/layouts/types'
+// MUI Imports
+import type { Theme } from '@mui/material'
 
-const Drawer = (skin: Skin) => {
-  return {
-    MuiDrawer: {
-      styleOverrides: {
-        paper: ({ theme }: OwnerStateThemeType) => ({
-          boxShadow: theme.shadows[skin === 'default' ? 7 : 0]
+// Type Imports
+import type { Skin } from '@core/types'
+
+const drawer = (skin: Skin): Theme['components'] => ({
+  MuiDrawer: {
+    defaultProps: {
+      ...(skin === 'bordered' && {
+        PaperProps: {
+          elevation: 0
+        }
+      })
+    },
+    styleOverrides: {
+      paper: {
+        ...(skin !== 'bordered' && {
+          boxShadow: 'var(--mui-customShadows-lg)'
         })
       }
     }
   }
-}
+})
 
-export default Drawer
+export default drawer

@@ -1,145 +1,92 @@
-// ** Next Import
-import Link from 'next/link'
-
-// ** MUI Components
-import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
+// MUI Imports
 import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
-import Avatar from '@mui/material/Avatar'
-import Typography from '@mui/material/Typography'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
+import CardActions from '@mui/material/CardActions'
+import Typography from '@mui/material/Typography'
+import Grid from '@mui/material/Grid'
+import Chip from '@mui/material/Chip'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Type Imports
+import type { ProfileTeamsTechType, ProfileConnectionsType } from '@/types/pages/profileTypes'
 
-// ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
-import OptionsMenu from 'src/@core/components/option-menu'
+// Component Imports
+import OptionMenu from '@core/components/option-menu'
+import CustomAvatar from '@core/components/mui/Avatar'
+import CustomIconButton from '@core/components/mui/IconButton'
+import Link from '@components/Link'
 
-// ** Types
-import { ProfileTeamsTechType, ProfileConnectionsType } from 'src/@fake-db/types'
-
-interface Props {
-  teams: ProfileTeamsTechType[]
-  connections: ProfileConnectionsType[]
+type Props = {
+  teamsTech?: ProfileTeamsTechType[]
+  connections?: ProfileConnectionsType[]
 }
 
-const ConnectionsTeams = ({ connections, teams }: Props) => {
+const ConnectionsTeams = (props: Props) => {
+  // props
+  const { teamsTech, connections } = props
+
   return (
     <>
-      <Grid item md={6} xs={12}>
+      <Grid item xs={12} md={6}>
         <Card>
           <CardHeader
             title='Connections'
-            action={
-              <OptionsMenu
-                iconButtonProps={{ size: 'small', sx: { color: 'text.disabled' } }}
-                options={['Share connections', 'Suggest edits', { divider: true }, 'Report bug']}
-              />
-            }
+            action={<OptionMenu options={['Share Connections', 'Suggest Edits', { divider: true }, 'Report Bug']} />}
           />
-          <CardContent>
+          <CardContent className='flex flex-col gap-4'>
             {connections &&
-              connections.map((connection: ProfileConnectionsType, index) => {
-                return (
-                  <Box
-                    key={index}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      '&:not(:last-of-type)': { mb: 4 }
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Avatar src={connection.avatar} sx={{ mr: 3, width: 38, height: 38 }} />
-                      <div>
-                        <Typography sx={{ fontWeight: 500, color: 'text.secondary' }}>{connection.name}</Typography>
-                        <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                          {connection.connections} Connections
-                        </Typography>
-                      </div>
-                    </Box>
-                    <Button
-                      size='small'
-                      color='primary'
-                      variant={connection.isFriend ? 'contained' : 'tonal'}
-                      sx={{ minWidth: 30, minHeight: 30, p: theme => `${theme.spacing(1.25)} !important` }}
-                    >
-                      <Icon fontSize='1.125rem' icon={connection.isFriend ? 'tabler:user-x' : 'tabler:user-check'} />
-                    </Button>
-                  </Box>
-                )
-              })}
-            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-              <Typography
-                href='/'
-                component={Link}
-                onClick={e => e.preventDefault()}
-                sx={{ color: 'primary.main', textDecoration: 'none' }}
-              >
-                View all connections
-              </Typography>
-            </Box>
+              connections.map((connection, index) => (
+                <div key={index} className='flex items-center gap-2'>
+                  <div className='flex items-center flex-grow gap-2'>
+                    <CustomAvatar src={connection.avatar} size={38} />
+                    <div className='flex flex-grow flex-col'>
+                      <Typography className='font-medium' color='text.primary'>
+                        {connection.name}
+                      </Typography>
+                      <Typography variant='body2'>{connection.connections} Connections</Typography>
+                    </div>
+                  </div>
+                  <CustomIconButton color='primary' variant={connection.isFriend ? 'tonal' : 'contained'}>
+                    <i className={connection.isFriend ? 'tabler-user-check' : 'tabler-user-x'} />
+                  </CustomIconButton>
+                </div>
+              ))}
           </CardContent>
+          <CardActions className='flex justify-center'>
+            <Typography component={Link} color='primary'>
+              View all connections
+            </Typography>
+          </CardActions>
         </Card>
       </Grid>
-      <Grid item md={6} xs={12}>
+      <Grid item xs={12} md={6}>
         <Card>
           <CardHeader
             title='Teams'
-            action={
-              <OptionsMenu
-                iconButtonProps={{ size: 'small', sx: { color: 'text.disabled' } }}
-                options={['Share teams', 'Suggest edits', { divider: true }, 'Report bug']}
-              />
-            }
+            action={<OptionMenu options={['Share Teams', 'Suggest Edits', { divider: true }, 'Report Bug']} />}
           />
-          <CardContent>
-            {teams &&
-              teams.map((team: ProfileTeamsTechType, index) => {
-                return (
-                  <Box
-                    key={index}
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      '&:not(:last-of-type)': { mb: 4 }
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Avatar src={team.avatar} sx={{ mr: 3, width: 38, height: 38 }} />
-                      <div>
-                        <Typography sx={{ fontWeight: 500, color: 'text.secondary' }}>{team.title}</Typography>
-                        <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                          {team.members} Members
-                        </Typography>
-                      </div>
-                    </Box>
-                    <Box
-                      href='/'
-                      component={Link}
-                      onClick={e => e.preventDefault()}
-                      sx={{ height: 0, textDecoration: 'none', '& .MuiChip-root': { cursor: 'pointer' } }}
-                    >
-                      <CustomChip rounded size='small' skin='light' color={team.ChipColor} label={team.chipText} />
-                    </Box>
-                  </Box>
-                )
-              })}
-            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-              <Typography
-                href='/'
-                component={Link}
-                onClick={e => e.preventDefault()}
-                sx={{ color: 'primary.main', textDecoration: 'none' }}
-              >
-                View all teams
-              </Typography>
-            </Box>
+          <CardContent className='flex flex-col gap-4'>
+            {teamsTech &&
+              teamsTech.map((team: ProfileTeamsTechType, index) => (
+                <div key={index} className='flex'>
+                  <div className='flex flex-grow  items-center gap-2'>
+                    <CustomAvatar src={team.avatar} size={38} />
+                    <div className='flex flex-grow flex-col'>
+                      <Typography className='font-medium' color='text.primary'>
+                        {team.title}
+                      </Typography>
+                      <Typography variant='body2'>{team.members} Members</Typography>
+                    </div>
+                  </div>
+                  <Chip color={team.ChipColor} label={team.chipText} size='small' variant='tonal' />
+                </div>
+              ))}
           </CardContent>
+          <CardActions className='flex justify-center'>
+            <Typography component={Link} color='primary'>
+              View all teams
+            </Typography>
+          </CardActions>
         </Card>
       </Grid>
     </>

@@ -1,23 +1,23 @@
-// ** MUI Imports
-import Box from '@mui/material/Box'
+'use client'
+
+// Next Imports
+import dynamic from 'next/dynamic'
+
+// MUI Imports
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
+import { useTheme } from '@mui/material/styles'
 
-// ** Third Party Imports
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts'
+// Component Imports
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from '@/libs/Recharts'
+import type { TooltipProps } from '@/libs/Recharts'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Styled Component Imports
+const AppRecharts = dynamic(() => import('@/libs/styles/AppRecharts'))
 
-// ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
-
-interface Props {
-  direction: 'ltr' | 'rtl'
-}
-
+// Vars
 const data = [
   { pv: 280, name: '7/12' },
   { pv: 200, name: '8/12' },
@@ -37,13 +37,13 @@ const data = [
 ]
 
 const CustomTooltip = (props: TooltipProps<any, any>) => {
-  // ** Props
+  // Props
   const { active, payload } = props
 
   if (active && payload) {
     return (
       <div className='recharts-custom-tooltip'>
-        <Typography sx={{ fontSize: theme => theme.typography.body2.fontSize }}>{`${payload[0].value}%`}</Typography>
+        <Typography fontSize='0.875rem' color='text.primary'>{`${payload[0].value}%`}</Typography>
       </div>
     )
   }
@@ -51,50 +51,36 @@ const CustomTooltip = (props: TooltipProps<any, any>) => {
   return null
 }
 
-const RechartsLineChart = ({ direction }: Props) => {
+const RechartsLineChart = () => {
+  // Hooks
+  const theme = useTheme()
+
   return (
     <Card>
       <CardHeader
         title='Balance'
         subheader='Commercial networks & enterprises'
-        subheaderTypographyProps={{ sx: { color: theme => `${theme.palette.text.disabled} !important` } }}
         sx={{
           flexDirection: ['column', 'row'],
           alignItems: ['flex-start', 'center'],
           '& .MuiCardHeader-action': { mb: 0 },
           '& .MuiCardHeader-content': { mb: [2, 0] }
         }}
-        action={
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant='h6' sx={{ mr: 5 }}>
-              $221,267
-            </Typography>
-            <CustomChip
-              skin='light'
-              color='success'
-              sx={{ fontWeight: 500, borderRadius: 1, fontSize: theme => theme.typography.body2.fontSize }}
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1 } }}>
-                  <Icon icon='tabler:arrow-up' fontSize='1rem' />
-                  <span>22%</span>
-                </Box>
-              }
-            />
-          </Box>
-        }
       />
       <CardContent>
-        <Box sx={{ height: 350 }}>
-          <ResponsiveContainer>
-            <LineChart height={350} data={data} style={{ direction }} margin={{ left: -20 }}>
-              <CartesianGrid />
-              <XAxis dataKey='name' reversed={direction === 'rtl'} />
-              <YAxis orientation={direction === 'rtl' ? 'right' : 'left'} />
-              <Tooltip content={CustomTooltip} />
-              <Line dataKey='pv' stroke='#ff9f43' strokeWidth={3} />
-            </LineChart>
-          </ResponsiveContainer>
-        </Box>
+        <AppRecharts>
+          <div className='bs-[350px]'>
+            <ResponsiveContainer>
+              <LineChart height={350} data={data} style={{ direction: theme.direction }} margin={{ left: -20 }}>
+                <CartesianGrid />
+                <XAxis dataKey='name' reversed={theme.direction === 'rtl'} />
+                <YAxis orientation={theme.direction === 'rtl' ? 'right' : 'left'} />
+                <Tooltip content={CustomTooltip} />
+                <Line dataKey='pv' stroke='#ff9f43' strokeWidth={3} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </AppRecharts>
       </CardContent>
     </Card>
   )

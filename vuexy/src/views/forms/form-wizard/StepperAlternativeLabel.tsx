@@ -1,45 +1,54 @@
-// ** React Imports
-import { ChangeEvent, Fragment, useState } from 'react'
+'use client'
 
-// ** MUI Imports
-import Box from '@mui/material/Box'
+// React Imports
+import { useState } from 'react'
+
+// MUI Imports
 import Card from '@mui/material/Card'
-import Step from '@mui/material/Step'
 import Grid from '@mui/material/Grid'
-import Button from '@mui/material/Button'
+import CardContent from '@mui/material/CardContent'
 import Stepper from '@mui/material/Stepper'
-import MenuItem from '@mui/material/MenuItem'
+import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
 import Typography from '@mui/material/Typography'
-import IconButton from '@mui/material/IconButton'
-import CardContent from '@mui/material/CardContent'
-import { SelectChangeEvent } from '@mui/material/Select'
+import Button from '@mui/material/Button'
+import MenuItem from '@mui/material/MenuItem'
 import InputAdornment from '@mui/material/InputAdornment'
+import IconButton from '@mui/material/IconButton'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Third-party Imports
+import { toast } from 'react-toastify'
 
-// ** Custom Components Imports
-import StepperCustomDot from './StepperCustomDot'
-import CustomTextField from 'src/@core/components/mui/text-field'
+// Component Imports
+import DirectionalIcon from '@components/DirectionalIcon'
+import CustomTextField from '@core/components/mui/TextField'
 
-// ** Third Party Imports
-import toast from 'react-hot-toast'
+// Styled Component Imports
+import StepperWrapper from '@core/styles/stepper'
+import StepperCustomDot from '@components/stepper-dot'
 
-// ** Styled Component
-import StepperWrapper from 'src/@core/styles/mui/stepper'
-
-interface State {
+type FormDataType = {
+  username: string
+  email: string
   password: string
-  password2: string
-  showPassword: boolean
-  showPassword2: boolean
+  isPasswordShown: boolean
+  confirmPassword: string
+  isConfirmPasswordShown: boolean
+  firstName: string
+  lastName: string
+  country: string
+  language: string[]
+  twitter: string
+  facebook: string
+  instagram: string
+  github: string
 }
 
+// Vars
 const steps = [
   {
     title: 'Account Details',
-    subtitle: 'Enter your Account Details'
+    subtitle: 'Enter your account details'
   },
   {
     title: 'Personal Info',
@@ -52,83 +61,75 @@ const steps = [
 ]
 
 const StepperAlternativeLabel = () => {
-  // ** States
-  const [email, setEmail] = useState<string>('')
-  const [google, setGoogle] = useState<string>('')
-  const [country, setCountry] = useState<string>('')
-  const [twitter, setTwitter] = useState<string>('')
-  const [username, setUsername] = useState<string>('')
-  const [lastName, setLastName] = useState<string>('')
-  const [facebook, setFacebook] = useState<string>('')
-  const [linkedIn, setLinkedIn] = useState<string>('')
-  const [firstName, setFirstName] = useState<string>('')
-  const [activeStep, setActiveStep] = useState<number>(0)
-  const [language, setLanguage] = useState<string[]>([])
-  const [state, setState] = useState<State>({
+  // States
+  const [activeStep, setActiveStep] = useState(0)
+
+  const [formData, setFormData] = useState<FormDataType>({
+    username: '',
+    email: '',
     password: '',
-    password2: '',
-    showPassword: false,
-    showPassword2: false
+    isPasswordShown: false,
+    confirmPassword: '',
+    isConfirmPasswordShown: false,
+    firstName: '',
+    lastName: '',
+    country: '',
+    language: [],
+    twitter: '',
+    facebook: '',
+    instagram: '',
+    github: ''
   })
 
-  // Handle Stepper
-  const handleBack = () => {
-    setActiveStep(prevActiveStep => prevActiveStep - 1)
+  const handleClickShowPassword = () => setFormData(show => ({ ...show, isPasswordShown: !show.isPasswordShown }))
+
+  const handleClickShowConfirmPassword = () =>
+    setFormData(show => ({ ...show, isConfirmPasswordShown: !show.isConfirmPasswordShown }))
+
+  const handleReset = () => {
+    setActiveStep(0)
+    setFormData({
+      username: '',
+      email: '',
+      password: '',
+      isPasswordShown: false,
+      confirmPassword: '',
+      isConfirmPasswordShown: false,
+      firstName: '',
+      lastName: '',
+      country: '',
+      language: [],
+      twitter: '',
+      facebook: '',
+      instagram: '',
+      github: ''
+    })
   }
+
   const handleNext = () => {
     setActiveStep(prevActiveStep => prevActiveStep + 1)
+
     if (activeStep === steps.length - 1) {
       toast.success('Form Submitted')
     }
   }
-  const handleReset = () => {
-    setEmail('')
-    setGoogle('')
-    setCountry('')
-    setTwitter('')
-    setUsername('')
-    setLastName('')
-    setFacebook('')
-    setLinkedIn('')
-    setLanguage([])
-    setFirstName('')
-    setActiveStep(0)
-    setState({ ...state, password: '', password2: '' })
+
+  const handleBack = () => {
+    setActiveStep(prevActiveStep => prevActiveStep - 1)
   }
 
-  // Handle Password
-  const handlePasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setState({ ...state, [prop]: event.target.value })
-  }
-  const handleClickShowPassword = () => {
-    setState({ ...state, showPassword: !state.showPassword })
-  }
-
-  // Handle Confirm Password
-  const handleConfirmChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setState({ ...state, [prop]: event.target.value })
-  }
-  const handleClickShowConfirmPassword = () => {
-    setState({ ...state, showPassword2: !state.showPassword2 })
-  }
-
-  // Handle Language
-  const handleSelectChange = (event: SelectChangeEvent<string[]>) => {
-    setLanguage(event.target.value as string[])
-  }
-
-  const getStepContent = (step: number) => {
-    switch (step) {
+  const renderStepContent = (activeStep: number) => {
+    switch (activeStep) {
       case 0:
         return (
-          <Fragment>
+          <>
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
                 label='Username'
-                value={username}
-                placeholder='carterLeonard'
-                onChange={e => setUsername(e.target.value)}
+                placeholder='johnDoe'
+                value={formData.username}
+                onChange={e => setFormData({ ...formData, username: e.target.value })}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -136,19 +137,20 @@ const StepperAlternativeLabel = () => {
                 fullWidth
                 type='email'
                 label='Email'
-                value={email}
-                placeholder='carterleonard@gmail.com'
-                onChange={e => setEmail(e.target.value)}
+                placeholder='johndoe@gmail.com'
+                value={formData.email}
+                onChange={e => setFormData({ ...formData, email: e.target.value })}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
                 label='Password'
-                value={state.password}
-                id='stepper-alternative-account-password'
-                onChange={handlePasswordChange('password')}
-                type={state.showPassword ? 'text' : 'password'}
+                placeholder='············'
+                id='stepper-alternative-password'
+                type={formData.isPasswordShown ? 'text' : 'password'}
+                value={formData.password}
+                onChange={e => setFormData({ ...formData, password: e.target.value })}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position='end'>
@@ -158,7 +160,7 @@ const StepperAlternativeLabel = () => {
                         onMouseDown={e => e.preventDefault()}
                         aria-label='toggle password visibility'
                       >
-                        <Icon fontSize='1.25rem' icon={state.showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
+                        <i className={formData.isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
                       </IconButton>
                     </InputAdornment>
                   )
@@ -168,48 +170,49 @@ const StepperAlternativeLabel = () => {
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
-                value={state.password2}
                 label='Confirm Password'
-                id='stepper-alternative-account-password-2'
-                onChange={handleConfirmChange('password2')}
-                type={state.showPassword2 ? 'text' : 'password'}
+                placeholder='············'
+                id='stepper-alternative-confirm-password'
+                type={formData.isConfirmPasswordShown ? 'text' : 'password'}
+                value={formData.confirmPassword}
+                onChange={e => setFormData({ ...formData, confirmPassword: e.target.value })}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position='end'>
                       <IconButton
                         edge='end'
-                        onMouseDown={e => e.preventDefault()}
-                        aria-label='toggle password visibility'
                         onClick={handleClickShowConfirmPassword}
+                        onMouseDown={e => e.preventDefault()}
+                        aria-label='toggle confirm password visibility'
                       >
-                        <Icon fontSize='1.25rem' icon={state.showPassword2 ? 'tabler:eye' : 'tabler:eye-off'} />
+                        <i className={formData.isConfirmPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
                       </IconButton>
                     </InputAdornment>
                   )
                 }}
               />
             </Grid>
-          </Fragment>
+          </>
         )
       case 1:
         return (
-          <Fragment key={step}>
+          <>
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
-                value={firstName}
                 label='First Name'
-                placeholder='Leonard'
-                onChange={e => setFirstName(e.target.value)}
+                placeholder='John'
+                value={formData.firstName}
+                onChange={e => setFormData({ ...formData, firstName: e.target.value })}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
-                value={lastName}
                 label='Last Name'
-                placeholder='Carter'
-                onChange={e => setLastName(e.target.value)}
+                placeholder='Doe'
+                value={formData.lastName}
+                onChange={e => setFormData({ ...formData, lastName: e.target.value })}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -217,11 +220,10 @@ const StepperAlternativeLabel = () => {
                 select
                 fullWidth
                 label='Country'
-                SelectProps={{
-                  value: country,
-                  onChange: e => setCountry(e.target.value as string)
-                }}
+                value={formData.country}
+                onChange={e => setFormData({ ...formData, country: e.target.value as string })}
               >
+                <MenuItem value=''>Select Country</MenuItem>
                 <MenuItem value='UK'>UK</MenuItem>
                 <MenuItem value='USA'>USA</MenuItem>
                 <MenuItem value='Australia'>Australia</MenuItem>
@@ -233,11 +235,10 @@ const StepperAlternativeLabel = () => {
                 select
                 fullWidth
                 label='Language'
-                id='stepper-alternative-select-multiple-language'
+                value={formData.language}
                 SelectProps={{
                   multiple: true,
-                  value: language,
-                  onChange: e => handleSelectChange(e as SelectChangeEvent<string[]>)
+                  onChange: e => setFormData({ ...formData, language: e.target.value as string[] })
                 }}
               >
                 <MenuItem value='English'>English</MenuItem>
@@ -249,105 +250,66 @@ const StepperAlternativeLabel = () => {
                 <MenuItem value='Arabic'>Arabic</MenuItem>
               </CustomTextField>
             </Grid>
-          </Fragment>
+          </>
         )
       case 2:
         return (
-          <Fragment key={step}>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Twitter'
-                value={twitter}
-                onChange={e => setTwitter(e.target.value)}
-                placeholder='https://twitter.com/carterLeonard'
-              />
-            </Grid>
+          <>
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
                 label='Facebook'
-                value={facebook}
-                onChange={e => setFacebook(e.target.value)}
-                placeholder='https://facebook.com/carterLeonard'
+                placeholder='https://www.facebook.com/johndoe'
+                value={formData.facebook}
+                onChange={e => setFormData({ ...formData, facebook: e.target.value })}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
-                label='Google+'
-                value={google}
-                onChange={e => setGoogle(e.target.value)}
-                placeholder='https://plus.google.com/carterLeonard'
+                label='Twitter'
+                placeholder='https://www.twitter.com/johndoe'
+                value={formData.twitter}
+                onChange={e => setFormData({ ...formData, twitter: e.target.value })}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
-                label='LinkedIn'
-                value={linkedIn}
-                onChange={e => setLinkedIn(e.target.value)}
-                placeholder='https://linkedin.com/carterLeonard'
+                label='Instagram'
+                placeholder='https://www.instagram.com/johndoe'
+                value={formData.instagram}
+                onChange={e => setFormData({ ...formData, instagram: e.target.value })}
               />
             </Grid>
-          </Fragment>
+            <Grid item xs={12} sm={6}>
+              <CustomTextField
+                fullWidth
+                label='Github'
+                placeholder='https://www.github.com/johndoe'
+                value={formData.github}
+                onChange={e => setFormData({ ...formData, github: e.target.value })}
+              />
+            </Grid>
+          </>
         )
       default:
-        return 'Unknown Step'
-    }
-  }
-
-  const renderContent = () => {
-    if (activeStep === steps.length) {
-      return (
-        <Fragment>
-          <Typography>All steps are completed!</Typography>
-          <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end' }}>
-            <Button variant='contained' onClick={handleReset}>
-              Reset
-            </Button>
-          </Box>
-        </Fragment>
-      )
-    } else {
-      return (
-        <form onSubmit={e => e.preventDefault()}>
-          <Grid container spacing={5}>
-            <Grid item xs={12}>
-              <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>
-                {steps[activeStep].title}
-              </Typography>
-              <Typography variant='caption' component='p'>
-                {steps[activeStep].subtitle}
-              </Typography>
-            </Grid>
-            {getStepContent(activeStep)}
-            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Button variant='tonal' color='secondary' disabled={activeStep === 0} onClick={handleBack}>
-                Back
-              </Button>
-              <Button variant='contained' onClick={handleNext}>
-                {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      )
+        return 'Unknown step'
     }
   }
 
   return (
-    <Fragment>
+    <>
       <StepperWrapper>
         <Stepper activeStep={activeStep} alternativeLabel>
-          {steps.map((step, index) => {
+          {steps.map(label => {
             return (
-              <Step key={index}>
+              <Step key={label.title}>
                 <StepLabel StepIconComponent={StepperCustomDot}>
                   <div className='step-label'>
                     <div>
-                      <Typography className='step-title'>{step.title}</Typography>
-                      <Typography className='step-subtitle'>{step.subtitle}</Typography>
+                      <Typography className='step-title'>{label.title}</Typography>
+                      <Typography className='step-subtitle'>{label.subtitle}</Typography>
                     </div>
                   </div>
                 </StepLabel>
@@ -356,10 +318,59 @@ const StepperAlternativeLabel = () => {
           })}
         </Stepper>
       </StepperWrapper>
-      <Card sx={{ mt: 4 }}>
-        <CardContent>{renderContent()}</CardContent>
+      <Card className='mt-4'>
+        <CardContent>
+          {activeStep === steps.length ? (
+            <>
+              <Typography className='mlb-2 mli-1'>All steps are completed!</Typography>
+              <div className='flex justify-end mt-4'>
+                <Button variant='contained' onClick={handleReset}>
+                  Reset
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <form onSubmit={e => e.preventDefault()}>
+                <Grid container spacing={6}>
+                  <Grid item xs={12}>
+                    <Typography className='font-medium' color='text.primary'>
+                      {steps[activeStep].title}
+                    </Typography>
+                    <Typography variant='body2'>{steps[activeStep].subtitle}</Typography>
+                  </Grid>
+                  {renderStepContent(activeStep)}
+                  <Grid item xs={12} className='flex justify-between'>
+                    <Button
+                      variant='tonal'
+                      disabled={activeStep === 0}
+                      onClick={handleBack}
+                      color='secondary'
+                      startIcon={<DirectionalIcon ltrIconClass='tabler-arrow-left' rtlIconClass='tabler-arrow-right' />}
+                    >
+                      Back
+                    </Button>
+                    <Button
+                      variant='contained'
+                      onClick={handleNext}
+                      endIcon={
+                        activeStep === steps.length - 1 ? (
+                          <i className='tabler-check' />
+                        ) : (
+                          <DirectionalIcon ltrIconClass='tabler-arrow-right' rtlIconClass='tabler-arrow-left' />
+                        )
+                      }
+                    >
+                      {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+                    </Button>
+                  </Grid>
+                </Grid>
+              </form>
+            </>
+          )}
+        </CardContent>
       </Card>
-    </Fragment>
+    </>
   )
 }
 

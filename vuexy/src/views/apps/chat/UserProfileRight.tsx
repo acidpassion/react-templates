@@ -1,240 +1,172 @@
-// ** React Imports
-import { Fragment, ReactNode } from 'react'
+// React Imports
+import type { ReactNode } from 'react'
 
-// ** MUI Imports
-import Box from '@mui/material/Box'
-import List from '@mui/material/List'
-import Badge from '@mui/material/Badge'
-import MuiAvatar from '@mui/material/Avatar'
-import ListItem from '@mui/material/ListItem'
-import FormGroup from '@mui/material/FormGroup'
+// MUI Imports
+import Drawer from '@mui/material/Drawer'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import ListItemButton from '@mui/material/ListItemButton'
+import Button from '@mui/material/Button'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-// ** Third Party Components
+// Third-party Imports
+import classnames from 'classnames'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
-// ** Type
-import { UserProfileRightType } from 'src/types/apps/chatTypes'
+// Type Imports
+import type { ContactType } from '@/types/apps/chatTypes'
 
-// ** Custom Component Imports
-import Sidebar from 'src/@core/components/sidebar'
-import CustomAvatar from 'src/@core/components/mui/avatar'
+// Component Imports
+import { statusObj } from './SidebarLeft'
+import AvatarWithBadge from './AvatarWithBadge'
 
-const UserProfileRight = (props: UserProfileRightType) => {
-  const {
-    store,
-    hidden,
-    statusObj,
-    getInitials,
-    sidebarWidth,
-    userProfileRightOpen,
-    handleUserProfileRightSidebarToggle
-  } = props
+type Props = {
+  open: boolean
+  handleClose: () => void
+  activeUser: ContactType
+  isBelowLgScreen: boolean
+  isBelowSmScreen: boolean
+}
 
-  const ScrollWrapper = ({ children }: { children: ReactNode }) => {
-    if (hidden) {
-      return <Box sx={{ height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>{children}</Box>
-    } else {
-      return <PerfectScrollbar options={{ wheelPropagation: false }}>{children}</PerfectScrollbar>
-    }
+const ScrollWrapper = ({
+  children,
+  isBelowLgScreen,
+  className
+}: {
+  children: ReactNode
+  isBelowLgScreen: boolean
+  className?: string
+}) => {
+  if (isBelowLgScreen) {
+    return <div className={classnames('bs-full overflow-x-hidden overflow-y-auto', className)}>{children}</div>
+  } else {
+    return (
+      <PerfectScrollbar options={{ wheelPropagation: false }} className={className}>
+        {children}
+      </PerfectScrollbar>
+    )
   }
+}
 
-  return (
-    <Sidebar
-      direction='right'
-      show={userProfileRightOpen}
-      backDropClick={handleUserProfileRightSidebarToggle}
+const UserProfileRight = (props: Props) => {
+  // Props
+  const { open, handleClose, activeUser, isBelowLgScreen, isBelowSmScreen } = props
+
+  return activeUser ? (
+    <Drawer
+      open={open}
+      anchor='right'
+      variant='persistent'
+      ModalProps={{ keepMounted: true }}
       sx={{
-        zIndex: 9,
-        height: '100%',
-        width: sidebarWidth,
-        borderTopRightRadius: theme => theme.shape.borderRadius,
-        borderBottomRightRadius: theme => theme.shape.borderRadius,
-        '& + .MuiBackdrop-root': {
-          zIndex: 8,
-          borderRadius: 1
-        }
+        zIndex: 12,
+        '& .MuiDrawer-paper': { width: isBelowSmScreen ? '100%' : '370px', position: 'absolute', border: 0 }
       }}
     >
-      {store && store.selectedChat ? (
-        <Fragment>
-          <Box sx={{ position: 'relative' }}>
-            <IconButton
-              size='small'
-              onClick={handleUserProfileRightSidebarToggle}
-              sx={{ top: '0.5rem', right: '0.5rem', position: 'absolute', color: 'text.disabled' }}
-            >
-              <Icon icon='tabler:x' />
-            </IconButton>
-            <Box sx={{ display: 'flex', flexDirection: 'column', p: theme => theme.spacing(11.25, 6, 4.5) }}>
-              <Box sx={{ mb: 3.5, display: 'flex', justifyContent: 'center' }}>
-                <Badge
-                  overlap='circular'
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                  }}
-                  badgeContent={
-                    <Box
-                      component='span'
-                      sx={{
-                        width: 10,
-                        height: 10,
-                        borderRadius: '50%',
-                        color: `${statusObj[store.selectedChat.contact.status]}.main`,
-                        boxShadow: theme => `0 0 0 2px ${theme.palette.background.paper}`,
-                        backgroundColor: `${statusObj[store.selectedChat.contact.status]}.main`
-                      }}
-                    />
-                  }
-                >
-                  {store.selectedChat.contact.avatar ? (
-                    <MuiAvatar
-                      sx={{ width: '5rem', height: '5rem' }}
-                      src={store.selectedChat.contact.avatar}
-                      alt={store.selectedChat.contact.fullName}
-                    />
-                  ) : (
-                    <CustomAvatar
-                      skin='light'
-                      color={store.selectedChat.contact.avatarColor}
-                      sx={{ width: '5rem', height: '5rem', fontWeight: 500, fontSize: '2rem' }}
-                    >
-                      {getInitials(store.selectedChat.contact.fullName)}
-                    </CustomAvatar>
-                  )}
-                </Badge>
-              </Box>
-              <Typography variant='h5' sx={{ textAlign: 'center' }}>
-                {store.selectedChat.contact.fullName}
-              </Typography>
-              <Typography sx={{ textAlign: 'center', color: 'text.secondary' }}>
-                {store.selectedChat.contact.role}
-              </Typography>
-            </Box>
-          </Box>
+      <IconButton className='absolute block-start-4 inline-end-4' onClick={handleClose}>
+        <i className='tabler-x text-2xl' />
+      </IconButton>
+      <div className='flex flex-col justify-center items-center gap-4 mbs-6 pli-6 pbs-6 pbe-3'>
+        <AvatarWithBadge
+          alt={activeUser.fullName}
+          src={activeUser.avatar}
+          color={activeUser.avatarColor}
+          badgeColor={statusObj[activeUser.status]}
+          className='bs-[84px] is-[84px] text-3xl'
+          badgeSize={12}
+        />
+        <div className='text-center'>
+          <Typography variant='h5'>{activeUser.fullName}</Typography>
+          <Typography>{activeUser.role}</Typography>
+        </div>
+      </div>
 
-          <Box sx={{ height: 'calc(100% - 13.3125rem)' }}>
-            <ScrollWrapper>
-              <Box sx={{ p: 6 }}>
-                <FormGroup sx={{ mb: 6.5 }}>
-                  <Typography
-                    variant='body2'
-                    sx={{ mb: 3.5, color: 'text.disabled', textTransform: 'uppercase', lineHeight: 'normal' }}
-                  >
-                    About
-                  </Typography>
-                  <Typography sx={{ color: 'text.secondary' }}>{store.selectedChat.contact.about}</Typography>
-                </FormGroup>
-
-                <Box sx={{ mb: 6 }}>
-                  <Typography
-                    variant='body2'
-                    sx={{ mb: 3.5, color: 'text.disabled', textTransform: 'uppercase', lineHeight: 'normal' }}
-                  >
-                    Personal Information
-                  </Typography>
-                  <List dense sx={{ p: 0 }}>
-                    <ListItem sx={{ px: 2 }}>
-                      <ListItemIcon sx={{ mr: 2 }}>
-                        <Icon icon='tabler:mail' fontSize='1.5rem' />
-                      </ListItemIcon>
-                      <ListItemText
-                        sx={{ textTransform: 'lowercase' }}
-                        primaryTypographyProps={{ variant: 'body1' }}
-                        primary={`${store.selectedChat.contact.fullName.replace(/\s/g, '_')}@email.com`}
-                      />
-                    </ListItem>
-                    <ListItem sx={{ px: 2 }}>
-                      <ListItemIcon sx={{ mr: 2 }}>
-                        <Icon icon='tabler:phone-call' fontSize='1.5rem' />
-                      </ListItemIcon>
-                      <ListItemText primaryTypographyProps={{ variant: 'body1' }} primary='+1(123) 456 - 7890' />
-                    </ListItem>
-                    <ListItem sx={{ px: 2 }}>
-                      <ListItemIcon sx={{ mr: 2 }}>
-                        <Icon icon='tabler:clock' fontSize='1.5rem' />
-                      </ListItemIcon>
-                      <ListItemText primaryTypographyProps={{ variant: 'body1' }} primary='Mon - Fri 10AM - 8PM' />
-                    </ListItem>
-                  </List>
-                </Box>
-
-                <div>
-                  <Typography
-                    variant='body2'
-                    sx={{ mb: 3.5, color: 'text.disabled', textTransform: 'uppercase', lineHeight: 'normal' }}
-                  >
-                    Options
-                  </Typography>
-                  <List
-                    dense
-                    sx={{
-                      p: 0,
-                      '& .MuiListItemButton-root:hover': {
-                        backgroundColor: 'action.hover',
-                        '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-                          color: 'inherit'
-                        }
-                      }
-                    }}
-                  >
-                    <ListItem disablePadding>
-                      <ListItemButton sx={{ px: 2 }}>
-                        <ListItemIcon sx={{ mr: 2 }}>
-                          <Icon icon='tabler:badge' fontSize='1.5rem' />
-                        </ListItemIcon>
-                        <ListItemText primary='Add Tag' primaryTypographyProps={{ variant: 'body1' }} />
-                      </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                      <ListItemButton sx={{ px: 2 }}>
-                        <ListItemIcon sx={{ mr: 2 }}>
-                          <Icon icon='tabler:star' fontSize='1.5rem' />
-                        </ListItemIcon>
-                        <ListItemText primary='Important Contact' primaryTypographyProps={{ variant: 'body1' }} />
-                      </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                      <ListItemButton sx={{ px: 2 }}>
-                        <ListItemIcon sx={{ mr: 2 }}>
-                          <Icon icon='tabler:photo' fontSize='1.5rem' />
-                        </ListItemIcon>
-                        <ListItemText primary='Shared Media' primaryTypographyProps={{ variant: 'body1' }} />
-                      </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                      <ListItemButton sx={{ px: 2 }}>
-                        <ListItemIcon sx={{ mr: 2 }}>
-                          <Icon icon='tabler:trash' fontSize='1.5rem' />
-                        </ListItemIcon>
-                        <ListItemText primary='Delete Contact' primaryTypographyProps={{ variant: 'body1' }} />
-                      </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                      <ListItemButton sx={{ px: 2 }}>
-                        <ListItemIcon sx={{ mr: 2 }}>
-                          <Icon icon='tabler:ban' fontSize='1.5rem' />
-                        </ListItemIcon>
-                        <ListItemText primary='Block Contact' primaryTypographyProps={{ variant: 'body1' }} />
-                      </ListItemButton>
-                    </ListItem>
-                  </List>
-                </div>
-              </Box>
-            </ScrollWrapper>
-          </Box>
-        </Fragment>
-      ) : null}
-    </Sidebar>
-  )
+      <ScrollWrapper isBelowLgScreen={isBelowLgScreen} className='flex flex-col gap-6 p-6 pbs-3'>
+        <div className='flex flex-col gap-1'>
+          <Typography className='uppercase' color='text.disabled'>
+            About
+          </Typography>
+          <Typography>{activeUser.about}</Typography>
+        </div>
+        <div className='flex flex-col gap-1'>
+          <Typography className='uppercase' color='text.disabled'>
+            Personal Information
+          </Typography>
+          <List className='plb-0'>
+            <ListItem className='p-2 gap-2'>
+              <ListItemIcon>
+                <i className='tabler-mail' />
+              </ListItemIcon>
+              <ListItemText primary={`${activeUser.fullName.toLowerCase().replace(/\s/g, '_')}@email.com`} />
+            </ListItem>
+            <ListItem className='p-2 gap-2'>
+              <ListItemIcon>
+                <i className='tabler-phone' />
+              </ListItemIcon>
+              <ListItemText primary='+1(123) 456 - 7890' />
+            </ListItem>
+            <ListItem className='p-2 gap-2'>
+              <ListItemIcon>
+                <i className='tabler-clock' />
+              </ListItemIcon>
+              <ListItemText primary='Mon - Fri 10AM - 8PM' />
+            </ListItem>
+          </List>
+        </div>
+        <div className='flex flex-col gap-1'>
+          <Typography className='uppercase' color='text.disabled'>
+            Options
+          </Typography>
+          <List className='plb-0'>
+            <ListItem disablePadding>
+              <ListItemButton className='p-2'>
+                <ListItemIcon>
+                  <i className='tabler-bookmark' />
+                </ListItemIcon>
+                <ListItemText primary='Add Tag' />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton className='p-2'>
+                <ListItemIcon>
+                  <i className='tabler-star' />
+                </ListItemIcon>
+                <ListItemText primary='Important Contact' />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton className='p-2'>
+                <ListItemIcon>
+                  <i className='tabler-photo' />
+                </ListItemIcon>
+                <ListItemText primary='Shared Image' />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton className='p-2'>
+                <ListItemIcon>
+                  <i className='tabler-circle-off' />
+                </ListItemIcon>
+                <ListItemText primary='Block Contact' />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </div>
+        <Button
+          variant='contained'
+          color='error'
+          fullWidth
+          className='mbs-auto'
+          endIcon={<i className='tabler-trash' />}
+        >
+          Delete Contact
+        </Button>
+      </ScrollWrapper>
+    </Drawer>
+  ) : null
 }
 
 export default UserProfileRight

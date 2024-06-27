@@ -1,58 +1,79 @@
-// ** Next Import
+// React Imports
+import { useState } from 'react'
+
+// Next Imports
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 
-// ** MUI Imports
+// MUI Imports
 import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
 import CardContent from '@mui/material/CardContent'
+import Button from '@mui/material/Button'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Type Imports
+import type { Locale } from '@configs/i18n'
 
-interface Props {
-  id: string | undefined
-  toggleAddPaymentDrawer: () => void
-  toggleSendInvoiceDrawer: () => void
-}
+// Component Imports
+import AddPaymentDrawer from '@views/apps/invoice/shared/AddPaymentDrawer'
+import SendInvoiceDrawer from '@views/apps/invoice/shared/SendInvoiceDrawer'
 
-const PreviewActions = ({ id, toggleSendInvoiceDrawer, toggleAddPaymentDrawer }: Props) => {
+// Util Imports
+import { getLocalizedUrl } from '@/utils/i18n'
+
+const PreviewActions = ({ id, onButtonClick }: { id: string; onButtonClick: () => void }) => {
+  // States
+  const [paymentDrawerOpen, setPaymentDrawerOpen] = useState(false)
+  const [sendDrawerOpen, setSendDrawerOpen] = useState(false)
+
+  // Hooks
+  const { lang: locale } = useParams()
+
   return (
-    <Card>
-      <CardContent>
-        <Button fullWidth variant='contained' onClick={toggleSendInvoiceDrawer} sx={{ mb: 2, '& svg': { mr: 2 } }}>
-          <Icon fontSize='1.125rem' icon='tabler:send' />
-          Send Invoice
-        </Button>
-        <Button fullWidth sx={{ mb: 2 }} color='secondary' variant='tonal'>
-          Download
-        </Button>
-        <Button
-          fullWidth
-          sx={{ mb: 2 }}
-          target='_blank'
-          variant='tonal'
-          component={Link}
-          color='secondary'
-          href={`/apps/invoice/print/${id}`}
-        >
-          Print
-        </Button>
-        <Button
-          fullWidth
-          sx={{ mb: 2 }}
-          variant='tonal'
-          component={Link}
-          color='secondary'
-          href={`/apps/invoice/edit/${id}`}
-        >
-          Edit Invoice
-        </Button>
-        <Button fullWidth variant='contained' sx={{ '& svg': { mr: 2 } }} onClick={toggleAddPaymentDrawer}>
-          <Icon fontSize='1.125rem' icon='tabler:currency-dollar' />
-          Add Payment
-        </Button>
-      </CardContent>
-    </Card>
+    <>
+      <Card>
+        <CardContent className='flex flex-col gap-4'>
+          <Button
+            fullWidth
+            variant='contained'
+            className='capitalize'
+            startIcon={<i className='tabler-send' />}
+            onClick={() => setSendDrawerOpen(true)}
+          >
+            Send Invoice
+          </Button>
+          <Button fullWidth color='secondary' variant='tonal' className='capitalize'>
+            Download
+          </Button>
+          <div className='flex items-center gap-4'>
+            <Button fullWidth color='secondary' variant='tonal' className='capitalize' onClick={onButtonClick}>
+              Print
+            </Button>
+            <Button
+              fullWidth
+              component={Link}
+              color='secondary'
+              variant='tonal'
+              className='capitalize'
+              href={getLocalizedUrl(`/apps/invoice/edit/${id}`, locale as Locale)}
+            >
+              Edit
+            </Button>
+          </div>
+          <Button
+            fullWidth
+            color='success'
+            variant='contained'
+            className='capitalize'
+            onClick={() => setPaymentDrawerOpen(true)}
+            startIcon={<i className='tabler-currency-dollar' />}
+          >
+            Add Payment
+          </Button>
+        </CardContent>
+      </Card>
+      <AddPaymentDrawer open={paymentDrawerOpen} handleClose={() => setPaymentDrawerOpen(false)} />
+      <SendInvoiceDrawer open={sendDrawerOpen} handleClose={() => setSendDrawerOpen(false)} />
+    </>
   )
 }
 

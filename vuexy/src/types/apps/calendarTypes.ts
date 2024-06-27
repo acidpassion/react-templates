@@ -1,8 +1,9 @@
-// ** Types
-import { Dispatch } from 'redux'
+// Third-party Imports
+import type { Dispatch } from '@reduxjs/toolkit'
+import type { EventInput } from '@fullcalendar/core'
 
-// ** Theme Type Import
-import { ThemeColor } from 'src/@core/layouts/types'
+// Type Imports
+import type { ThemeColor } from '@core/types'
 
 export type CalendarFiltersType = 'Personal' | 'Business' | 'Family' | 'Holiday' | 'ETC'
 
@@ -16,89 +17,30 @@ export type CalendarColors = {
   Business: ThemeColor
 }
 
-export type EventType = {
-  id: number
-  url: string
-  title: string
-  allDay: boolean
-  end: Date | string
-  start: Date | string
-  extendedProps: {
-    location?: string
-    calendar?: string
-    description?: string
-    guests?: string[] | string | undefined
-  }
-}
-
-export type AddEventType = {
-  url: string
-  title: string
-  display: string
-  allDay: boolean
-  end: Date | string
-  start: Date | string
-  extendedProps: {
-    calendar: string
-    description: string | undefined
-    guests: string[] | string | undefined
-  }
-}
-
-export type EventStateType = {
-  url: string
-  title: string
-  allDay: boolean
-  guests: string[]
-  description: string
-  endDate: Date | string
-  startDate: Date | string
-  calendar: CalendarFiltersType | string
-}
-
-export type CalendarStoreType = {
-  events: EventType[]
-  selectedEvent: null | EventType
-  selectedCalendars: CalendarFiltersType[] | string[]
-}
-
 export type CalendarType = {
-  calendarApi: any
-  dispatch: Dispatch<any>
-  store: CalendarStoreType
-  direction: 'ltr' | 'rtl'
-  calendarsColor: CalendarColors
-  setCalendarApi: (val: any) => void
-  handleLeftSidebarToggle: () => void
-  updateEvent: (event: EventType) => void
-  handleAddEventSidebarToggle: () => void
-  handleSelectEvent: (event: EventType) => void
+  events: EventInput[]
+  filteredEvents: EventInput[]
+  selectedEvent: null | any
+  selectedCalendars: CalendarFiltersType[]
 }
 
-export type SidebarLeftType = {
+export type AddEventType = Omit<EventInput, 'id'>
+
+export type SidebarLeftProps = {
   mdAbove: boolean
   calendarApi: any
-  dispatch: Dispatch<any>
-  leftSidebarWidth: number
+  calendarStore: CalendarType
   leftSidebarOpen: boolean
-  store: CalendarStoreType
+  dispatch: Dispatch
   calendarsColor: CalendarColors
   handleLeftSidebarToggle: () => void
   handleAddEventSidebarToggle: () => void
-  handleAllCalendars: (val: boolean) => void
-  handleSelectEvent: (event: null | EventType) => void
-  handleCalendarsUpdate: (val: CalendarFiltersType) => void
 }
 
 export type AddEventSidebarType = {
+  calendarStore: CalendarType
   calendarApi: any
-  drawerWidth: number
-  dispatch: Dispatch<any>
-  store: CalendarStoreType
+  dispatch: Dispatch
   addEventSidebarOpen: boolean
-  deleteEvent: (id: number) => void
-  addEvent: (event: AddEventType) => void
-  updateEvent: (event: EventType) => void
   handleAddEventSidebarToggle: () => void
-  handleSelectEvent: (event: null | EventType) => void
 }

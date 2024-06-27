@@ -1,225 +1,227 @@
-// ** React Imports
-import { Fragment } from 'react'
+// React Imports
+import { useEffect, useState } from 'react'
+import type { RefObject } from 'react'
 
-// ** MUI Imports
-import Badge from '@mui/material/Badge'
-import MuiAvatar from '@mui/material/Avatar'
-import { styled } from '@mui/material/styles'
+// MUI Imports
+import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
-import Box, { BoxProps } from '@mui/material/Box'
+import CardContent from '@mui/material/CardContent'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Type Imports
+import type { AppDispatch } from '@/redux-store'
+import type { ChatDataType, ContactType } from '@/types/apps/chatTypes'
 
-// ** Custom Components Import
+// Component Imports
+import OptionMenu from '@core/components/option-menu'
+import AvatarWithBadge from './AvatarWithBadge'
+import { statusObj } from './SidebarLeft'
 import ChatLog from './ChatLog'
-import SendMsgForm from 'src/views/apps/chat/SendMsgForm'
-import CustomAvatar from 'src/@core/components/mui/avatar'
-import OptionsMenu from 'src/@core/components/option-menu'
-import UserProfileRight from 'src/views/apps/chat/UserProfileRight'
+import SendMsgForm from './SendMsgForm'
+import UserProfileRight from './UserProfileRight'
+import CustomAvatar from '@core/components/mui/Avatar'
 
-// ** Types
-import { ChatContentType } from 'src/types/apps/chatTypes'
+type Props = {
+  chatStore: ChatDataType
+  dispatch: AppDispatch
+  backdropOpen: boolean
+  setBackdropOpen: (open: boolean) => void
+  setSidebarOpen: (open: boolean) => void
+  isBelowMdScreen: boolean
+  isBelowLgScreen: boolean
+  isBelowSmScreen: boolean
+  messageInputRef: RefObject<HTMLDivElement>
+}
 
-// ** Styled Components
-const ChatWrapperStartChat = styled(Box)<BoxProps>(({ theme }) => ({
-  flexGrow: 1,
-  height: '100%',
-  display: 'flex',
-  borderRadius: 1,
-  alignItems: 'center',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  backgroundColor: theme.palette.action.hover
-}))
+// Renders the user avatar with badge and user information
+const UserAvatar = ({
+  activeUser,
+  setUserProfileLeftOpen,
+  setBackdropOpen
+}: {
+  activeUser: ContactType
+  setUserProfileLeftOpen: (open: boolean) => void
+  setBackdropOpen: (open: boolean) => void
+}) => (
+  <div
+    className='flex items-center gap-4 cursor-pointer'
+    onClick={() => {
+      setUserProfileLeftOpen(true)
+      setBackdropOpen(true)
+    }}
+  >
+    <AvatarWithBadge
+      alt={activeUser?.fullName}
+      src={activeUser?.avatar}
+      color={activeUser?.avatarColor}
+      badgeColor={statusObj[activeUser?.status || 'offline']}
+    />
+    <div>
+      <Typography color='text.primary'>{activeUser?.fullName}</Typography>
+      <Typography variant='body2'>{activeUser?.role}</Typography>
+    </div>
+  </div>
+)
 
-const ChatContent = (props: ChatContentType) => {
-  // ** Props
+const ChatContent = (props: Props) => {
+  // Props
   const {
-    store,
-    hidden,
-    sendMsg,
-    mdAbove,
+    chatStore,
     dispatch,
-    statusObj,
-    getInitials,
-    sidebarWidth,
-    userProfileRightOpen,
-    handleLeftSidebarToggle,
-    handleUserProfileRightSidebarToggle
+    backdropOpen,
+    setBackdropOpen,
+    setSidebarOpen,
+    isBelowMdScreen,
+    isBelowSmScreen,
+    isBelowLgScreen,
+    messageInputRef
   } = props
 
-  const handleStartConversation = () => {
-    if (!mdAbove) {
-      handleLeftSidebarToggle()
-    }
-  }
+  // States
+  const [userProfileRightOpen, setUserProfileRightOpen] = useState(false)
 
-  const renderContent = () => {
-    if (store) {
-      const selectedChat = store.selectedChat
-      if (!selectedChat) {
-        return (
-          <ChatWrapperStartChat
-            sx={{
-              ...(mdAbove ? { borderTopLeftRadius: 0, borderBottomLeftRadius: 0 } : {})
-            }}
-          >
-            <MuiAvatar
-              sx={{
-                mb: 6,
-                pt: 8,
-                pb: 7,
-                px: 7.5,
-                width: 110,
-                height: 110,
-                boxShadow: 3,
-                backgroundColor: 'background.paper'
-              }}
-            >
-              <Icon icon='tabler:message' fontSize='3.125rem' />
-            </MuiAvatar>
-            <Box
-              onClick={handleStartConversation}
-              sx={{
-                py: 2,
-                px: 6,
-                boxShadow: 3,
-                borderRadius: 5,
-                backgroundColor: 'background.paper',
-                cursor: mdAbove ? 'default' : 'pointer'
-              }}
-            >
-              <Typography sx={{ fontWeight: 500, fontSize: '1.125rem', lineHeight: 'normal' }}>
-                Start Conversation
-              </Typography>
-            </Box>
-          </ChatWrapperStartChat>
-        )
-      } else {
-        return (
-          <Box
-            sx={{
-              width: 0,
-              flexGrow: 1,
-              height: '100%',
-              backgroundColor: 'action.hover'
-            }}
-          >
-            <Box
-              sx={{
-                px: 5,
-                py: 2.5,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                backgroundColor: 'background.paper',
-                borderBottom: theme => `1px solid ${theme.palette.divider}`
-              }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                {mdAbove ? null : (
-                  <IconButton onClick={handleLeftSidebarToggle} sx={{ mr: 2 }}>
-                    <Icon icon='tabler:menu-2' />
-                  </IconButton>
-                )}
-                <Box
-                  onClick={handleUserProfileRightSidebarToggle}
-                  sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+  // Vars
+  const { activeUser } = chatStore
+
+  useEffect(() => {
+    if (!backdropOpen && userProfileRightOpen) {
+      setUserProfileRightOpen(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [backdropOpen])
+
+  return !chatStore.activeUser ? (
+    <CardContent className='flex flex-col flex-auto items-center justify-center bs-full gap-[18px] bg-backgroundChat'>
+      <CustomAvatar variant='circular' size={98} color='primary' skin='light'>
+        <i className='tabler-message-2 text-[50px]' />
+      </CustomAvatar>
+      <Typography className='text-center'>Select a contact to start a conversation.</Typography>
+      {isBelowMdScreen && (
+        <Button
+          variant='contained'
+          className='rounded-full'
+          onClick={() => {
+            setSidebarOpen(true)
+            isBelowSmScreen ? setBackdropOpen(false) : setBackdropOpen(true)
+          }}
+        >
+          Select Contact
+        </Button>
+      )}
+    </CardContent>
+  ) : (
+    <>
+      {activeUser && (
+        <div className='flex flex-col flex-grow bs-full bg-backgroundChat'>
+          <div className='flex items-center justify-between border-be plb-[17px] pli-6 bg-backgroundPaper'>
+            {isBelowMdScreen ? (
+              <div className='flex items-center gap-4'>
+                <IconButton
+                  color='secondary'
+                  onClick={() => {
+                    setSidebarOpen(true)
+                    setBackdropOpen(true)
+                  }}
                 >
-                  <Badge
-                    overlap='circular'
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'right'
-                    }}
-                    sx={{ mr: 3 }}
-                    badgeContent={
-                      <Box
-                        component='span'
-                        sx={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: '50%',
-                          color: `${statusObj[selectedChat.contact.status]}.main`,
-                          boxShadow: theme => `0 0 0 2px ${theme.palette.background.paper}`,
-                          backgroundColor: `${statusObj[selectedChat.contact.status]}.main`
-                        }}
-                      />
-                    }
-                  >
-                    {selectedChat.contact.avatar ? (
-                      <MuiAvatar
-                        sx={{ width: 38, height: 38 }}
-                        src={selectedChat.contact.avatar}
-                        alt={selectedChat.contact.fullName}
-                      />
-                    ) : (
-                      <CustomAvatar
-                        skin='light'
-                        color={selectedChat.contact.avatarColor}
-                        sx={{ width: 38, height: 38, fontSize: theme => theme.typography.body1.fontSize }}
-                      >
-                        {getInitials(selectedChat.contact.fullName)}
-                      </CustomAvatar>
-                    )}
-                  </Badge>
-                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Typography variant='h6'>{selectedChat.contact.fullName}</Typography>
-                    <Typography sx={{ color: 'text.disabled' }}>{selectedChat.contact.role}</Typography>
-                  </Box>
-                </Box>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                {mdAbove ? (
-                  <Fragment>
-                    <IconButton size='small' sx={{ color: 'text.secondary' }}>
-                      <Icon icon='tabler:phone-call' />
-                    </IconButton>
-                    <IconButton size='small' sx={{ color: 'text.secondary' }}>
-                      <Icon icon='tabler:video' />
-                    </IconButton>
-                    <IconButton size='small' sx={{ color: 'text.secondary' }}>
-                      <Icon icon='tabler:search' />
-                    </IconButton>
-                  </Fragment>
-                ) : null}
-
-                <OptionsMenu
-                  menuProps={{ sx: { mt: 2 } }}
-                  icon={<Icon icon='tabler:dots-vertical' />}
-                  iconButtonProps={{ size: 'small', sx: { color: 'text.secondary' } }}
-                  options={['View Contact', 'Mute Notifications', 'Block Contact', 'Clear Chat', 'Report']}
+                  <i className='tabler-menu-2' />
+                </IconButton>
+                <UserAvatar
+                  activeUser={activeUser}
+                  setBackdropOpen={setBackdropOpen}
+                  setUserProfileLeftOpen={setUserProfileRightOpen}
                 />
-              </Box>
-            </Box>
+              </div>
+            ) : (
+              <UserAvatar
+                activeUser={activeUser}
+                setBackdropOpen={setBackdropOpen}
+                setUserProfileLeftOpen={setUserProfileRightOpen}
+              />
+            )}
+            {isBelowMdScreen ? (
+              <OptionMenu
+                iconButtonProps={{ size: 'medium' }}
+                iconClassName='text-secondary'
+                options={[
+                  {
+                    text: 'View Contact',
+                    menuItemProps: {
+                      onClick: () => {
+                        setUserProfileRightOpen(true)
+                        setBackdropOpen(true)
+                      }
+                    }
+                  },
+                  'Mute Notifications',
+                  'Block Contact',
+                  'Clear Chat',
+                  'Block'
+                ]}
+              />
+            ) : (
+              <div className='flex items-center gap-1'>
+                <IconButton color='secondary'>
+                  <i className='tabler-phone' />
+                </IconButton>
+                <IconButton color='secondary'>
+                  <i className='tabler-video' />
+                </IconButton>
+                <IconButton color='secondary'>
+                  <i className='tabler-search' />
+                </IconButton>
+                <OptionMenu
+                  iconButtonProps={{ size: 'medium' }}
+                  iconClassName='text-secondary'
+                  options={[
+                    {
+                      text: 'View Contact',
+                      menuItemProps: {
+                        onClick: () => {
+                          setUserProfileRightOpen(true)
+                          setBackdropOpen(true)
+                        }
+                      }
+                    },
+                    'Mute Notifications',
+                    'Block Contact',
+                    'Clear Chat',
+                    'Block'
+                  ]}
+                />
+              </div>
+            )}
+          </div>
 
-            {selectedChat && store.userProfile ? (
-              <ChatLog hidden={hidden} data={{ ...selectedChat, userContact: store.userProfile }} />
-            ) : null}
+          <ChatLog
+            chatStore={chatStore}
+            isBelowMdScreen={isBelowMdScreen}
+            isBelowSmScreen={isBelowSmScreen}
+            isBelowLgScreen={isBelowLgScreen}
+          />
 
-            <SendMsgForm store={store} dispatch={dispatch} sendMsg={sendMsg} />
+          <SendMsgForm
+            dispatch={dispatch}
+            activeUser={activeUser}
+            isBelowSmScreen={isBelowSmScreen}
+            messageInputRef={messageInputRef}
+          />
+        </div>
+      )}
 
-            <UserProfileRight
-              store={store}
-              hidden={hidden}
-              statusObj={statusObj}
-              getInitials={getInitials}
-              sidebarWidth={sidebarWidth}
-              userProfileRightOpen={userProfileRightOpen}
-              handleUserProfileRightSidebarToggle={handleUserProfileRightSidebarToggle}
-            />
-          </Box>
-        )
-      }
-    } else {
-      return null
-    }
-  }
-
-  return renderContent()
+      {activeUser && (
+        <UserProfileRight
+          open={userProfileRightOpen}
+          handleClose={() => {
+            setUserProfileRightOpen(false)
+            setBackdropOpen(false)
+          }}
+          activeUser={activeUser}
+          isBelowSmScreen={isBelowSmScreen}
+          isBelowLgScreen={isBelowLgScreen}
+        />
+      )}
+    </>
+  )
 }
 
 export default ChatContent

@@ -1,92 +1,164 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// MUI Imports
+import type { Theme } from '@mui/material/styles'
 
-// ** Util Import
-import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
-
-const Timeline = () => {
-  return {
-    MuiTimeline: {
-      styleOverrides: {
-        root: {
-          margin: 0,
-          padding: 0
+const timeline: Theme['components'] = {
+  MuiTimeline: {
+    styleOverrides: {
+      root: {
+        padding: 0
+      }
+    }
+  },
+  MuiTimelineDot: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        margin: theme.spacing(3, 0),
+        boxShadow: 'none',
+        '&:has(> i), &:has(> svg)': {
+          padding: 6
+        },
+        '& > svg, & > i': {
+          fontSize: '1.25rem'
+        },
+        '&:has(svg)': {
+          width: 32,
+          height: 32,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }
+      })
+    },
+    variants: [
+      {
+        props: { variant: 'outlined' },
+        style: {
+          padding: 5,
+          '& + .MuiTimelineConnector-root': {
+            backgroundColor: 'transparent',
+            borderInlineStart: '1px dashed var(--mui-palette-divider)'
+          },
+          '&:has(+ .MuiTimelineConnector-root)': {
+            marginBlock: '0.625rem'
+          }
+        }
+      },
+      {
+        props: { variant: 'filled', color: 'grey' },
+        style: {
+          boxShadow: '0 0 0 3px rgb(var(--mui-palette-action-activeChannel) / 0.04)'
+        }
+      },
+      {
+        props: { variant: 'filled', color: 'primary' },
+        style: {
+          boxShadow: '0 0 0 3px var(--mui-palette-primary-lightOpacity)'
+        }
+      },
+      {
+        props: { variant: 'filled', color: 'secondary' },
+        style: {
+          boxShadow: '0 0 0 3px var(--mui-palette-secondary-lightOpacity)'
+        }
+      },
+      {
+        props: { variant: 'filled', color: 'error' },
+        style: {
+          boxShadow: '0 0 0 3px var(--mui-palette-error-lightOpacity)'
+        }
+      },
+      {
+        props: { variant: 'filled', color: 'warning' },
+        style: {
+          boxShadow: '0 0 0 3px var(--mui-palette-warning-lightOpacity)'
+        }
+      },
+      {
+        props: { variant: 'filled', color: 'info' },
+        style: {
+          boxShadow: '0 0 0 3px var(--mui-palette-info-lightOpacity)'
+        }
+      },
+      {
+        props: { variant: 'filled', color: 'success' },
+        style: {
+          boxShadow: '0 0 0 3px var(--mui-palette-success-lightOpacity)'
+        }
+      },
+      {
+        props: { variant: 'tonal' },
+        style: {
+          border: 0,
+          '&:has(+ .MuiTimelineConnector-root)': {
+            marginBlock: '1rem'
+          }
+        }
+      },
+      {
+        props: { variant: 'tonal', color: 'grey' },
+        style: {
+          backgroundColor: 'var(--mui-palette-action-selected)',
+          color: 'var(--mui-palette-text-primary)'
+        }
+      },
+      {
+        props: { variant: 'tonal', color: 'primary' },
+        style: {
+          backgroundColor: 'var(--mui-palette-primary-lightOpacity)',
+          color: 'var(--mui-palette-primary-main)'
+        }
+      },
+      {
+        props: { variant: 'tonal', color: 'secondary' },
+        style: {
+          backgroundColor: 'var(--mui-palette-secondary-lightOpacity)',
+          color: 'var(--mui-palette-secondary-main)'
+        }
+      },
+      {
+        props: { variant: 'tonal', color: 'error' },
+        style: {
+          backgroundColor: 'var(--mui-palette-error-lightOpacity)',
+          color: 'var(--mui-palette-error-main)'
+        }
+      },
+      {
+        props: { variant: 'tonal', color: 'warning' },
+        style: {
+          backgroundColor: 'var(--mui-palette-warning-lightOpacity)',
+          color: 'var(--mui-palette-warning-main)'
+        }
+      },
+      {
+        props: { variant: 'tonal', color: 'info' },
+        style: {
+          backgroundColor: 'var(--mui-palette-info-lightOpacity)',
+          color: 'var(--mui-palette-info-main)'
+        }
+      },
+      {
+        props: { variant: 'tonal', color: 'success' },
+        style: {
+          backgroundColor: 'var(--mui-palette-success-lightOpacity)',
+          color: 'var(--mui-palette-success-main)'
         }
       }
-    },
-    MuiTimelineItem: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          '&:last-of-type': {
-            minHeight: 0
-          },
-          '&:not(:last-of-type) .MuiTimelineContent-root': {
-            marginBottom: theme.spacing(4)
-          }
-        })
+    ]
+  },
+  MuiTimelineConnector: {
+    styleOverrides: {
+      root: {
+        width: 1,
+        backgroundColor: 'var(--mui-palette-divider)'
       }
-    },
-    MuiTimelineConnector: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          backgroundColor: theme.palette.divider
-        })
-      }
-    },
-    MuiTimelineContent: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          marginTop: theme.spacing(0.5)
-        })
-      }
-    },
-    MuiTimelineDot: {
-      styleOverrides: {
-        filledPrimary: ({ theme }: OwnerStateThemeType) => ({
-          boxShadow: `0 0 0 3px ${hexToRGBA(theme.palette.primary.main, 0.16)}`
-        }),
-        filledSecondary: ({ theme }: OwnerStateThemeType) => ({
-          boxShadow: `0 0 0 3px ${hexToRGBA(theme.palette.secondary.main, 0.16)}`
-        }),
-        filledSuccess: ({ theme }: OwnerStateThemeType) => ({
-          boxShadow: `0 0 0 3px ${hexToRGBA(theme.palette.success.main, 0.16)}`
-        }),
-        filledError: ({ theme }: OwnerStateThemeType) => ({
-          boxShadow: `0 0 0 3px ${hexToRGBA(theme.palette.error.main, 0.16)}`
-        }),
-        filledWarning: ({ theme }: OwnerStateThemeType) => ({
-          boxShadow: `0 0 0 3px ${hexToRGBA(theme.palette.warning.main, 0.16)}`
-        }),
-        filledInfo: ({ theme }: OwnerStateThemeType) => ({
-          boxShadow: `0 0 0 3px ${hexToRGBA(theme.palette.info.main, 0.16)}`
-        }),
-        filledGrey: ({ theme }: OwnerStateThemeType) => ({
-          boxShadow: `0 0 0 3px ${hexToRGBA(theme.palette.grey[400], 0.16)}`
-        }),
-        outlinedPrimary: ({ theme }: OwnerStateThemeType) => ({
-          '& svg': { color: theme.palette.primary.main }
-        }),
-        outlinedSecondary: ({ theme }: OwnerStateThemeType) => ({
-          '& svg': { color: theme.palette.secondary.main }
-        }),
-        outlinedSuccess: ({ theme }: OwnerStateThemeType) => ({
-          '& svg': { color: theme.palette.success.main }
-        }),
-        outlinedError: ({ theme }: OwnerStateThemeType) => ({
-          '& svg': { color: theme.palette.error.main }
-        }),
-        outlinedWarning: ({ theme }: OwnerStateThemeType) => ({
-          '& svg': { color: theme.palette.warning.main }
-        }),
-        outlinedInfo: ({ theme }: OwnerStateThemeType) => ({
-          '& svg': { color: theme.palette.info.main }
-        }),
-        outlinedGrey: ({ theme }: OwnerStateThemeType) => ({
-          '& svg': { color: theme.palette.grey[400] }
-        })
+    }
+  },
+  MuiTimelineContent: {
+    styleOverrides: {
+      root: {
+        paddingBottom: '1rem'
       }
     }
   }
 }
 
-export default Timeline
+export default timeline

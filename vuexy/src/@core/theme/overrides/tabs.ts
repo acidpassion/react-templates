@@ -1,48 +1,101 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// MUI Imports
+import type { Theme } from '@mui/material/styles'
 
-const Tabs = () => {
-  return {
-    MuiTabs: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          minHeight: 38,
-          '&:not(.MuiTabs-vertical)': {
-            borderBottom: `1px solid ${theme.palette.divider}`
+const tabs: Theme['components'] = {
+  MuiTabs: {
+    styleOverrides: {
+      root: ({ theme, ownerState }) => ({
+        minBlockSize: 38,
+        ...(ownerState.orientation === 'horizontal'
+          ? {
+              borderBlockEnd: '1px solid var(--mui-palette-divider)'
+            }
+          : {
+              borderInlineEnd: '1px solid var(--mui-palette-divider)'
+            }),
+        '& .MuiTab-root:hover': {
+          ...(ownerState.orientation === 'horizontal'
+            ? {
+                paddingBlockEnd: theme.spacing(1.5),
+                ...(ownerState.textColor === 'secondary'
+                  ? {
+                      color: 'var(--mui-palette-secondary-main)',
+                      borderBlockEnd: '2px solid var(--mui-palette-secondary-lightOpacity)'
+                    }
+                  : {
+                      color: 'var(--mui-palette-primary-main)',
+                      borderBlockEnd: '2px solid var(--mui-palette-primary-lightOpacity)'
+                    })
+              }
+            : {
+                paddingInlineEnd: theme.spacing(4.5),
+                ...(ownerState.textColor === 'secondary'
+                  ? {
+                      color: 'var(--mui-palette-secondary-main)',
+                      borderInlineEnd: '2px solid var(--mui-palette-secondary-mainOpacity)'
+                    }
+                  : {
+                      color: 'var(--mui-palette-primary-main)',
+                      borderInlineEnd: '2px solid var(--mui-palette-primary-mainOpacity)'
+                    })
+              }),
+          '& .MuiTabScrollButton-root': {
+            borderRadius: 'var(--mui-shape-borderRadius)'
           }
-        }),
-        vertical: ({ theme }: OwnerStateThemeType) => ({
-          minWidth: 130,
-          marginRight: theme.spacing(4),
-          borderRight: `1px solid ${theme.palette.divider}`,
-          '& .MuiTab-root': {
-            minWidth: 130
-          }
-        })
+        },
+        '& ~ .MuiTabPanel-root': {
+          ...(ownerState.orientation === 'horizontal'
+            ? {
+                paddingBlockStart: theme.spacing(6)
+              }
+            : {
+                paddingInlineStart: theme.spacing(6)
+              })
+        }
+      }),
+      vertical: {
+        minWidth: 131,
+        '& .MuiTab-root': {
+          minWidth: 130
+        }
       }
+    }
+  },
+  MuiTab: {
+    defaultProps: {
+      disableRipple: true
     },
-    MuiTab: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          minHeight: 38,
-          textTransform: 'none',
-          padding: theme.spacing(1.75, 5)
-        }),
-        textColorSecondary: ({ theme }: OwnerStateThemeType) => ({
-          '&.Mui-selected': {
-            color: theme.palette.text.secondary
-          }
-        })
-      }
-    },
-    MuiTabPanel: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          padding: theme.spacing(6)
-        })
+    styleOverrides: {
+      root: ({ theme, ownerState }) => ({
+        lineHeight: 1.4667,
+        padding: theme.spacing(2, 5),
+        minBlockSize: 38,
+        color: 'var(--mui-palette-text-primary)',
+        '& > .MuiTab-iconWrapper': {
+          fontSize: '1.125rem',
+          ...(ownerState.iconPosition === 'top' && {
+            marginBlockEnd: theme.spacing(1.5)
+          }),
+          ...(ownerState.iconPosition === 'bottom' && {
+            marginBlockStart: theme.spacing(1.5)
+          }),
+          ...(ownerState.iconPosition === 'start' && {
+            marginInlineEnd: theme.spacing(1.5)
+          }),
+          ...(ownerState.iconPosition === 'end' && {
+            marginInlineStart: theme.spacing(1.5)
+          })
+        }
+      })
+    }
+  },
+  MuiTabPanel: {
+    styleOverrides: {
+      root: {
+        padding: 0
       }
     }
   }
 }
 
-export default Tabs
+export default tabs

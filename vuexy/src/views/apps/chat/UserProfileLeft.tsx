@@ -1,233 +1,183 @@
-// ** React Imports
-import { ChangeEvent, Fragment, ReactNode } from 'react'
+// React Imports
+import { useState } from 'react'
+import type { ChangeEvent, ReactNode } from 'react'
 
-// ** MUI Imports
-import Box from '@mui/material/Box'
-import List from '@mui/material/List'
-import Badge from '@mui/material/Badge'
-import Radio from '@mui/material/Radio'
-import Avatar from '@mui/material/Avatar'
-import Button from '@mui/material/Button'
-import Switch from '@mui/material/Switch'
-import ListItem from '@mui/material/ListItem'
-import IconButton from '@mui/material/IconButton'
+// MUI Import
+import Drawer from '@mui/material/Drawer'
 import Typography from '@mui/material/Typography'
+import IconButton from '@mui/material/IconButton'
+import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import ListItemButton from '@mui/material/ListItemButton'
 import FormControlLabel from '@mui/material/FormControlLabel'
+import FormLabel from '@mui/material/FormLabel'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import Switch from '@mui/material/Switch'
+import Backdrop from '@mui/material/Backdrop'
+import Button from '@mui/material/Button'
 
-// ** Custom Component Import
-import CustomTextField from 'src/@core/components/mui/text-field'
-
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-// ** Third Party Components
+// Third Party Imports
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
-// ** Types
-import { StatusType, UserProfileLeftType } from 'src/types/apps/chatTypes'
+// Type Imports
+import type { AppDispatch } from '@/redux-store'
+import type { ProfileUserType, StatusType } from '@/types/apps/chatTypes'
 
-// ** Custom Component Imports
-import Sidebar from 'src/@core/components/sidebar'
+// Slice Imports
+import { setUserStatus } from '@/redux-store/slices/chat'
 
-const UserProfileLeft = (props: UserProfileLeftType) => {
-  const {
-    store,
-    hidden,
-    statusObj,
-    userStatus,
-    sidebarWidth,
-    setUserStatus,
-    userProfileLeftOpen,
-    handleUserProfileLeftSidebarToggle
-  } = props
+// Component Imports
+import AvatarWithBadge from './AvatarWithBadge'
+import { statusObj } from '@views/apps/chat/SidebarLeft'
+import CustomTextField from '@core/components/mui/TextField'
+
+type Props = {
+  userSidebar: boolean
+  setUserSidebar: (open: boolean) => void
+  profileUserData: ProfileUserType
+  dispatch: AppDispatch
+  isBelowLgScreen: boolean
+  isBelowSmScreen: boolean
+}
+
+const ScrollWrapper = ({ children, isBelowLgScreen }: { children: ReactNode; isBelowLgScreen: boolean }) => {
+  if (isBelowLgScreen) {
+    return <div className='bs-full overflow-x-hidden overflow-y-auto'>{children}</div>
+  } else {
+    return <PerfectScrollbar options={{ wheelPropagation: false }}>{children}</PerfectScrollbar>
+  }
+}
+
+const UserProfileLeft = (props: Props) => {
+  // Props
+  const { userSidebar, setUserSidebar, profileUserData, dispatch, isBelowLgScreen, isBelowSmScreen } = props
+
+  // States
+  const [twoStepVerification, setTwoStepVerification] = useState<boolean>(true)
+  const [notification, setNotification] = useState<boolean>(false)
+
+  const handleTwoStepVerification = () => {
+    setTwoStepVerification(!twoStepVerification)
+  }
+
+  const handleNotification = () => {
+    setNotification(!notification)
+  }
 
   const handleUserStatus = (e: ChangeEvent<HTMLInputElement>) => {
-    setUserStatus(e.target.value as StatusType)
+    dispatch(setUserStatus({ status: e.target.value as StatusType }))
   }
 
-  const ScrollWrapper = ({ children }: { children: ReactNode }) => {
-    if (hidden) {
-      return <Box sx={{ height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>{children}</Box>
-    } else {
-      return <PerfectScrollbar options={{ wheelPropagation: false }}>{children}</PerfectScrollbar>
-    }
-  }
-
-  return (
-    <Sidebar
-      show={userProfileLeftOpen}
-      backDropClick={handleUserProfileLeftSidebarToggle}
-      sx={{
-        zIndex: 9,
-        height: '100%',
-        width: sidebarWidth,
-        borderTopLeftRadius: theme => theme.shape.borderRadius,
-        borderBottomLeftRadius: theme => theme.shape.borderRadius,
-        '& + .MuiBackdrop-root': {
-          zIndex: 8,
-          borderRadius: 1
-        }
-      }}
-    >
-      {store && store.userProfile ? (
-        <Fragment>
-          <IconButton
-            size='small'
-            onClick={handleUserProfileLeftSidebarToggle}
-            sx={{ top: '0.5rem', right: '0.5rem', position: 'absolute', color: 'text.disabled' }}
-          >
-            <Icon icon='tabler:x' />
-          </IconButton>
-
-          <Box sx={{ display: 'flex', flexDirection: 'column', p: theme => theme.spacing(11.25, 6, 4.5) }}>
-            <Box sx={{ mb: 3.5, display: 'flex', justifyContent: 'center' }}>
-              <Badge
-                overlap='circular'
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right'
-                }}
-                badgeContent={
-                  <Box
-                    component='span'
-                    sx={{
-                      width: 10,
-                      height: 10,
-                      borderRadius: '50%',
-                      color: `${statusObj[userStatus]}.main`,
-                      backgroundColor: `${statusObj[userStatus]}.main`,
-                      boxShadow: theme => `0 0 0 2px ${theme.palette.background.paper}`
-                    }}
-                  />
-                }
+  return profileUserData ? (
+    <>
+      <Drawer
+        open={userSidebar}
+        anchor='left'
+        variant='persistent'
+        ModalProps={{ keepMounted: true }}
+        onClose={() => setUserSidebar(false)}
+        sx={{
+          zIndex: 13,
+          '& .MuiDrawer-paper': { width: isBelowSmScreen ? '100%' : '370px', position: 'absolute', border: 0 }
+        }}
+      >
+        <IconButton className='absolute block-start-4 inline-end-4' onClick={() => setUserSidebar(false)}>
+          <i className='tabler-x text-2xl' />
+        </IconButton>
+        <div className='flex flex-col justify-center items-center gap-4 mbs-6 pli-6 pbs-6 pbe-3'>
+          <AvatarWithBadge
+            alt={profileUserData.fullName}
+            src={profileUserData.avatar}
+            badgeColor={statusObj[profileUserData.status]}
+            className='bs-[84px] is-[84px]'
+            badgeSize={12}
+          />
+          <div className='text-center'>
+            <Typography variant='h5'>{profileUserData.fullName}</Typography>
+            <Typography>{profileUserData.role}</Typography>
+          </div>
+        </div>
+        <ScrollWrapper isBelowLgScreen={isBelowLgScreen}>
+          <div className='flex flex-col gap-6 p-6 pbs-3'>
+            <div className='flex flex-col gap-1'>
+              <Typography className='uppercase' color='text.disabled'>
+                About
+              </Typography>
+              <CustomTextField fullWidth rows={3} multiline id='about-textarea' defaultValue={profileUserData.about} />
+            </div>
+            <div className='flex flex-col gap-1'>
+              <FormLabel id='status-radio-buttons-group-label' className='uppercase text-textDisabled'>
+                Status
+              </FormLabel>
+              <RadioGroup
+                value={profileUserData.status}
+                name='radio-buttons-group'
+                onChange={handleUserStatus}
+                aria-labelledby='status-radio-buttons-group-label'
               >
-                <Avatar
-                  sx={{ width: 80, height: 80 }}
-                  src={store.userProfile.avatar}
-                  alt={store.userProfile.fullName}
-                />
-              </Badge>
-            </Box>
-            <Typography variant='h5' sx={{ textAlign: 'center' }}>
-              {store.userProfile.fullName}
-            </Typography>
-            <Typography sx={{ textAlign: 'center', color: 'text.secondary', textTransform: 'capitalize' }}>
-              {store.userProfile.role}
-            </Typography>
-          </Box>
-
-          <Box sx={{ height: 'calc(100% - 13.3125rem)' }}>
-            <ScrollWrapper>
-              <Box sx={{ p: 6 }}>
-                <Typography
-                  variant='body2'
-                  sx={{ mb: 3.5, color: 'text.disabled', textTransform: 'uppercase', lineHeight: 'normal' }}
+                <FormControlLabel value='online' control={<Radio color='success' />} label='Online' />
+                <FormControlLabel value='away' control={<Radio color='warning' />} label='Away' />
+                <FormControlLabel value='busy' control={<Radio color='error' />} label='Do not disturb' />
+                <FormControlLabel value='offline' control={<Radio color='secondary' />} label='Offline' />
+              </RadioGroup>
+            </div>
+            <div className='flex flex-col gap-1'>
+              <Typography className='uppercase' color='text.disabled'>
+                Settings
+              </Typography>
+              <List className='plb-0'>
+                <ListItem
+                  disablePadding
+                  secondaryAction={<Switch checked={twoStepVerification} onChange={handleTwoStepVerification} />}
                 >
-                  About
-                </Typography>
-                <CustomTextField
-                  multiline
-                  fullWidth
-                  minRows={4}
-                  sx={{ mb: 6 }}
-                  defaultValue={store.userProfile.about}
-                />
-                <Typography
-                  variant='body2'
-                  sx={{ mb: 3.5, color: 'text.disabled', textTransform: 'uppercase', lineHeight: 'normal' }}
+                  <ListItemButton onClick={handleTwoStepVerification} className='p-2'>
+                    <ListItemIcon>
+                      <i className='tabler-lock' />
+                    </ListItemIcon>
+                    <ListItemText primary='Two-step Verification' />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem
+                  disablePadding
+                  secondaryAction={<Switch checked={notification} onChange={handleNotification} />}
                 >
-                  Status
-                </Typography>
-                <RadioGroup value={userStatus} sx={{ mb: 6, ml: 0.8 }} onChange={handleUserStatus}>
-                  <div>
-                    <FormControlLabel
-                      value='online'
-                      label='Online'
-                      control={<Radio color='success' sx={{ p: 1.5 }} />}
-                    />
-                  </div>
-                  <div>
-                    <FormControlLabel value='away' label='Away' control={<Radio color='warning' sx={{ p: 1.5 }} />} />
-                  </div>
-                  <div>
-                    <FormControlLabel
-                      value='busy'
-                      label='Do not Disturb'
-                      control={<Radio color='error' sx={{ p: 1.5 }} />}
-                    />
-                  </div>
-                  <div>
-                    <FormControlLabel
-                      value='offline'
-                      label='Offline'
-                      control={<Radio color='secondary' sx={{ p: 1.5 }} />}
-                    />
-                  </div>
-                </RadioGroup>
-                <Typography
-                  variant='body2'
-                  sx={{ mb: 3.5, color: 'text.disabled', textTransform: 'uppercase', lineHeight: 'normal' }}
-                >
-                  Settings
-                </Typography>
-                <List
-                  dense
-                  sx={{
-                    p: 0,
-                    mb: 3.5,
-                    '& .MuiListItemButton-root:hover': {
-                      backgroundColor: 'action.hover',
-                      '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-                        color: 'inherit'
-                      }
-                    }
-                  }}
-                >
-                  <ListItem disablePadding secondaryAction={<Switch />}>
-                    <ListItemButton sx={{ px: 2 }}>
-                      <ListItemIcon sx={{ mr: 2, color: 'text.primary' }}>
-                        <Icon icon='tabler:message-dots' />
-                      </ListItemIcon>
-                      <ListItemText primary='Two-step Verification' primaryTypographyProps={{ variant: 'body1' }} />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding secondaryAction={<Switch defaultChecked />}>
-                    <ListItemButton sx={{ px: 2 }}>
-                      <ListItemIcon sx={{ mr: 2, color: 'text.primary' }}>
-                        <Icon icon='tabler:bell' />
-                      </ListItemIcon>
-                      <ListItemText primary='Notification' primaryTypographyProps={{ variant: 'body1' }} />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemButton sx={{ px: 2 }}>
-                      <ListItemIcon sx={{ mr: 2, color: 'text.primary' }}>
-                        <Icon icon='tabler:user-plus' />
-                      </ListItemIcon>
-                      <ListItemText primary='Invite Friends' primaryTypographyProps={{ variant: 'body1' }} />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemButton sx={{ px: 2 }}>
-                      <ListItemIcon sx={{ mr: 2, color: 'text.primary' }}>
-                        <Icon icon='tabler:trash' />
-                      </ListItemIcon>
-                      <ListItemText primary='Delete Account' primaryTypographyProps={{ variant: 'body1' }} />
-                    </ListItemButton>
-                  </ListItem>
-                </List>
-                <Button variant='contained'>Logout</Button>
-              </Box>
-            </ScrollWrapper>
-          </Box>
-        </Fragment>
-      ) : null}
-    </Sidebar>
-  )
+                  <ListItemButton onClick={handleNotification} className='p-2'>
+                    <ListItemIcon>
+                      <i className='tabler-bell' />
+                    </ListItemIcon>
+                    <ListItemText primary='Notification' />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton className='p-2'>
+                    <ListItemIcon>
+                      <i className='tabler-user-plus' />
+                    </ListItemIcon>
+                    <ListItemText primary='Invite Friends' />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton className='p-2'>
+                    <ListItemIcon>
+                      <i className='tabler-trash' />
+                    </ListItemIcon>
+                    <ListItemText primary='Delete Account' />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </div>
+            <Button variant='contained' fullWidth className='mbs-auto' endIcon={<i className='tabler-logout' />}>
+              Logout
+            </Button>
+          </div>
+        </ScrollWrapper>
+      </Drawer>
+      <Backdrop open={userSidebar} onClick={() => setUserSidebar(false)} className='absolute z-[12]' />
+    </>
+  ) : null
 }
 
 export default UserProfileLeft

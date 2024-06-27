@@ -1,40 +1,39 @@
-// ** React Imports
-import { ChangeEvent, Fragment, useState } from 'react'
+'use client'
 
-// ** MUI Imports
+// React Imports
+import type { ChangeEvent } from 'react'
+import { Fragment, useState } from 'react'
+
+// MUI Imports
+import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Stepper from '@mui/material/Stepper'
 import MenuItem from '@mui/material/MenuItem'
-import { styled } from '@mui/material/styles'
 import StepLabel from '@mui/material/StepLabel'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
-import MuiStep, { StepProps } from '@mui/material/Step'
-import { SelectChangeEvent } from '@mui/material/Select'
 import InputAdornment from '@mui/material/InputAdornment'
-import CardContent, { CardContentProps } from '@mui/material/CardContent'
+import CardContent from '@mui/material/CardContent'
+import MuiStep from '@mui/material/Step'
+import type { StepProps } from '@mui/material/Step'
+import type { SelectChangeEvent } from '@mui/material/Select'
+import type { CardContentProps } from '@mui/material/CardContent'
 
-// ** Third Party Imports
-import toast from 'react-hot-toast'
+// Third Party Imports
+import { toast } from 'react-toastify'
+import classnames from 'classnames'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Components Imports
+import CustomAvatar from '@core/components/mui/Avatar'
+import CustomTextField from '@core/components/mui/TextField'
+import DirectionalIcon from '@components/DirectionalIcon'
 
-// ** Custom Components Imports
-import StepperCustomDot from './StepperCustomDot'
-import CustomAvatar from 'src/@core/components/mui/avatar'
-import CustomTextField from 'src/@core/components/mui/text-field'
-
-// ** Util Import
-import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
-
-// ** Styled Component
-import StepperWrapper from 'src/@core/styles/mui/stepper'
+// Styled Component Imports
+import StepperWrapper from '@core/styles/stepper'
 
 interface State {
   password: string
@@ -45,27 +44,27 @@ interface State {
 
 const steps = [
   {
-    icon: 'tabler:home',
+    icon: 'tabler-file-analytics',
     title: 'Account Details',
     subtitle: 'Enter your Account Details'
   },
   {
-    icon: 'tabler:user',
+    icon: 'tabler-user',
     title: 'Personal Info',
     subtitle: 'Setup Information'
   },
   {
-    icon: 'tabler:link',
+    icon: 'tabler-brand-instagram',
     title: 'Social Links',
     subtitle: 'Add Social Links'
   }
 ]
 
 const StepperHeaderContainer = styled(CardContent)<CardContentProps>(({ theme }) => ({
-  borderRight: `1px solid ${theme.palette.divider}`,
+  borderRight: `1px solid 'var(--mui-palette-divider)'`,
   [theme.breakpoints.down('md')]: {
     borderRight: 0,
-    borderBottom: `1px solid ${theme.palette.divider}`
+    borderBottom: `1px solid 'var(--mui-palette-divider)'`
   }
 }))
 
@@ -73,28 +72,25 @@ const Step = styled(MuiStep)<StepProps>(({ theme }) => ({
   '& .MuiStepLabel-root': {
     paddingTop: 0
   },
+  '&:first-of-type .MuiStepLabel-root': {
+    paddingTop: theme.spacing(1)
+  },
   '&:not(:last-of-type) .MuiStepLabel-root': {
     paddingBottom: theme.spacing(6)
   },
   '&:last-of-type .MuiStepLabel-root': {
-    paddingBottom: 0
+    paddingBottom: theme.spacing(1)
   },
   '& .MuiStepLabel-iconContainer': {
     display: 'none'
   },
-  '& .step-subtitle': {
-    color: `${theme.palette.text.disabled} !important`
-  },
-  '& + svg': {
-    color: theme.palette.text.disabled
-  },
-  '&.Mui-completed .step-title': {
-    color: theme.palette.text.disabled
+  '&.Mui-completed .step-title , &.Mui-completed .step-subtitle': {
+    color: 'var(--mui-palette-text-disabled)'
   }
 }))
 
 const StepperCustomVertical = () => {
-  // ** States
+  // States
   const [email, setEmail] = useState<string>('')
   const [google, setGoogle] = useState<string>('')
   const [country, setCountry] = useState<string>('')
@@ -106,6 +102,7 @@ const StepperCustomVertical = () => {
   const [firstName, setFirstName] = useState<string>('')
   const [activeStep, setActiveStep] = useState<number>(0)
   const [language, setLanguage] = useState<string[]>([])
+
   const [state, setState] = useState<State>({
     password: '',
     password2: '',
@@ -117,12 +114,15 @@ const StepperCustomVertical = () => {
   const handleBack = () => {
     setActiveStep(prevActiveStep => prevActiveStep - 1)
   }
+
   const handleNext = () => {
     setActiveStep(prevActiveStep => prevActiveStep + 1)
+
     if (activeStep === steps.length - 1) {
       toast.success('Form Submitted')
     }
   }
+
   const handleReset = () => {
     setEmail('')
     setGoogle('')
@@ -142,6 +142,7 @@ const StepperCustomVertical = () => {
   const handlePasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [prop]: event.target.value })
   }
+
   const handleClickShowPassword = () => {
     setState({ ...state, showPassword: !state.showPassword })
   }
@@ -150,6 +151,7 @@ const StepperCustomVertical = () => {
   const handleConfirmChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [prop]: event.target.value })
   }
+
   const handleClickShowConfirmPassword = () => {
     setState({ ...state, showPassword2: !state.showPassword2 })
   }
@@ -169,7 +171,7 @@ const StepperCustomVertical = () => {
                 fullWidth
                 label='Username'
                 value={username}
-                placeholder='carterLeonard'
+                placeholder='JohnDoe'
                 onChange={e => setUsername(e.target.value)}
               />
             </Grid>
@@ -179,7 +181,7 @@ const StepperCustomVertical = () => {
                 type='email'
                 label='Email'
                 value={email}
-                placeholder='carterleonard@gmail.com'
+                placeholder='johndoe@gmail.com'
                 onChange={e => setEmail(e.target.value)}
               />
             </Grid>
@@ -187,6 +189,7 @@ const StepperCustomVertical = () => {
               <CustomTextField
                 fullWidth
                 label='Password'
+                placeholder='············'
                 value={state.password}
                 id='stepper-custom-vertical-account-password'
                 onChange={handlePasswordChange('password')}
@@ -200,7 +203,7 @@ const StepperCustomVertical = () => {
                         onMouseDown={e => e.preventDefault()}
                         aria-label='toggle password visibility'
                       >
-                        <Icon fontSize='1.25rem' icon={state.showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
+                        <i className={state.showPassword ? 'tabler-eye' : 'tabler-eye-off'} />
                       </IconButton>
                     </InputAdornment>
                   )
@@ -212,6 +215,7 @@ const StepperCustomVertical = () => {
                 fullWidth
                 value={state.password2}
                 label='Confirm Password'
+                placeholder='············'
                 id='stepper-custom-vertical-account-password-2'
                 onChange={handleConfirmChange('password2')}
                 type={state.showPassword2 ? 'text' : 'password'}
@@ -224,7 +228,7 @@ const StepperCustomVertical = () => {
                         aria-label='toggle password visibility'
                         onClick={handleClickShowConfirmPassword}
                       >
-                        <Icon fontSize='1.25rem' icon={state.showPassword2 ? 'tabler:eye' : 'tabler:eye-off'} />
+                        <i className={state.showPassword2 ? 'tabler-eye' : 'tabler-eye-off'} />
                       </IconButton>
                     </InputAdornment>
                   )
@@ -241,7 +245,7 @@ const StepperCustomVertical = () => {
                 fullWidth
                 value={firstName}
                 label='First Name'
-                placeholder='Leonard'
+                placeholder='John'
                 onChange={e => setFirstName(e.target.value)}
               />
             </Grid>
@@ -250,7 +254,7 @@ const StepperCustomVertical = () => {
                 fullWidth
                 value={lastName}
                 label='Last Name'
-                placeholder='Carter'
+                placeholder='Doe'
                 onChange={e => setLastName(e.target.value)}
               />
             </Grid>
@@ -263,6 +267,7 @@ const StepperCustomVertical = () => {
                 onChange={e => setCountry(e.target.value)}
                 id='stepper-custom-vertical-personal-select'
               >
+                <MenuItem value=''>Select Country</MenuItem>
                 <MenuItem value='UK'>UK</MenuItem>
                 <MenuItem value='USA'>USA</MenuItem>
                 <MenuItem value='Australia'>Australia</MenuItem>
@@ -301,7 +306,7 @@ const StepperCustomVertical = () => {
                 label='Twitter'
                 value={twitter}
                 onChange={e => setTwitter(e.target.value)}
-                placeholder='https://twitter.com/carterLeonard'
+                placeholder='https://twitter.com/johndoe'
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -310,7 +315,7 @@ const StepperCustomVertical = () => {
                 label='Facebook'
                 value={facebook}
                 onChange={e => setFacebook(e.target.value)}
-                placeholder='https://facebook.com/carterLeonard'
+                placeholder='https://facebook.com/johndoe'
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -319,7 +324,7 @@ const StepperCustomVertical = () => {
                 label='Google+'
                 value={google}
                 onChange={e => setGoogle(e.target.value)}
-                placeholder='https://plus.google.com/carterLeonard'
+                placeholder='https://plus.google.com/johndoe'
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -328,7 +333,7 @@ const StepperCustomVertical = () => {
                 label='LinkedIn'
                 value={linkedIn}
                 onChange={e => setLinkedIn(e.target.value)}
-                placeholder='https://linkedin.com/carterLeonard'
+                placeholder='https://linkedin.com/johndoe'
               />
             </Grid>
           </Fragment>
@@ -364,10 +369,26 @@ const StepperCustomVertical = () => {
             </Grid>
             {getStepContent(activeStep)}
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Button variant='tonal' color='secondary' disabled={activeStep === 0} onClick={handleBack}>
+              <Button
+                variant='tonal'
+                color='secondary'
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                startIcon={<DirectionalIcon ltrIconClass='tabler-arrow-left' rtlIconClass='tabler-arrow-right' />}
+              >
                 Back
               </Button>
-              <Button variant='contained' onClick={handleNext}>
+              <Button
+                variant='contained'
+                onClick={handleNext}
+                endIcon={
+                  activeStep === steps.length - 1 ? (
+                    <i className='tabler-check' />
+                  ) : (
+                    <DirectionalIcon ltrIconClass='tabler-arrow-right' rtlIconClass='tabler-arrow-left' />
+                  )
+                }
+              >
                 {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
               </Button>
             </Grid>
@@ -388,24 +409,21 @@ const StepperCustomVertical = () => {
             sx={{ height: '100%', minWidth: '15rem' }}
           >
             {steps.map((step, index) => {
-              const RenderAvatar = activeStep >= index ? CustomAvatar : Avatar
+              // const RenderAvatar = activeStep >= index ? CustomAvatar : Avatar
 
               return (
                 <Step key={index}>
-                  <StepLabel StepIconComponent={StepperCustomDot}>
+                  <StepLabel>
                     <div className='step-label'>
-                      <RenderAvatar
+                      <CustomAvatar
                         variant='rounded'
-                        {...(activeStep >= index && { skin: 'light' })}
-                        {...(activeStep === index && { skin: 'filled' })}
+                        skin={activeStep === index ? 'filled' : 'light'}
                         {...(activeStep >= index && { color: 'primary' })}
-                        sx={{
-                          ...(activeStep === index && { boxShadow: theme => theme.shadows[3] }),
-                          ...(activeStep > index && { color: theme => hexToRGBA(theme.palette.primary.main, 0.4) })
-                        }}
+                        {...(activeStep === index && { className: 'shadow-primarySm' })}
+                        size={38}
                       >
-                        <Icon icon={step.icon} />
-                      </RenderAvatar>
+                        <i className={classnames(step.icon)} />
+                      </CustomAvatar>
                       <div>
                         <Typography className='step-title'>{step.title}</Typography>
                         <Typography className='step-subtitle'>{step.subtitle}</Typography>

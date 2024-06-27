@@ -1,97 +1,84 @@
-// ** MUI Import
-import { useTheme } from '@mui/material/styles'
+// React Imports
+import React from 'react'
 
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// MUI Imports
+import type { Theme } from '@mui/material/styles'
 
-const CheckedIcon = () => {
-  const theme = useTheme()
-
+const IconChecked = () => {
   return (
-    <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <svg width='1em' height='1em' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <path
-        fillRule='evenodd'
-        clipRule='evenodd'
-        fill={theme.palette.primary.main}
-        d='M12 3C16.9705 3 21 7.02944 21 12C21 16.9705 16.9705 21 12 21C7.02944 21 3 16.9705 3 12C3 7.02944 7.02944 3 12 3Z'
-      />
-      <path
-        fill={theme.palette.common.white}
-        d='M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z'
+        d='M5.5 12a6.5 6.5 0 1 1 13 0 6.5 6.5 0 0 1-13 0Z'
+        fill='var(--mui-palette-common-white)'
+        stroke='currentColor'
+        strokeWidth='5'
       />
     </svg>
   )
 }
 
-const Icon = () => {
-  const theme = useTheme()
-
+const UncheckedIcon = () => {
   return (
-    <svg
-      width='24'
-      height='24'
-      fill='none'
-      viewBox='0 0 24 24'
-      xmlns='http://www.w3.org/2000/svg'
-      stroke={theme.palette.text.disabled}
-    >
-      <path d='M12 3.5C16.6944 3.5 20.5 7.30558 20.5 12C20.5 16.6944 16.6944 20.5 12 20.5C7.30558 20.5 3.5 16.6944 3.5 12C3.5 7.30558 7.30558 3.5 12 3.5Z' />
+    <svg width='1em' height='1em' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <path d='M4 12a8 8 0 1 1 16 0 8 8 0 0 1-16 0Z' stroke='var(--mui-palette-text-disabled)' strokeWidth='2' />
     </svg>
   )
 }
 
-const Radio = () => {
-  return {
-    MuiRadio: {
-      defaultProps: {
-        icon: <Icon />,
-        checkedIcon: <CheckedIcon />
-      },
-
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          '&.Mui-checked': {
-            '& svg': {
-              fill: theme.palette.primary.main,
-              filter: `drop-shadow(0 2px 3px rgba(${
-                theme.palette.mode === 'light' ? theme.palette.customColors.main : '12, 16, 27'
-              }, 0.16))`
-            },
-            '&.Mui-disabled svg': {
-              opacity: 0.4,
-              filter: 'none',
-              '& path:first-of-type': {
-                fill: theme.palette.text.disabled
-              },
-              '& path:last-of-type': {
-                fill: theme.palette.common.white,
-                stroke: theme.palette.common.white,
-                opacity: theme.palette.mode === 'dark' ? 0.5 : 0.9
+const radio: Theme['components'] = {
+  MuiRadio: {
+    defaultProps: {
+      icon: <UncheckedIcon />,
+      checkedIcon: <IconChecked />
+    },
+    styleOverrides: {
+      root: ({ theme, ownerState }) => ({
+        ...(ownerState.size === 'small'
+          ? {
+              padding: theme.spacing(1),
+              '& svg': {
+                fontSize: '1.25rem'
               }
             }
+          : {
+              padding: theme.spacing(1.5),
+              '& svg': {
+                fontSize: '1.5rem'
+              }
+            }),
+        '&:not(.Mui-checked):not(.Mui-disabled) svg, &:not(.Mui-checked):not(.Mui-disabled) i': {
+          color: 'var(--mui-palette-text-disabled)'
+        },
+        '&.Mui-checked:not(.Mui-disabled) svg': {
+          filter: `drop-shadow(var(--mui-customShadows-${ownerState.color}-sm))`
+        },
+        '&.Mui-disabled': {
+          opacity: 0.45,
+          '&:not(.Mui-checked)': {
+            color: 'var(--mui-palette-text-secondary)'
           },
-          '&.Mui-disabled:not(.Mui-checked) svg': {
-            opacity: 0.5
+          '&.Mui-checked.MuiRadio-colorPrimary': {
+            color: 'var(--mui-palette-primary-main)'
           },
-          '&.Mui-checked.MuiRadio-colorSecondary svg path:first-of-type': {
-            fill: theme.palette.secondary.main
+          '&.Mui-checked.MuiRadio-colorSecondary': {
+            color: 'var(--mui-palette-secondary-main)'
           },
-          '&.Mui-checked.MuiRadio-colorSuccess svg path:first-of-type': {
-            fill: theme.palette.success.main
+          '&.Mui-checked.MuiRadio-colorError': {
+            color: 'var(--mui-palette-error-main)'
           },
-          '&.Mui-checked.MuiRadio-colorError svg path:first-of-type': {
-            fill: theme.palette.error.main
+          '&.Mui-checked.MuiRadio-colorWarning': {
+            color: 'var(--mui-palette-warning-main)'
           },
-          '&.Mui-checked.MuiRadio-colorWarning svg path:first-of-type': {
-            fill: theme.palette.warning.main
+          '&.Mui-checked.MuiRadio-colorInfo': {
+            color: 'var(--mui-palette-info-main)'
           },
-          '&.Mui-checked.MuiRadio-colorInfo svg path:first-of-type': {
-            fill: theme.palette.info.main
+          '&.Mui-checked.MuiRadio-colorSuccess': {
+            color: 'var(--mui-palette-success-main)'
           }
-        })
-      }
+        }
+      })
     }
   }
 }
 
-export default Radio
+export default radio

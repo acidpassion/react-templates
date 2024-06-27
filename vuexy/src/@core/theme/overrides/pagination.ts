@@ -1,58 +1,175 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// MUI Imports
+import type { Theme } from '@mui/material/styles'
 
-// ** Util Import
-import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
-
-const Pagination = () => {
-  return {
-    MuiPaginationItem: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          height: 38,
-          minWidth: 38,
-          '&:not(.MuiPaginationItem-rounded)': {
-            borderRadius: '50%'
-          },
-          '&:not(.MuiPaginationItem-outlined):not(.Mui-disabled)': {
-            transition: theme.transitions.create(['color', 'background-color', 'box-shadow'], {
-              duration: 250,
-              easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
-            }),
-            '&.Mui-selected': {
-              boxShadow: theme.shadows[2]
+const pagination: Theme['components'] = {
+  MuiPagination: {
+    styleOverrides: {
+      ul: {
+        rowGap: 6
+      }
+    },
+    variants: [
+      {
+        props: { variant: 'text', color: 'primary' },
+        style: {
+          '& .MuiPaginationItem-root.Mui-selected.Mui-disabled': {
+            backgroundColor: 'var(--mui-palette-primary-main)',
+            color: 'var(--mui-palette-primary-contrastText)'
+          }
+        }
+      },
+      {
+        props: { variant: 'text', color: 'secondary' },
+        style: {
+          '& .MuiPaginationItem-root.Mui-selected.Mui-disabled': {
+            backgroundColor: 'var(--mui-palette-secondary-main)',
+            color: 'var(--mui-palette-secondary-contrastText)'
+          }
+        }
+      },
+      {
+        props: { variant: 'outlined' },
+        style: {
+          '& .MuiPaginationItem-root': {
+            borderColor: 'var(--mui-palette-customColors-inputBorder)'
+          }
+        }
+      },
+      {
+        props: { variant: 'outlined', color: 'primary' },
+        style: {
+          '& .MuiPaginationItem-root.Mui-selected': {
+            color: 'var(--mui-palette-primary-main)',
+            backgroundColor: 'var(--mui-palette-primary-lightOpacity)',
+            borderColor: 'rgb(var(--mui-palette-primary-mainChannel))'
+          }
+        }
+      },
+      {
+        props: { variant: 'outlined', color: 'secondary' },
+        style: {
+          '& .MuiPaginationItem-root.Mui-selected': {
+            color: 'var(--mui-palette-secondary-main)',
+            backgroundColor: 'var(--mui-palette-secondary-lightOpacity)',
+            borderColor: 'rgb(var(--mui-palette-secondary-mainChannel))'
+          }
+        }
+      },
+      {
+        props: { variant: 'tonal' },
+        style: {
+          '& .MuiPaginationItem-root:not(.MuiPaginationItem-ellipsis)': {
+            backgroundColor: 'var(--mui-palette-action-selected)'
+          }
+        }
+      },
+      {
+        props: { variant: 'tonal', color: 'standard' },
+        style: {
+          '& .MuiPaginationItem-root.Mui-selected': {
+            backgroundColor: 'var(--mui-palette-primary-lightOpacity)',
+            color: 'var(--mui-palette-primary-main)',
+            '&:hover': {
+              backgroundColor: 'var(--mui-palette-primary-mainOpacity)'
             }
+          },
+          '& .MuiPaginationItem-root:hover:not(.Mui-selected):not(.MuiPaginationItem-ellipsis)': {
+            backgroundColor: 'var(--mui-palette-action-disabledBackground)'
+          },
+          '& .MuiPaginationItem-root.Mui-selected.Mui-disabled': {
+            backgroundColor: 'var(--mui-palette-primary-lightOpacity)',
+            color: 'var(--mui-palette-primary-main)'
           }
-        }),
-        sizeSmall: {
-          height: 28,
-          minWidth: 28,
-          borderRadius: 4
-        },
-        sizeLarge: {
-          height: 48,
-          minWidth: 48,
-          borderRadius: 8
-        },
-        ellipsis: {
-          height: 'auto'
-        },
-        outlined: ({ theme }: OwnerStateThemeType) => ({
-          borderColor: `rgba(${theme.palette.customColors.main}, 0.2)`
-        }),
-        outlinedPrimary: ({ theme }: OwnerStateThemeType) => ({
-          '&.Mui-selected': {
-            backgroundColor: hexToRGBA(theme.palette.primary.main, 0.16)
+        }
+      },
+      {
+        props: { variant: 'tonal', color: 'primary' },
+        style: {
+          '& .MuiPaginationItem-root.Mui-selected': {
+            backgroundColor: 'var(--mui-palette-primary-main)',
+            color: 'var(--mui-palette-primary-contrastText)',
+            '&:not(.Mui-disabled)': {
+              boxShadow: 'var(--mui-customShadows-primary-sm)'
+            },
+            '&:hover': {
+              backgroundColor: 'var(--mui-palette-primary-dark)'
+            }
+          },
+          '& .MuiPaginationItem-root:hover:not(.Mui-selected):not(.MuiPaginationItem-ellipsis)': {
+            backgroundColor: 'var(--mui-palette-primary-lightOpacity)',
+            color: 'var(--mui-palette-primary-main)'
+          },
+          '& .MuiPaginationItem-root.Mui-selected.Mui-disabled': {
+            backgroundColor: 'var(--mui-palette-primary-main)',
+            color: 'var(--mui-palette-primary-contrastText)'
           }
-        }),
-        outlinedSecondary: ({ theme }: OwnerStateThemeType) => ({
-          '&.Mui-selected': {
-            backgroundColor: hexToRGBA(theme.palette.secondary.main, 0.16)
+        }
+      },
+      {
+        props: { variant: 'tonal', color: 'secondary' },
+        style: {
+          '& .MuiPaginationItem-root.Mui-selected': {
+            backgroundColor: 'var(--mui-palette-secondary-main)',
+            color: 'var(--mui-palette-secondary-contrastText)',
+            '&:not(.Mui-disabled)': {
+              boxShadow: 'var(--mui-customShadows-secondary-sm)'
+            },
+            '&:hover': {
+              backgroundColor: 'var(--mui-palette-secondary-dark)'
+            }
+          },
+          '& .MuiPaginationItem-root:hover:not(.Mui-selected):not(.MuiPaginationItem-ellipsis)': {
+            backgroundColor: 'var(--mui-palette-secondary-mainOpacity)'
+          },
+          '& .MuiPaginationItem-root.Mui-selected.Mui-disabled': {
+            backgroundColor: 'var(--mui-palette-secondary-main)',
+            color: 'var(--mui-palette-secondary-contrastText)'
           }
-        })
+        }
+      }
+    ]
+  },
+  MuiPaginationItem: {
+    styleOverrides: {
+      root: ({ ownerState }) => ({
+        ...(ownerState.size === 'medium' && {
+          height: '2.375rem',
+          minWidth: '2.375rem'
+        }),
+        ...(ownerState.shape !== 'rounded' && {
+          borderRadius: '50px'
+        }),
+        '&.Mui-selected.Mui-disabled': {
+          color: 'var(--mui-palette-text-primary)',
+          opacity: 0.45
+        },
+        '&.Mui-disabled': {
+          opacity: 0.45
+        },
+        ...(ownerState.shape === 'rounded' &&
+          ownerState.size === 'small' && {
+            borderRadius: 'var(--mui-shape-customBorderRadius-sm)'
+          }),
+        ...(ownerState.shape === 'rounded' &&
+          ownerState.size === 'large' && {
+            borderRadius: 'var(--mui-shape-customBorderRadius-lg)'
+          })
+      }),
+      ellipsis: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      },
+      sizeSmall: {
+        height: '1.875rem',
+        minWidth: '1.875rem'
+      },
+      sizeLarge: {
+        height: '3rem',
+        minWidth: '3rem'
       }
     }
   }
 }
 
-export default Pagination
+export default pagination

@@ -1,25 +1,16 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// MUI Imports
+import type { Theme } from '@mui/material/styles'
 
-// ** Util Import
-import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
-
-const Backdrop = () => {
-  return {
-    MuiBackdrop: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          backgroundColor:
-            theme.palette.mode === 'light'
-              ? `rgba(${theme.palette.customColors.main}, 0.7)`
-              : hexToRGBA(theme.palette.background.default, 0.7)
-        }),
-        invisible: {
-          backgroundColor: 'transparent'
+const backdrop: Theme['components'] = {
+  MuiBackdrop: {
+    styleOverrides: {
+      root: {
+        '&:not(.MuiBackdrop-invisible)': {
+          backgroundColor: 'var(--backdrop-color)'
         }
       }
     }
   }
 }
 
-export default Backdrop
+export default backdrop

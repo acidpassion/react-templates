@@ -1,93 +1,96 @@
-// ** Next Import
+'use client'
+
+// React Imports
+import { useState } from 'react'
+
+// Next Imports
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 
-// ** MUI Imports
+// MUI Imports
 import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
-import Button from '@mui/material/Button'
-import Switch from '@mui/material/Switch'
-import MenuItem from '@mui/material/MenuItem'
-import { styled } from '@mui/material/styles'
-import InputLabel from '@mui/material/InputLabel'
-import Box, { BoxProps } from '@mui/material/Box'
 import CardContent from '@mui/material/CardContent'
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Switch from '@mui/material/Switch'
 
-// ** Custom Component Import
-import CustomTextField from 'src/@core/components/mui/text-field'
+// Type Imports
+import type { Locale } from '@configs/i18n'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Component Imports
+import SendInvoiceDrawer from '@views/apps/invoice/shared/SendInvoiceDrawer'
+import CustomTextField from '@core/components/mui/TextField'
 
-const OptionsWrapper = styled(Box)<BoxProps>(() => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between'
-}))
+// Util Imports
+import { getLocalizedUrl } from '@/utils/i18n'
 
 const AddActions = () => {
+  // States
+  const [sendDrawerOpen, setSendDrawerOpen] = useState(false)
+
+  // Hooks
+  const { lang: locale } = useParams()
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <CardContent>
-            <Button fullWidth variant='contained' sx={{ mb: 2, '& svg': { mr: 2 } }}>
-              <Icon fontSize='1.125rem' icon='tabler:send' />
+          <CardContent className='flex flex-col gap-4'>
+            <Button
+              fullWidth
+              variant='contained'
+              className='capitalize'
+              startIcon={<i className='tabler-send' />}
+              onClick={() => setSendDrawerOpen(true)}
+            >
               Send Invoice
             </Button>
             <Button
               fullWidth
-              sx={{ mb: 2 }}
-              variant='tonal'
               component={Link}
               color='secondary'
-              href='/apps/invoice/preview/4987'
+              variant='tonal'
+              className='capitalize'
+              href={getLocalizedUrl('/apps/invoice/preview/4987', locale as Locale)}
             >
               Preview
             </Button>
-            <Button fullWidth variant='tonal' color='secondary'>
+            <Button fullWidth color='secondary' variant='tonal' className='capitalize'>
               Save
             </Button>
           </CardContent>
         </Card>
+        <SendInvoiceDrawer open={sendDrawerOpen} handleClose={() => setSendDrawerOpen(false)} />
       </Grid>
+
       <Grid item xs={12}>
-        <CustomTextField
-          select
-          fullWidth
-          label='Accept payments via'
-          defaultValue='Internet Banking'
-          sx={{
-            mb: 4,
-            '& .MuiInputLabel-root': {
-              fontSize: theme => theme.typography.body1.fontSize,
-              lineHeight: theme => theme.typography.body1.lineHeight
-            }
-          }}
-        >
+        <CustomTextField select fullWidth defaultValue='Internet Banking' label='Accept payments via'>
           <MenuItem value='Internet Banking'>Internet Banking</MenuItem>
           <MenuItem value='Debit Card'>Debit Card</MenuItem>
           <MenuItem value='Credit Card'>Credit Card</MenuItem>
           <MenuItem value='Paypal'>Paypal</MenuItem>
           <MenuItem value='UPI Transfer'>UPI Transfer</MenuItem>
         </CustomTextField>
-        <OptionsWrapper>
-          <InputLabel sx={{ cursor: 'pointer', lineHeight: 1.467 }} htmlFor='invoice-add-payment-terms'>
+        <div className='flex items-center justify-between mbs-3'>
+          <InputLabel htmlFor='invoice-edit-payment-terms' className='cursor-pointer'>
             Payment Terms
           </InputLabel>
-          <Switch defaultChecked id='invoice-add-payment-terms' />
-        </OptionsWrapper>
-        <OptionsWrapper>
-          <InputLabel sx={{ cursor: 'pointer', lineHeight: 1.467 }} htmlFor='invoice-add-client-notes'>
+          <Switch defaultChecked id='invoice-edit-payment-terms' />
+        </div>
+        <div className='flex items-center justify-between'>
+          <InputLabel htmlFor='invoice-edit-client-notes' className='cursor-pointer'>
             Client Notes
           </InputLabel>
-          <Switch id='invoice-add-client-notes' />
-        </OptionsWrapper>
-        <OptionsWrapper>
-          <InputLabel sx={{ cursor: 'pointer', lineHeight: 1.467 }} htmlFor='invoice-add-payment-stub'>
+          <Switch id='invoice-edit-client-notes' />
+        </div>
+        <div className='flex items-center justify-between'>
+          <InputLabel htmlFor='invoice-edit-payment-stub' className='cursor-pointer'>
             Payment Stub
           </InputLabel>
-          <Switch id='invoice-add-payment-stub' />
-        </OptionsWrapper>
+          <Switch id='invoice-edit-payment-stub' />
+        </div>
       </Grid>
     </Grid>
   )

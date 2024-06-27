@@ -1,130 +1,84 @@
-// ** MUI Imports
-import { Theme } from '@mui/material/styles'
-import { ComponentsPropsList } from '@mui/material'
+// Type Imports
+import type { Skin } from '@core/types'
 
-// ** Type Import
-import { Settings } from 'src/@core/context/settingsContext'
+// Override Imports
+import Accordion from './accordion'
+import Alerts from './alert'
+import Autocomplete from './autocomplete'
+import avatar from './avatar'
+import backdrop from './backdrop'
+import badges from './badges'
+import breadcrumbs from './breadcrumbs'
+import button from './button'
+import buttonGroup from './button-group'
+import card from './card'
+import Checkbox from './checkbox'
+import chip from './chip'
+import dialog from './dialog'
+import drawer from './drawer'
+import fab from './fab'
+import formControlLabel from './form-control-label'
+import iconButton from './icon-button'
+import input from './input'
+import list from './list'
+import menu from './menu'
+import pagination from './pagination'
+import paper from './paper'
+import popover from './popover'
+import progress from './progress'
+import Radio from './radio'
+import Rating from './rating'
+import select from './select'
+import slider from './slider'
+import snackbar from './snackbar'
+import switchOverrides from './switch'
+import tablePagination from './table-pagination'
+import tabs from './tabs'
+import timeline from './timeline'
+import toggleButton from './toggle-button'
+import tooltip from './tooltip'
+import typography from './typography'
 
-export type OwnerStateThemeType = {
-  theme: Theme
-  ownerState: ComponentsPropsList[keyof ComponentsPropsList] & Record<string, unknown>
-}
-
-// ** Overrides Imports
-import MuiCard from './card'
-import MuiChip from './chip'
-import MuiLink from './link'
-import MuiList from './list'
-import MuiMenu from './menu'
-import MuiTabs from './tabs'
-import FabButton from './fab'
-import MuiBadge from './badge'
-import MuiInput from './input'
-import MuiPaper from './paper'
-import MuiTable from './table'
-import MuiRadio from './radio'
-import MuiAlerts from './alerts'
-import MuiButton from './button'
-import MuiDialog from './dialog'
-import MuiRating from './rating'
-import MuiDrawer from './drawer'
-import MuiSelect from './select'
-import MuiSlider from './slider'
-import MuiAvatar from './avatars'
-import MuiDivider from './divider'
-import MuiPopover from './popover'
-import MuiTooltip from './tooltip'
-import MuiCheckbox from './checkbox'
-import MuiBackdrop from './backdrop'
-import MuiDataGrid from './dataGrid'
-import MuiProgress from './progress'
-import MuiSnackbar from './snackbar'
-import MuiSwitches from './switches'
-import MuiTimeline from './timeline'
-import MuiAccordion from './accordion'
-import MuiPagination from './pagination'
-import MuiTypography from './typography'
-import MuiBreadcrumb from './breadcrumbs'
-import MuiIconButton from './icon-button'
-import MuiButtonGroup from './button-group'
-import MuiAutocomplete from './autocomplete'
-import MuiToggleButton from './toggleButton'
-
-const Overrides = (settings: Settings) => {
-  const { skin } = settings
-
-  const chip = MuiChip()
-  const list = MuiList()
-  const menu = MuiMenu()
-  const tabs = MuiTabs()
-  const radio = MuiRadio()
-  const input = MuiInput()
-  const tables = MuiTable()
-  const alerts = MuiAlerts()
-  const button = MuiButton()
-  const rating = MuiRating()
-  const slider = MuiSlider()
-  const cards = MuiCard(skin)
-  const avatars = MuiAvatar()
-  const divider = MuiDivider()
-  const tooltip = MuiTooltip()
-  const fabButton = FabButton()
-  const dialog = MuiDialog(skin)
-  const checkbox = MuiCheckbox()
-  const backdrop = MuiBackdrop()
-  const dataGrid = MuiDataGrid()
-  const progress = MuiProgress()
-  const drawer = MuiDrawer(skin)
-  const switches = MuiSwitches()
-  const timeline = MuiTimeline()
-  const popover = MuiPopover(skin)
-  const accordion = MuiAccordion()
-  const pagination = MuiPagination()
-  const snackbar = MuiSnackbar(skin)
-  const breadcrumb = MuiBreadcrumb()
-  const buttonGroup = MuiButtonGroup()
-  const autocomplete = MuiAutocomplete(skin)
-
+const overrides = (skin: Skin) => {
   return Object.assign(
-    chip,
-    list,
-    menu,
-    tabs,
-    cards,
-    radio,
-    input,
-    alerts,
-    button,
-    dialog,
-    rating,
-    slider,
-    drawer,
-    tables,
-    avatars,
-    divider,
-    MuiLink,
-    popover,
-    tooltip,
-    checkbox,
+    {},
+    Accordion(skin),
+    Alerts,
+    Autocomplete(skin),
+    avatar,
     backdrop,
-    MuiBadge,
-    dataGrid,
-    MuiPaper,
-    progress,
-    snackbar,
-    switches,
-    timeline,
-    accordion,
-    MuiSelect,
-    fabButton,
-    breadcrumb,
-    pagination,
+    badges,
+    breadcrumbs,
+    button,
     buttonGroup,
-    autocomplete,
-    MuiIconButton,
-    MuiTypography,
-    MuiToggleButton
+    card(skin),
+    Checkbox,
+    chip,
+    dialog(skin),
+    drawer(skin),
+    fab,
+    formControlLabel,
+    iconButton,
+    input,
+    list,
+    menu(skin),
+    pagination,
+    paper,
+    popover(skin),
+    progress,
+    Radio,
+    Rating,
+    select,
+    slider,
+    snackbar(skin),
+    switchOverrides,
+    tablePagination,
+    tabs,
+    timeline,
+    toggleButton,
+    tooltip,
+    typography
   )
 }
 
-export default Overrides
+export default overrides

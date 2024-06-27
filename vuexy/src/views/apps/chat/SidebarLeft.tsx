@@ -1,474 +1,290 @@
-// ** React Imports
-import { useState, useEffect, ChangeEvent, ReactNode } from 'react'
+// React Imports
+import { useState } from 'react'
+import type { ReactNode, RefObject } from 'react'
 
-// ** Next Import
-import { useRouter } from 'next/router'
-
-// ** MUI Imports
-import Box from '@mui/material/Box'
-import List from '@mui/material/List'
-import Chip from '@mui/material/Chip'
-import Badge from '@mui/material/Badge'
+// MUI Imports
+import Avatar from '@mui/material/Avatar'
 import Drawer from '@mui/material/Drawer'
-import MuiAvatar from '@mui/material/Avatar'
-import ListItem from '@mui/material/ListItem'
-import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import ListItemText from '@mui/material/ListItemText'
-import ListItemAvatar from '@mui/material/ListItemAvatar'
-import ListItemButton from '@mui/material/ListItemButton'
+import Autocomplete from '@mui/material/Autocomplete'
 import InputAdornment from '@mui/material/InputAdornment'
+import IconButton from '@mui/material/IconButton'
 
-// ** Third Party Components
+// Third-party Imports
+import classnames from 'classnames'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Type Imports
+import type { ThemeColor } from '@core/types'
+import type { ChatDataType, StatusObjType } from '@/types/apps/chatTypes'
+import type { AppDispatch } from '@/redux-store'
 
-// ** Util Import
-import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
+// Slice Imports
+import { addNewChat } from '@/redux-store/slices/chat'
 
-// ** Types
-import { ContactType, ChatSidebarLeftType, ChatsArrType } from 'src/types/apps/chatTypes'
+// Component Imports
+import CustomAvatar from '@core/components/mui/Avatar'
+import CustomChip from '@core/components/mui/Chip'
+import UserProfileLeft from './UserProfileLeft'
+import AvatarWithBadge from './AvatarWithBadge'
+import CustomTextField from '@core/components/mui/TextField'
 
-// ** Custom Components Import
-import CustomAvatar from 'src/@core/components/mui/avatar'
-import CustomTextField from 'src/@core/components/mui/text-field'
+// Util Imports
+import { getInitials } from '@/utils/getInitials'
+import { formatDateToMonthShort } from './utils'
 
-// ** Chat App Components Imports
-import UserProfileLeft from 'src/views/apps/chat/UserProfileLeft'
+export const statusObj: StatusObjType = {
+  busy: 'error',
+  away: 'warning',
+  online: 'success',
+  offline: 'secondary'
+}
 
-const ScrollWrapper = ({ children, hidden }: { children: ReactNode; hidden: boolean }) => {
-  if (hidden) {
-    return <Box sx={{ height: '100%', overflow: 'auto' }}>{children}</Box>
+type Props = {
+  chatStore: ChatDataType
+  getActiveUserData: (id: number) => void
+  dispatch: AppDispatch
+  backdropOpen: boolean
+  setBackdropOpen: (value: boolean) => void
+  sidebarOpen: boolean
+  setSidebarOpen: (value: boolean) => void
+  isBelowLgScreen: boolean
+  isBelowMdScreen: boolean
+  isBelowSmScreen: boolean
+  messageInputRef: RefObject<HTMLDivElement>
+}
+
+type RenderChatType = {
+  chatStore: ChatDataType
+  getActiveUserData: (id: number) => void
+  setSidebarOpen: (value: boolean) => void
+  backdropOpen: boolean
+  setBackdropOpen: (value: boolean) => void
+  isBelowMdScreen: boolean
+}
+
+// Render chat list
+const renderChat = (props: RenderChatType) => {
+  // Props
+  const { chatStore, getActiveUserData, setSidebarOpen, backdropOpen, setBackdropOpen, isBelowMdScreen } = props
+
+  return chatStore.chats.map(chat => {
+    const contact = chatStore.contacts.find(contact => contact.id === chat.userId) || chatStore.contacts[0]
+    const isChatActive = chatStore.activeUser?.id === contact.id
+
+    return (
+      <li
+        key={chat.id}
+        className={classnames('flex items-start gap-4 pli-3 plb-2 cursor-pointer rounded mbe-1', {
+          'bg-primary shadow-primarySm': isChatActive,
+          'text-[var(--mui-palette-primary-contrastText)]': isChatActive
+        })}
+        onClick={() => {
+          getActiveUserData(chat.userId)
+          isBelowMdScreen && setSidebarOpen(false)
+          isBelowMdScreen && backdropOpen && setBackdropOpen(false)
+        }}
+      >
+        <AvatarWithBadge
+          src={contact.avatar}
+          isChatActive={isChatActive}
+          alt={contact.fullName}
+          badgeColor={statusObj[contact.status]}
+          color={contact.avatarColor}
+        />
+        <div className='min-is-0 flex-auto'>
+          <Typography color='inherit'>{contact?.fullName}</Typography>
+          {chat.chat.length ? (
+            <Typography variant='body2' color={isChatActive ? 'inherit' : 'text.secondary'} className='truncate'>
+              {chat.chat[chat.chat.length - 1].message}
+            </Typography>
+          ) : (
+            <Typography variant='body2' color={isChatActive ? 'inherit' : 'text.secondary'} className='truncate'>
+              {contact.role}
+            </Typography>
+          )}
+        </div>
+        <div className='flex flex-col items-end justify-start'>
+          <Typography
+            variant='body2'
+            color='inherit'
+            className={classnames('truncate', {
+              'text-textDisabled': !isChatActive
+            })}
+          >
+            {chat.chat.length ? formatDateToMonthShort(chat.chat[chat.chat.length - 1].time) : null}
+          </Typography>
+          {chat.unseenMsgs > 0 ? <CustomChip round='true' label={chat.unseenMsgs} color='error' size='small' /> : null}
+        </div>
+      </li>
+    )
+  })
+}
+
+// Scroll wrapper for chat list
+const ScrollWrapper = ({ children, isBelowLgScreen }: { children: ReactNode; isBelowLgScreen: boolean }) => {
+  if (isBelowLgScreen) {
+    return <div className='bs-full overflow-y-auto overflow-x-hidden'>{children}</div>
   } else {
     return <PerfectScrollbar options={{ wheelPropagation: false }}>{children}</PerfectScrollbar>
   }
 }
 
-const SidebarLeft = (props: ChatSidebarLeftType) => {
-  // ** Props
+const SidebarLeft = (props: Props) => {
+  // Props
   const {
-    store,
-    hidden,
-    mdAbove,
+    chatStore,
+    getActiveUserData,
     dispatch,
-    statusObj,
-    userStatus,
-    selectChat,
-    getInitials,
-    sidebarWidth,
-    setUserStatus,
-    leftSidebarOpen,
-    removeSelectedChat,
-    userProfileLeftOpen,
-    formatDateToMonthShort,
-    handleLeftSidebarToggle,
-    handleUserProfileLeftSidebarToggle
+    backdropOpen,
+    setBackdropOpen,
+    sidebarOpen,
+    setSidebarOpen,
+    isBelowLgScreen,
+    isBelowMdScreen,
+    isBelowSmScreen,
+    messageInputRef
   } = props
 
-  // ** States
-  const [query, setQuery] = useState<string>('')
-  const [filteredChat, setFilteredChat] = useState<ChatsArrType[]>([])
-  const [filteredContacts, setFilteredContacts] = useState<ContactType[]>([])
-  const [active, setActive] = useState<null | { type: string; id: string | number }>(null)
+  // States
+  const [userSidebar, setUserSidebar] = useState(false)
+  const [searchValue, setSearchValue] = useState<string | null>()
 
-  // ** Hooks
-  const router = useRouter()
-
-  const handleChatClick = (type: 'chat' | 'contact', id: number) => {
-    dispatch(selectChat(id))
-    setActive({ type, id })
-    if (!mdAbove) {
-      handleLeftSidebarToggle()
-    }
-  }
-
-  useEffect(() => {
-    if (store && store.chats) {
-      if (active !== null) {
-        if (active.type === 'contact' && active.id === store.chats[0].id) {
-          setActive({ type: 'chat', id: active.id })
-        }
-      }
-    }
-  }, [store, active])
-
-  useEffect(() => {
-    router.events.on('routeChangeComplete', () => {
-      setActive(null)
-      dispatch(removeSelectedChat())
-    })
-
-    return () => {
-      setActive(null)
-      dispatch(removeSelectedChat())
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const hasActiveId = (id: number | string) => {
-    if (store.chats !== null) {
-      const arr = store.chats.filter(i => i.id === id)
-
-      return !!arr.length
-    }
-  }
-
-  const renderChats = () => {
-    if (store && store.chats && store.chats.length) {
-      if (query.length && !filteredChat.length) {
-        return (
-          <ListItem>
-            <Typography sx={{ color: 'text.secondary' }}>No Chats Found</Typography>
-          </ListItem>
-        )
-      } else {
-        const arrToMap = query.length && filteredChat.length ? filteredChat : store.chats
-
-        return arrToMap.map((chat: ChatsArrType, index: number) => {
-          const { lastMessage } = chat.chat
-          const activeCondition = active !== null && active.id === chat.id && active.type === 'chat'
-
-          return (
-            <ListItem key={index} disablePadding sx={{ '&:not(:last-child)': { mb: 1 } }}>
-              <ListItemButton
-                disableRipple
-                onClick={() => handleChatClick('chat', chat.id)}
-                sx={{
-                  py: 2,
-                  px: 3,
-                  width: '100%',
-                  borderRadius: 1,
-                  alignItems: 'flex-start',
-                  '&.MuiListItemButton-root:hover': { backgroundColor: 'action.hover' },
-                  ...(activeCondition && {
-                    background: theme =>
-                      `linear-gradient(72.47deg, ${theme.palette.primary.main} 22.16%, ${hexToRGBA(
-                        theme.palette.primary.main,
-                        0.7
-                      )} 76.47%) !important`
-                  })
-                }}
-              >
-                <ListItemAvatar sx={{ m: 0, alignSelf: 'center' }}>
-                  <Badge
-                    overlap='circular'
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'right'
-                    }}
-                    badgeContent={
-                      <Box
-                        component='span'
-                        sx={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: '50%',
-                          color: `${statusObj[chat.status]}.main`,
-                          backgroundColor: `${statusObj[chat.status]}.main`,
-                          boxShadow: theme =>
-                            `0 0 0 2px ${
-                              !activeCondition ? theme.palette.background.paper : theme.palette.common.white
-                            }`
-                        }}
-                      />
-                    }
-                  >
-                    {chat.avatar ? (
-                      <MuiAvatar
-                        src={chat.avatar}
-                        alt={chat.fullName}
-                        sx={{
-                          width: 38,
-                          height: 38,
-                          outline: theme => `2px solid ${activeCondition ? theme.palette.common.white : 'transparent'}`
-                        }}
-                      />
-                    ) : (
-                      <CustomAvatar
-                        color={chat.avatarColor}
-                        skin={activeCondition ? 'light-static' : 'light'}
-                        sx={{
-                          width: 38,
-                          height: 38,
-                          fontSize: theme => theme.typography.body1.fontSize,
-                          outline: theme => `2px solid ${activeCondition ? theme.palette.common.white : 'transparent'}`
-                        }}
-                      >
-                        {getInitials(chat.fullName)}
-                      </CustomAvatar>
-                    )}
-                  </Badge>
-                </ListItemAvatar>
-                <ListItemText
-                  sx={{
-                    my: 0,
-                    ml: 3,
-                    mr: 1.5,
-                    '& .MuiTypography-root': { ...(activeCondition && { color: 'common.white' }) }
-                  }}
-                  primary={
-                    <Typography noWrap variant='h6'>
-                      {chat.fullName}
-                    </Typography>
-                  }
-                  secondary={
-                    <Typography noWrap sx={{ ...(!activeCondition && { color: 'text.secondary' }) }}>
-                      {lastMessage ? lastMessage.message : null}
-                    </Typography>
-                  }
-                />
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-start'
-                  }}
-                >
-                  <Typography
-                    variant='body2'
-                    sx={{ whiteSpace: 'nowrap', color: activeCondition ? 'common.white' : 'text.disabled' }}
-                  >
-                    <>{lastMessage ? formatDateToMonthShort(lastMessage.time as string, true) : new Date()}</>
-                  </Typography>
-                  {chat.chat.unseenMsgs && chat.chat.unseenMsgs > 0 ? (
-                    <Chip
-                      color='error'
-                      label={chat.chat.unseenMsgs}
-                      sx={{
-                        mt: 0.5,
-                        height: 18,
-                        fontWeight: 600,
-                        fontSize: '0.75rem',
-                        '& .MuiChip-label': { pt: 0.25, px: 1.655 }
-                      }}
-                    />
-                  ) : null}
-                </Box>
-              </ListItemButton>
-            </ListItem>
-          )
-        })
-      }
-    }
-  }
-
-  const renderContacts = () => {
-    if (store && store.chats && store.chats.length) {
-      if (query.length && !filteredContacts.length) {
-        return (
-          <ListItem>
-            <Typography sx={{ color: 'text.secondary' }}>No Contacts Found</Typography>
-          </ListItem>
-        )
-      } else {
-        const arrToMap = query.length && filteredContacts.length ? filteredContacts : store.contacts
-
-        return arrToMap !== null
-          ? arrToMap.map((contact: ContactType, index: number) => {
-              const activeCondition =
-                active !== null && active.id === contact.id && active.type === 'contact' && !hasActiveId(contact.id)
-
-              return (
-                <ListItem key={index} disablePadding sx={{ '&:not(:last-child)': { mb: 1 } }}>
-                  <ListItemButton
-                    disableRipple
-                    onClick={() => handleChatClick(hasActiveId(contact.id) ? 'chat' : 'contact', contact.id)}
-                    sx={{
-                      py: 2,
-                      px: 3,
-                      width: '100%',
-                      borderRadius: 1,
-                      '&.MuiListItemButton-root:hover': { backgroundColor: 'action.hover' },
-                      ...(activeCondition && {
-                        background: theme =>
-                          `linear-gradient(72.47deg, ${theme.palette.primary.main} 22.16%, ${hexToRGBA(
-                            theme.palette.primary.main,
-                            0.7
-                          )} 76.47%) !important`
-                      })
-                    }}
-                  >
-                    <ListItemAvatar sx={{ m: 0 }}>
-                      {contact.avatar ? (
-                        <MuiAvatar
-                          alt={contact.fullName}
-                          src={contact.avatar}
-                          sx={{
-                            width: 38,
-                            height: 38,
-                            outline: theme =>
-                              `2px solid ${activeCondition ? theme.palette.common.white : 'transparent'}`
-                          }}
-                        />
-                      ) : (
-                        <CustomAvatar
-                          color={contact.avatarColor}
-                          skin={activeCondition ? 'light-static' : 'light'}
-                          sx={{
-                            width: 38,
-                            height: 38,
-                            fontSize: theme => theme.typography.body1.fontSize,
-                            outline: theme =>
-                              `2px solid ${activeCondition ? theme.palette.common.white : 'transparent'}`
-                          }}
-                        >
-                          {getInitials(contact.fullName)}
-                        </CustomAvatar>
-                      )}
-                    </ListItemAvatar>
-                    <ListItemText
-                      sx={{
-                        my: 0,
-                        ml: 3,
-                        ...(activeCondition && { '& .MuiTypography-root': { color: 'common.white' } })
-                      }}
-                      primary={<Typography variant='h6'>{contact.fullName}</Typography>}
-                      secondary={
-                        <Typography noWrap sx={{ ...(!activeCondition && { color: 'text.secondary' }) }}>
-                          {contact.about}
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </ListItem>
-              )
-            })
-          : null
-      }
-    }
-  }
-
-  const handleFilter = (e: ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value)
-    if (store.chats !== null && store.contacts !== null) {
-      const searchFilterFunction = (contact: ChatsArrType | ContactType) =>
-        contact.fullName.toLowerCase().includes(e.target.value.toLowerCase())
-      const filteredChatsArr = store.chats.filter(searchFilterFunction)
-      const filteredContactsArr = store.contacts.filter(searchFilterFunction)
-      setFilteredChat(filteredChatsArr)
-      setFilteredContacts(filteredContactsArr)
-    }
+  const handleChange = (event: any, newValue: string | null) => {
+    setSearchValue(newValue)
+    dispatch(addNewChat({ id: chatStore.contacts.find(contact => contact.fullName === newValue)?.id }))
+    getActiveUserData(
+      chatStore.contacts.find(contact => contact.fullName === newValue)?.id || (chatStore.activeUser?.id as number)
+    )
+    isBelowMdScreen && setSidebarOpen(false)
+    setBackdropOpen(false)
+    setSearchValue(null)
+    messageInputRef.current?.focus()
   }
 
   return (
-    <div>
+    <>
       <Drawer
-        open={leftSidebarOpen}
-        onClose={handleLeftSidebarToggle}
-        variant={mdAbove ? 'permanent' : 'temporary'}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        className='bs-full'
+        variant={!isBelowMdScreen ? 'permanent' : 'persistent'}
         ModalProps={{
           disablePortal: true,
           keepMounted: true // Better open performance on mobile.
         }}
         sx={{
-          zIndex: 7,
-          height: '100%',
-          display: 'block',
-          position: mdAbove ? 'static' : 'absolute',
+          zIndex: isBelowMdScreen && sidebarOpen ? 11 : 10,
+          position: !isBelowMdScreen ? 'static' : 'absolute',
+          ...(isBelowSmScreen && sidebarOpen && { width: '100%' }),
           '& .MuiDrawer-paper': {
+            overflow: 'hidden',
             boxShadow: 'none',
-            width: sidebarWidth,
-            position: mdAbove ? 'static' : 'absolute',
-            borderTopLeftRadius: theme => theme.shape.borderRadius,
-            borderBottomLeftRadius: theme => theme.shape.borderRadius
-          },
-          '& > .MuiBackdrop-root': {
-            borderRadius: 1,
-            position: 'absolute',
-            zIndex: theme => theme.zIndex.drawer - 1
+            width: isBelowSmScreen ? '100%' : '370px',
+            position: !isBelowMdScreen ? 'static' : 'absolute'
           }
         }}
       >
-        <Box
-          sx={{
-            py: 3,
-            px: 5,
-            display: 'flex',
-            alignItems: 'center',
-            borderBottom: theme => `1px solid ${theme.palette.divider}`
-          }}
-        >
-          {store && store.userProfile ? (
-            <Badge
-              overlap='circular'
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right'
-              }}
-              sx={{ mr: 3 }}
-              onClick={handleUserProfileLeftSidebarToggle}
-              badgeContent={
-                <Box
-                  component='span'
-                  sx={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    color: `${statusObj[userStatus]}.main`,
-                    backgroundColor: `${statusObj[userStatus]}.main`,
-                    boxShadow: theme => `0 0 0 2px ${theme.palette.background.paper}`
-                  }}
-                />
-              }
-            >
-              <MuiAvatar
-                src={store.userProfile.avatar}
-                alt={store.userProfile.fullName}
-                sx={{ width: '2.375rem', height: '2.375rem', cursor: 'pointer' }}
-              />
-            </Badge>
-          ) : null}
-          <CustomTextField
-            fullWidth
-            value={query}
-            onChange={handleFilter}
-            placeholder='Search for contact...'
-            sx={{ '& .MuiInputBase-root': { borderRadius: '30px !important' } }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start' sx={{ color: 'text.secondary' }}>
-                  <Icon fontSize='1.25rem' icon='tabler:search' />
-                </InputAdornment>
-              )
+        <div className='flex items-center plb-[18px] pli-6 gap-4 border-be'>
+          <AvatarWithBadge
+            alt={chatStore.profileUser.fullName}
+            src={chatStore.profileUser.avatar}
+            badgeColor={statusObj[chatStore.profileUser.status]}
+            onClick={() => {
+              setUserSidebar(true)
             }}
           />
-          {!mdAbove ? (
-            <IconButton sx={{ p: 1, ml: 1 }} onClick={handleLeftSidebarToggle}>
-              <Icon icon='tabler:x' />
-            </IconButton>
-          ) : null}
-        </Box>
+          <div className='flex is-full items-center flex-auto sm:gap-x-3'>
+            <Autocomplete
+              fullWidth
+              size='small'
+              id='select-contact'
+              options={chatStore.contacts.map(contact => contact.fullName) || []}
+              value={searchValue || null}
+              onChange={handleChange}
+              renderInput={params => (
+                <CustomTextField
+                  {...params}
+                  variant='outlined'
+                  placeholder='Search Contacts'
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position='start'>
+                        <i className='tabler-search' />
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              )}
+              renderOption={(props, option) => {
+                const contact = chatStore.contacts.find(contact => contact.fullName === option)
 
-        <Box sx={{ height: `calc(100% - 4.0625rem)` }}>
-          <ScrollWrapper hidden={hidden}>
-            <Box sx={{ p: theme => theme.spacing(5, 3, 3) }}>
-              <Typography variant='h5' sx={{ ml: 3, mb: 3.5, color: 'primary.main' }}>
-                Chats
-              </Typography>
-              <List sx={{ mb: 5, p: 0 }}>{renderChats()}</List>
-              <Typography variant='h5' sx={{ ml: 3, mb: 3.5, color: 'primary.main' }}>
-                Contacts
-              </Typography>
-              <List sx={{ p: 0 }}>{renderContacts()}</List>
-            </Box>
-          </ScrollWrapper>
-        </Box>
+                return (
+                  <li
+                    {...props}
+                    key={option.toLowerCase().replace(/\s+/g, '-')}
+                    className={classnames('gap-3 max-sm:pli-3', props.className)}
+                  >
+                    {contact ? (
+                      contact.avatar ? (
+                        <Avatar
+                          alt={contact.fullName}
+                          src={contact.avatar}
+                          key={option.toLowerCase().replace(/\s+/g, '-')}
+                        />
+                      ) : (
+                        <CustomAvatar
+                          color={contact.avatarColor as ThemeColor}
+                          skin='light'
+                          key={option.toLowerCase().replace(/\s+/g, '-')}
+                        >
+                          {getInitials(contact.fullName)}
+                        </CustomAvatar>
+                      )
+                    ) : null}
+                    {option}
+                  </li>
+                )
+              }}
+            />
+            {isBelowMdScreen ? (
+              <IconButton
+                className='mis-2'
+                size='small'
+                onClick={() => {
+                  setSidebarOpen(false)
+                  setBackdropOpen(false)
+                }}
+              >
+                <i className='tabler-x text-2xl' />
+              </IconButton>
+            ) : null}
+          </div>
+        </div>
+        <ScrollWrapper isBelowLgScreen={isBelowLgScreen}>
+          <ul className='p-3 pbs-4'>
+            {renderChat({
+              chatStore,
+              getActiveUserData,
+              backdropOpen,
+              setSidebarOpen,
+              isBelowMdScreen,
+              setBackdropOpen
+            })}
+          </ul>
+        </ScrollWrapper>
       </Drawer>
 
       <UserProfileLeft
-        store={store}
-        hidden={hidden}
-        statusObj={statusObj}
-        userStatus={userStatus}
-        sidebarWidth={sidebarWidth}
-        setUserStatus={setUserStatus}
-        userProfileLeftOpen={userProfileLeftOpen}
-        handleUserProfileLeftSidebarToggle={handleUserProfileLeftSidebarToggle}
+        userSidebar={userSidebar}
+        setUserSidebar={setUserSidebar}
+        profileUserData={chatStore.profileUser}
+        dispatch={dispatch}
+        isBelowLgScreen={isBelowLgScreen}
+        isBelowSmScreen={isBelowSmScreen}
       />
-    </div>
+    </>
   )
 }
 

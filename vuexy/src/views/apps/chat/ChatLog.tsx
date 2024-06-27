@@ -1,245 +1,229 @@
-// ** React Imports
-import { useRef, useEffect, Ref, ReactNode } from 'react'
+// React Imports
+import { useRef, useEffect } from 'react'
+import type { MutableRefObject, ReactNode } from 'react'
 
-// ** MUI Imports
-import Box from '@mui/material/Box'
-import { styled } from '@mui/material/styles'
+// MUI Imports
 import Typography from '@mui/material/Typography'
+import Avatar from '@mui/material/Avatar'
+import CardContent from '@mui/material/CardContent'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Third-party Imports
+import classnames from 'classnames'
+import PerfectScrollbar from 'react-perfect-scrollbar'
 
-// ** Third Party Components
-import PerfectScrollbarComponent, { ScrollBarProps } from 'react-perfect-scrollbar'
+// Type Imports
+import type { ChatType, ChatDataType, UserChatType, ProfileUserType } from '@/types/apps/chatTypes'
 
-// ** Custom Components Imports
-import CustomAvatar from 'src/@core/components/mui/avatar'
+// Component Imports
+import CustomAvatar from '@core/components/mui/Avatar'
 
-// ** Utils Imports
-import { getInitials } from 'src/@core/utils/get-initials'
+// Util Imports
+import { getInitials } from '@/utils/getInitials'
 
-// ** Types Imports
-import {
-  ChatLogType,
-  MessageType,
-  MsgFeedbackType,
-  ChatLogChatType,
-  MessageGroupType,
-  FormattedChatsType
-} from 'src/types/apps/chatTypes'
+type MsgGroupType = {
+  senderId: number
+  messages: Omit<UserChatType, 'senderId'>[]
+}
 
-const PerfectScrollbar = styled(PerfectScrollbarComponent)<ScrollBarProps & { ref: Ref<unknown> }>(({ theme }) => ({
-  padding: theme.spacing(5)
-}))
+type ChatLogProps = {
+  chatStore: ChatDataType
+  isBelowLgScreen: boolean
+  isBelowMdScreen: boolean
+  isBelowSmScreen: boolean
+}
 
-const ChatLog = (props: ChatLogType) => {
-  // ** Props
-  const { data, hidden } = props
+// Formats the chat data into a structured format for display.
+const formatedChatData = (chats: ChatType['chat'], profileUser: ProfileUserType) => {
+  const formattedChatData: MsgGroupType[] = []
+  let chatMessageSenderId = chats[0] ? chats[0].senderId : profileUser.id
+  let msgGroup: MsgGroupType = {
+    senderId: chatMessageSenderId,
+    messages: []
+  }
 
-  // ** Ref
-  const chatArea = useRef(null)
+  chats.forEach((chat, index) => {
+    if (chatMessageSenderId === chat.senderId) {
+      msgGroup.messages.push({
+        time: chat.time,
+        message: chat.message,
+        msgStatus: chat.msgStatus
+      })
+    } else {
+      chatMessageSenderId = chat.senderId
 
-  // ** Scroll to chat bottom
+      formattedChatData.push(msgGroup)
+      msgGroup = {
+        senderId: chat.senderId,
+        messages: [
+          {
+            time: chat.time,
+            message: chat.message,
+            msgStatus: chat.msgStatus
+          }
+        ]
+      }
+    }
+
+    if (index === chats.length - 1) formattedChatData.push(msgGroup)
+  })
+
+  return formattedChatData
+}
+
+// Wrapper for the chat log to handle scrolling
+const ScrollWrapper = ({
+  children,
+  isBelowLgScreen,
+  scrollRef,
+  className
+}: {
+  children: ReactNode
+  isBelowLgScreen: boolean
+  scrollRef: MutableRefObject<null>
+  className?: string
+}) => {
+  if (isBelowLgScreen) {
+    return (
+      <div ref={scrollRef} className={classnames('bs-full overflow-y-auto overflow-x-hidden', className)}>
+        {children}
+      </div>
+    )
+  } else {
+    return (
+      <PerfectScrollbar ref={scrollRef} options={{ wheelPropagation: false }} className={className}>
+        {children}
+      </PerfectScrollbar>
+    )
+  }
+}
+
+const ChatLog = ({ chatStore, isBelowLgScreen, isBelowMdScreen, isBelowSmScreen }: ChatLogProps) => {
+  // Props
+  const { profileUser, contacts } = chatStore
+
+  // Vars
+  const activeUserChat = chatStore.chats.find((chat: ChatType) => chat.userId === chatStore.activeUser?.id)
+
+  // Refs
+  const scrollRef = useRef(null)
+
+  // Function to scroll to bottom when new message is sent
   const scrollToBottom = () => {
-    if (chatArea.current) {
-      if (hidden) {
+    if (scrollRef.current) {
+      if (isBelowLgScreen) {
         // @ts-ignore
-        chatArea.current.scrollTop = chatArea.current.scrollHeight
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight
       } else {
         // @ts-ignore
-        chatArea.current._container.scrollTop = chatArea.current._container.scrollHeight
+        scrollRef.current._container.scrollTop = scrollRef.current._container.scrollHeight
       }
     }
   }
 
-  // ** Formats chat data based on sender
-  const formattedChatData = () => {
-    let chatLog: MessageType[] | [] = []
-    if (data.chat) {
-      chatLog = data.chat.chat
-    }
-
-    const formattedChatLog: FormattedChatsType[] = []
-    let chatMessageSenderId = chatLog[0] ? chatLog[0].senderId : 11
-    let msgGroup: MessageGroupType = {
-      senderId: chatMessageSenderId,
-      messages: []
-    }
-    chatLog.forEach((msg: MessageType, index: number) => {
-      if (chatMessageSenderId === msg.senderId) {
-        msgGroup.messages.push({
-          time: msg.time,
-          msg: msg.message,
-          feedback: msg.feedback
-        })
-      } else {
-        chatMessageSenderId = msg.senderId
-
-        formattedChatLog.push(msgGroup)
-        msgGroup = {
-          senderId: msg.senderId,
-          messages: [
-            {
-              time: msg.time,
-              msg: msg.message,
-              feedback: msg.feedback
-            }
-          ]
-        }
-      }
-
-      if (index === chatLog.length - 1) formattedChatLog.push(msgGroup)
-    })
-
-    return formattedChatLog
-  }
-
-  const renderMsgFeedback = (isSender: boolean, feedback: MsgFeedbackType) => {
-    if (isSender) {
-      if (feedback.isSent && !feedback.isDelivered) {
-        return (
-          <Box component='span' sx={{ display: 'flex', '& svg': { mr: 1.5, color: 'text.secondary' } }}>
-            <Icon icon='tabler:check' fontSize='1.125rem' />
-          </Box>
-        )
-      } else if (feedback.isSent && feedback.isDelivered) {
-        return (
-          <Box
-            component='span'
-            sx={{
-              display: 'flex',
-              '& svg': { mr: 1.5, color: feedback.isSeen ? 'success.main' : 'text.secondary' }
-            }}
-          >
-            <Icon icon='tabler:checks' fontSize='1.125rem' />
-          </Box>
-        )
-      } else {
-        return null
-      }
-    }
-  }
-
+  // Scroll to bottom on new message
   useEffect(() => {
-    if (data && data.chat && data.chat.chat.length) {
+    if (activeUserChat && activeUserChat.chat && activeUserChat.chat.length) {
       scrollToBottom()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data])
-
-  // ** Renders user chat
-  const renderChats = () => {
-    return formattedChatData().map((item: FormattedChatsType, index: number) => {
-      const isSender = item.senderId === data.userContact.id
-
-      return (
-        <Box
-          key={index}
-          sx={{
-            display: 'flex',
-            flexDirection: !isSender ? 'row' : 'row-reverse',
-            mb: index !== formattedChatData().length - 1 ? 4 : undefined
-          }}
-        >
-          <div>
-            <CustomAvatar
-              skin='light'
-              color={data.contact.avatarColor ? data.contact.avatarColor : undefined}
-              sx={{
-                width: 32,
-                height: 32,
-                ml: isSender ? 3 : undefined,
-                mr: !isSender ? 3 : undefined,
-                fontSize: theme => theme.typography.body1.fontSize
-              }}
-              {...(data.contact.avatar && !isSender
-                ? {
-                    src: data.contact.avatar,
-                    alt: data.contact.fullName
-                  }
-                : {})}
-              {...(isSender
-                ? {
-                    src: data.userContact.avatar,
-                    alt: data.userContact.fullName
-                  }
-                : {})}
-            >
-              {data.contact.avatarColor ? getInitials(data.contact.fullName) : null}
-            </CustomAvatar>
-          </div>
-
-          <Box className='chat-body' sx={{ maxWidth: ['calc(100% - 5.75rem)', '75%', '65%'] }}>
-            {item.messages.map((chat: ChatLogChatType, index: number, { length }: { length: number }) => {
-              const time = new Date(chat.time)
-
-              return (
-                <Box key={index} sx={{ '&:not(:last-of-type)': { mb: 3 } }}>
-                  <div>
-                    <Typography
-                      sx={{
-                        boxShadow: 1,
-                        borderRadius: 1,
-                        maxWidth: '100%',
-                        width: 'fit-content',
-                        wordWrap: 'break-word',
-                        p: theme => theme.spacing(2.25, 4),
-                        ml: isSender ? 'auto' : undefined,
-                        borderTopLeftRadius: !isSender ? 0 : undefined,
-                        borderTopRightRadius: isSender ? 0 : undefined,
-                        color: isSender ? 'common.white' : 'text.primary',
-                        backgroundColor: isSender ? 'primary.main' : 'background.paper'
-                      }}
-                    >
-                      {chat.msg}
-                    </Typography>
-                  </div>
-                  {index + 1 === length ? (
-                    <Box
-                      sx={{
-                        mt: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: isSender ? 'flex-end' : 'flex-start'
-                      }}
-                    >
-                      {renderMsgFeedback(isSender, chat.feedback)}
-                      <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                        {time
-                          ? new Date(time).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
-                          : null}
-                      </Typography>
-                    </Box>
-                  ) : null}
-                </Box>
-              )
-            })}
-          </Box>
-        </Box>
-      )
-    })
-  }
-
-  const ScrollWrapper = ({ children }: { children: ReactNode }) => {
-    if (hidden) {
-      return (
-        <Box ref={chatArea} sx={{ p: 5, height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>
-          {children}
-        </Box>
-      )
-    } else {
-      return (
-        <PerfectScrollbar ref={chatArea} options={{ wheelPropagation: false }}>
-          {children}
-        </PerfectScrollbar>
-      )
-    }
-  }
+  }, [chatStore])
 
   return (
-    <Box sx={{ height: 'calc(100% - 8.875rem)' }}>
-      <ScrollWrapper>{renderChats()}</ScrollWrapper>
-    </Box>
+    <ScrollWrapper isBelowLgScreen={isBelowLgScreen} scrollRef={scrollRef}>
+      <CardContent className='p-0'>
+        {activeUserChat &&
+          formatedChatData(activeUserChat.chat, profileUser).map((msgGroup, index) => {
+            const isSender = msgGroup.senderId === profileUser.id
+
+            return (
+              <div key={index} className={classnames('flex gap-4 p-6', { 'flex-row-reverse': isSender })}>
+                {!isSender ? (
+                  contacts.find(contact => contact.id === activeUserChat?.userId)?.avatar ? (
+                    <Avatar
+                      alt={contacts.find(contact => contact.id === activeUserChat?.userId)?.fullName}
+                      src={contacts.find(contact => contact.id === activeUserChat?.userId)?.avatar}
+                      className='is-8 bs-8'
+                    />
+                  ) : (
+                    <CustomAvatar
+                      color={contacts.find(contact => contact.id === activeUserChat?.userId)?.avatarColor}
+                      skin='light'
+                      size={32}
+                    >
+                      {getInitials(contacts.find(contact => contact.id === activeUserChat?.userId)?.fullName as string)}
+                    </CustomAvatar>
+                  )
+                ) : profileUser.avatar ? (
+                  <Avatar alt={profileUser.fullName} src={profileUser.avatar} className='is-8 bs-8' />
+                ) : (
+                  <CustomAvatar alt={profileUser.fullName} src={profileUser.avatar} size={32} />
+                )}
+                <div
+                  className={classnames('flex flex-col gap-2', {
+                    'items-end': isSender,
+                    'max-is-[65%]': !isBelowMdScreen,
+                    'max-is-[75%]': isBelowMdScreen && !isBelowSmScreen,
+                    'max-is-[calc(100%-5.75rem)]': isBelowSmScreen
+                  })}
+                >
+                  {msgGroup.messages.map((msg, index) => (
+                    <Typography
+                      key={index}
+                      className={classnames('whitespace-pre-wrap pli-4 plb-2 shadow-xs', {
+                        'bg-backgroundPaper rounded-e rounded-b': !isSender,
+                        'bg-primary text-[var(--mui-palette-primary-contrastText)] rounded-s rounded-b': isSender
+                      })}
+                      style={{ wordBreak: 'break-word' }}
+                    >
+                      {msg.message}
+                    </Typography>
+                  ))}
+                  {msgGroup.messages.map(
+                    (msg, index) =>
+                      index === msgGroup.messages.length - 1 &&
+                      (isSender ? (
+                        <div key={index} className='flex items-center gap-2'>
+                          {msg.msgStatus?.isSeen ? (
+                            <i className='tabler-checks text-success text-base' />
+                          ) : msg.msgStatus?.isDelivered ? (
+                            <i className='tabler-checks text-base' />
+                          ) : (
+                            msg.msgStatus?.isSent && <i className='tabler-check text-base' />
+                          )}
+                          {index === activeUserChat.chat.length - 1 ? (
+                            <Typography variant='caption'>
+                              {new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
+                            </Typography>
+                          ) : msg.time ? (
+                            <Typography variant='caption'>
+                              {new Date(msg.time).toLocaleString('en-US', {
+                                hour: 'numeric',
+                                minute: 'numeric',
+                                hour12: true
+                              })}
+                            </Typography>
+                          ) : null}
+                        </div>
+                      ) : index === activeUserChat.chat.length - 1 ? (
+                        <Typography key={index} variant='caption'>
+                          {new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
+                        </Typography>
+                      ) : msg.time ? (
+                        <Typography key={index} variant='caption'>
+                          {new Date(msg.time).toLocaleString('en-US', {
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hour12: true
+                          })}
+                        </Typography>
+                      ) : null)
+                  )}
+                </div>
+              </div>
+            )
+          })}
+      </CardContent>
+    </ScrollWrapper>
   )
 }
 
