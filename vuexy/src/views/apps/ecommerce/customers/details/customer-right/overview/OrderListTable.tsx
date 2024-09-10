@@ -240,7 +240,7 @@ const OrderListTable = ({ orderData }: { orderData?: OrderType[] }) => {
           value={globalFilter ?? ''}
           onChange={value => setGlobalFilter(String(value))}
           placeholder='Search Order'
-          className='is-full sm:is-auto'
+          className='max-sm:is-full'
         />
       </CardContent>
       <div className='overflow-x-auto'>

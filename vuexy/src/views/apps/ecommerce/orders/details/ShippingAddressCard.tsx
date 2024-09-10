@@ -20,7 +20,7 @@ const data = {
   address1: 'Latheronwheel',
   address2: 'KW5 8NW, London',
   landmark: 'Near Water Plant',
-  city: 'LondonUK',
+  city: 'London',
   state: 'Capholim',
   zipCode: '403114',
   taxId: 'TAX-875623',

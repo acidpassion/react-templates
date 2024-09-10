@@ -11,6 +11,7 @@ const navigationCustomStyles = (verticalNavOptions: VerticalNavState, theme: The
   // Vars
   const { collapsedWidth, isCollapsed, isHovered, transitionDuration } = verticalNavOptions
 
+  const collapsedHovered = isCollapsed && isHovered
   const collapsedNotHovered = isCollapsed && !isHovered
 
   return {
@@ -39,6 +40,9 @@ const navigationCustomStyles = (verticalNavOptions: VerticalNavState, theme: The
       boxShadow: 'var(--mui-customShadows-sm)',
       '[data-skin="bordered"] &': {
         boxShadow: 'none',
+        ...(collapsedHovered && {
+          boxShadow: 'var(--mui-customShadows-sm)'
+        }),
         borderColor: 'var(--mui-palette-divider)'
       }
     },

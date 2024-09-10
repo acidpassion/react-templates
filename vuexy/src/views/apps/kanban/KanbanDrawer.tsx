@@ -162,8 +162,8 @@ const KanbanDrawer = (props: KanbanDrawerProps) => {
             <AppReactDatepicker
               selected={date ? new Date(date) : new Date()}
               id='basic-input'
-              onChange={(date: Date) => {
-                setDate(date)
+              onChange={(date: Date | null) => {
+                date !== null && setDate(date)
               }}
               placeholderText='Click to select a date'
               dateFormat={'d MMMM, yyyy'}

@@ -54,7 +54,7 @@ const AppCalendar = () => {
         handleLeftSidebarToggle={handleLeftSidebarToggle}
         handleAddEventSidebarToggle={handleAddEventSidebarToggle}
       />
-      <div className='p-6 pbe-0 flex-grow overflow-visible bg-backgroundPaper rounded-e-[6px] rounded-s-[6px] md:rounded-s-[0px]'>
+      <div className='p-6 pbe-0 flex-grow overflow-visible bg-backgroundPaper rounded'>
         <Calendar
           dispatch={dispatch}
           calendarApi={calendarApi}

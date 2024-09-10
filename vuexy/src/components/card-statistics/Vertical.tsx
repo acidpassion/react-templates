@@ -15,25 +15,14 @@ import CustomAvatar from '@core/components/mui/Avatar'
 
 const CardStatsVertical = (props: CardStatsVerticalProps) => {
   // Props
-  const {
-    stats,
-    title,
-    subtitle,
-    avatarIcon,
-    avatarColor,
-    avatarSize,
-    avatarIconSize,
-    avatarSkin,
-    chipText,
-    chipColor,
-    chipVariant
-  } = props
+  const { stats, title, subtitle, avatarIcon, avatarColor, avatarSize, avatarSkin, chipText, chipColor, chipVariant } =
+    props
 
   return (
     <Card>
       <CardContent className='flex flex-col gap-y-3 items-start'>
         <CustomAvatar variant='rounded' skin={avatarSkin} size={avatarSize} color={avatarColor}>
-          <i className={classnames(avatarIcon, `text-[${avatarIconSize}px]`)} />
+          <i className={classnames(avatarIcon, 'text-[28px]')} />
         </CustomAvatar>
         <div className='flex flex-col gap-y-1'>
           <Typography variant='h5'>{title}</Typography>

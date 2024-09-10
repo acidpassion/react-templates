@@ -14,7 +14,7 @@ import CustomAvatar from '@core/components/mui/Avatar'
 
 const CardStatHorizontal = (props: CardStatsHorizontalProps) => {
   // Props
-  const { stats, avatarIcon, avatarColor, title, avatarSkin, avatarSize, avatarIconSize } = props
+  const { stats, avatarIcon, avatarColor, title, avatarSkin, avatarSize } = props
 
   return (
     <Card className='bs-full'>
@@ -27,7 +27,7 @@ const CardStatHorizontal = (props: CardStatsHorizontalProps) => {
             </Typography>
           </div>
           <CustomAvatar variant='rounded' color={avatarColor} skin={avatarSkin} size={avatarSize}>
-            <i className={classnames(avatarIcon, `text-[${avatarIconSize}px]`)} />
+            <i className={classnames(avatarIcon, 'text-[26px]')} />
           </CustomAvatar>
         </div>
       </CardContent>

@@ -38,10 +38,10 @@ const InviteAndShare = () => {
               className='flex-auto'
             />
             <div className='flex gap-2'>
-              <CustomIconButton variant='contained' className='bg-[#4267B2] text-white'>
+              <CustomIconButton variant='contained' className='bg-facebook text-white'>
                 <i className='tabler-brand-facebook' />
               </CustomIconButton>
-              <CustomIconButton variant='contained' className='bg-[#1DA1F2] text-white'>
+              <CustomIconButton variant='contained' className='bg-twitter text-white'>
                 <i className='tabler-brand-twitter' />
               </CustomIconButton>
             </div>

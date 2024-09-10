@@ -319,24 +319,24 @@ const InvoiceListTable = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
             component={Link}
             startIcon={<i className='tabler-plus' />}
             href={getLocalizedUrl('apps/invoice/add', locale as Locale)}
-            className='is-full sm:is-auto'
+            className='max-sm:is-full'
           >
             Create Invoice
           </Button>
         </div>
-        <div className='flex flex-col sm:flex-row is-full sm:is-auto items-start sm:items-center gap-4'>
+        <div className='flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4'>
           <DebouncedInput
             value={globalFilter ?? ''}
             onChange={value => setGlobalFilter(String(value))}
             placeholder='Search Invoice'
-            className='is-[250px]'
+            className='max-sm:is-full sm:is-[250px]'
           />
           <CustomTextField
             select
             id='select-status'
             value={status}
             onChange={e => setStatus(e.target.value)}
-            className='is-[160px]'
+            className='max-sm:is-full sm:is-[160px]'
             SelectProps={{ displayEmpty: true }}
           >
             <MenuItem value=''>Invoice Status</MenuItem>

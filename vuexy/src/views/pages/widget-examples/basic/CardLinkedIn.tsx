@@ -6,7 +6,7 @@ import Avatar from '@mui/material/Avatar'
 
 const CardLinkedIn = () => {
   return (
-    <Card className='bg-[#007bb6]'>
+    <Card className='bg-linkedin'>
       <CardContent>
         <div className='flex items-center gap-2 mbe-4'>
           <i className='tabler-brand-linkedin text-3xl text-white' />

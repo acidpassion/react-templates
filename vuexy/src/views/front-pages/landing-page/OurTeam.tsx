@@ -4,8 +4,6 @@ import { useEffect, useRef } from 'react'
 // MUI Imports
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid'
-import MuiCard from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
 import Chip from '@mui/material/Chip'
 import { styled } from '@mui/material/styles'
 
@@ -50,10 +48,12 @@ const team = [
   }
 ]
 
-const Card = styled(MuiCard)`
+const Card = styled('div')`
   border-color: ${(props: { color: ThemeColor }) => props.color};
   border-start-start-radius: 90px;
   border-start-end-radius: 20px;
+  border-end-start-radius: 6px;
+  border-end-end-radius: 6px;
 `
 
 const OurTeam = () => {
@@ -107,8 +107,8 @@ const OurTeam = () => {
         <Grid container rowSpacing={16} columnSpacing={6} className='pbs-[100px]'>
           {team.map((member, index) => (
             <Grid item xs={12} md={6} lg={3} key={index}>
-              <Card className='shadow-none border overflow-visible' color={member.color as ThemeColor}>
-                <CardContent className='flex flex-col items-center justify-center p-0'>
+              <Card className='border overflow-visible' color={member.color as ThemeColor}>
+                <div className='flex flex-col items-center justify-center p-0'>
                   <div
                     className={classnames(
                       'flex justify-center is-full mli-auto text-center bs-[189px] relative overflow-visible',
@@ -124,7 +124,7 @@ const OurTeam = () => {
                       <Typography color='text.disabled'>{member.position}</Typography>
                     </div>
                   </div>
-                </CardContent>
+                </div>
               </Card>
             </Grid>
           ))}

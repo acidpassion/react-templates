@@ -100,7 +100,7 @@ const CustomerAddress = (props: dataType) => {
                 height={typeOfCard === 'Mastercard' ? 19 : typeOfCard === 'American Express' ? 16 : 12}
               />
             </div>
-            <div className='flex flex-col gap-1'>
+            <div className='flex flex-col items-start gap-1'>
               <div className='flex flex-wrap items-center gap-x-2 gap-y-1'>
                 <Typography color='text.primary' className='font-medium'>
                   {typeOfCard}
@@ -131,7 +131,7 @@ const CustomerAddress = (props: dataType) => {
       <Collapse in={expanded} timeout={300}>
         <Grid container spacing={6} className='pbe-3 pis-12'>
           <Grid item xs={12} md={6}>
-            <Grid container>
+            <Grid container spacing={2}>
               <Grid item xs={4}>
                 <div className='flex flex-col gap-1'>
                   <Typography variant='body2'>Name</Typography>

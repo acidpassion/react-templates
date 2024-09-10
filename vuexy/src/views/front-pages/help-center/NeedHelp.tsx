@@ -23,7 +23,7 @@ const NeedHelp = () => {
         Our specialists are always happy to help. Contact us during standard business hours or email us 24/7, and
         we&apos;ll get back to you.
       </Typography>
-      <div className='flex gap-4'>
+      <div className='flex flex-wrap items-center justify-center gap-4'>
         <Button variant='contained'>Visit our community</Button>
         <Button variant='contained'>Contact Us</Button>
       </div>

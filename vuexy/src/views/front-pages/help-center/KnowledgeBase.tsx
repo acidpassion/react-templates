@@ -3,7 +3,6 @@ import Link from 'next/link'
 
 // MUI Imports
 import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Grid from '@mui/material/Grid'
@@ -139,19 +138,17 @@ const KnowledgeBase = () => {
                       )
                     })}
                   </div>
-                  <Button
-                    component={Link}
+                  <Link
                     href='/front-pages/help-center/article/how-to-add-product-in-cart'
-                    endIcon={
-                      <DirectionalIcon
-                        className='text-lg'
-                        ltrIconClass='tabler-arrow-right'
-                        rtlIconClass='tabler-arrow-left'
-                      />
-                    }
+                    className='flex items-center gap-x-2 text-primary'
                   >
-                    See all 6 articles
-                  </Button>
+                    <span className='font-medium'>See all 6 articles</span>
+                    <DirectionalIcon
+                      className='text-lg'
+                      ltrIconClass='tabler-arrow-right'
+                      rtlIconClass='tabler-arrow-left'
+                    />
+                  </Link>
                 </CardContent>
               </Card>
             </Grid>

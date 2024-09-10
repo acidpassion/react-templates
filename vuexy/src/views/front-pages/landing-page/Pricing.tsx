@@ -113,7 +113,7 @@ const PricingPlan = () => {
             </Typography>
           </div>
         </div>
-        <div className='flex justify-center items-center max-sm:mlb-3'>
+        <div className='flex justify-center items-center max-sm:mlb-3 mbe-6'>
           <InputLabel htmlFor='pricing-switch' className='cursor-pointer'>
             Pay Monthly
           </InputLabel>

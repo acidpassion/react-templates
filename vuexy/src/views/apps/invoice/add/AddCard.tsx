@@ -99,7 +99,7 @@ const AddAction = ({ invoiceData }: { invoiceData?: InvoiceType[] }) => {
                         selected={issuedDate}
                         placeholderText='YYYY-MM-DD'
                         dateFormat={'yyyy-MM-dd'}
-                        onChange={(date: Date) => setIssuedDate(date)}
+                        onChange={(date: Date | null) => setIssuedDate(date)}
                         customInput={<CustomTextField fullWidth />}
                       />
                     </div>
@@ -112,7 +112,7 @@ const AddAction = ({ invoiceData }: { invoiceData?: InvoiceType[] }) => {
                         selected={dueDate}
                         placeholderText='YYYY-MM-DD'
                         dateFormat={'yyyy-MM-dd'}
-                        onChange={(date: Date) => setDueDate(date)}
+                        onChange={(date: Date | null) => setDueDate(date)}
                         customInput={<CustomTextField fullWidth />}
                       />
                     </div>

@@ -138,10 +138,10 @@ const Footer = ({ mode }: { mode: Mode }) => {
                   <div className='flex items-center pli-5 plb-[7px] gap-6'>
                     <img src='/images/front-pages/apple-icon.png' alt='apple store' className='bs-[34px]' />
                     <div className='flex flex-col items-start'>
-                      <Typography variant='body2' color='white' className='capitalize opacity-[75]'>
+                      <Typography variant='body2' color='white' className='opacity-[75]'>
                         Download on the
                       </Typography>
-                      <Typography color='white' className='font-medium capitalize opacity-[92]'>
+                      <Typography color='white' className='font-medium opacity-[92]'>
                         App Store
                       </Typography>
                     </div>
@@ -172,15 +172,15 @@ const Footer = ({ mode }: { mode: Mode }) => {
             frontCommonStyles.layoutSpacing
           )}
         >
-          <p className='text-white text-[13px]'>
+          <Typography className='text-white' variant='body2'>
             <span>{`© ${new Date().getFullYear()}, Made with `}</span>
             <span>{`❤️`}</span>
             <span>{` by `}</span>
             <Link href='https://pixinvent.com/' target='_blank' className='font-medium text-white'>
               Pixinvent
             </Link>
-          </p>
-          <div className='flex gap-6 items-center'>
+          </Typography>
+          <div className='flex gap-1.5 items-center'>
             <IconButton component={Link} size='small' href='https://github.com/pixinvent' target='_blank'>
               <i className='tabler-brand-github-filled text-white text-lg' />
             </IconButton>

@@ -24,6 +24,7 @@ type LogoTextProps = {
   isHovered?: VerticalNavContextProps['isHovered']
   isCollapsed?: VerticalNavContextProps['isCollapsed']
   transitionDuration?: VerticalNavContextProps['transitionDuration']
+  isBreakpointReached?: VerticalNavContextProps['isBreakpointReached']
   color?: CSSProperties['color']
 }
 
@@ -36,8 +37,10 @@ const LogoText = styled.span<LogoTextProps>`
   transition: ${({ transitionDuration }) =>
     `margin-inline-start ${transitionDuration}ms ease-in-out, opacity ${transitionDuration}ms ease-in-out`};
 
-  ${({ isHovered, isCollapsed }) =>
-    isCollapsed && !isHovered ? 'opacity: 0; margin-inline-start: 0;' : 'opacity: 1; margin-inline-start: 12px;'}
+  ${({ isHovered, isCollapsed, isBreakpointReached }) =>
+    !isBreakpointReached && isCollapsed && !isHovered
+      ? 'opacity: 0; margin-inline-start: 0;'
+      : 'opacity: 1; margin-inline-start: 12px;'}
 `
 
 const Logo = ({ color }: { color?: CSSProperties['color'] }) => {
@@ -45,7 +48,7 @@ const Logo = ({ color }: { color?: CSSProperties['color'] }) => {
   const logoTextRef = useRef<HTMLSpanElement>(null)
 
   // Hooks
-  const { isHovered, transitionDuration } = useVerticalNav()
+  const { isHovered, transitionDuration, isBreakpointReached } = useVerticalNav()
   const { settings } = useSettings()
 
   // Vars
@@ -57,14 +60,14 @@ const Logo = ({ color }: { color?: CSSProperties['color'] }) => {
     }
 
     if (logoTextRef && logoTextRef.current) {
-      if (layout === 'collapsed' && !isHovered) {
+      if (!isBreakpointReached && layout === 'collapsed' && !isHovered) {
         logoTextRef.current?.classList.add('hidden')
       } else {
         logoTextRef.current.classList.remove('hidden')
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isHovered, layout])
+  }, [isHovered, layout, isBreakpointReached])
 
   return (
     <div className='flex items-center'>
@@ -75,6 +78,7 @@ const Logo = ({ color }: { color?: CSSProperties['color'] }) => {
         isHovered={isHovered}
         isCollapsed={layout === 'collapsed'}
         transitionDuration={transitionDuration}
+        isBreakpointReached={isBreakpointReached}
       >
         {themeConfig.templateName}
       </LogoText>

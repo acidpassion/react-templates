@@ -243,7 +243,7 @@ const ProductCategoryTable = () => {
         cell: ({ row }) => (
           <div className='flex items-center gap-3'>
             <img src={row.original.image} width={38} height={38} className='rounded bg-actionHover' />
-            <div>
+            <div className='flex flex-col items-start'>
               <Typography className='font-medium' color='text.primary'>
                 {row.original.categoryTitle}
               </Typography>
@@ -330,13 +330,14 @@ const ProductCategoryTable = () => {
             value={globalFilter ?? ''}
             onChange={value => setGlobalFilter(String(value))}
             placeholder='Search'
+            className='max-sm:is-full'
           />
-          <div className='flex items-center gap-x-4'>
+          <div className='flex max-sm:flex-col items-start sm:items-center gap-4 max-sm:is-full'>
             <CustomTextField
               select
               value={table.getState().pagination.pageSize}
               onChange={e => table.setPageSize(Number(e.target.value))}
-              className='flex-auto is-[70px]'
+              className='flex-auto max-sm:is-full sm:is-[70px]'
             >
               <MenuItem value='10'>10</MenuItem>
               <MenuItem value='15'>15</MenuItem>
@@ -344,6 +345,7 @@ const ProductCategoryTable = () => {
             </CustomTextField>
             <Button
               variant='contained'
+              className='max-sm:is-full'
               onClick={() => setAddCategoryOpen(!addCategoryOpen)}
               startIcon={<i className='tabler-plus' />}
             >

@@ -14,11 +14,9 @@ export type CustomChipProps = ChipProps & {
 
 const Chip = styled(MuiChip)<CustomChipProps>(({ round }) => {
   return {
-    '&': {
-      ...(round === 'true' && {
-        borderRadius: 16
-      })
-    }
+    ...(round === 'true' && {
+      borderRadius: 500
+    })
   }
 })
 

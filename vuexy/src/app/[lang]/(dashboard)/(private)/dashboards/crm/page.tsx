@@ -38,7 +38,6 @@ const DashboardCRM = () => {
           avatarIcon='tabler-credit-card'
           avatarSkin='light'
           avatarSize={44}
-          avatarIconSize={28}
           chipText='-12.2%'
           chipColor='error'
           chipVariant='tonal'
@@ -53,7 +52,6 @@ const DashboardCRM = () => {
           avatarIcon='tabler-currency-dollar'
           avatarSkin='light'
           avatarSize={44}
-          avatarIconSize={28}
           chipText='+24.67%'
           chipColor='success'
           chipVariant='tonal'

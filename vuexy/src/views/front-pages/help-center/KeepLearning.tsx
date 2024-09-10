@@ -31,19 +31,19 @@ const keepLearning: keepLearningType[] = [
   {
     slug: 'blogging',
     title: 'Blogging',
-    svg: <Laptop />,
+    svg: <Laptop color='var(--mui-palette-text-secondary)' />,
     subtitle: 'Expert tips & tools to improve your website or online store using blog.'
   },
   {
     slug: 'inspiration-center',
     title: 'Inspiration Center',
-    svg: <Bulb />,
+    svg: <Bulb color='var(--mui-palette-text-secondary)' />,
     subtitle: 'Inspiration from experts to help you start and grow your big ideas.'
   },
   {
     slug: 'community',
     title: 'Community',
-    svg: <Discord />,
+    svg: <Discord color='var(--mui-palette-text-secondary)' />,
     subtitle: 'A group of people living in the same place or having a particular.'
   }
 ]
@@ -59,7 +59,7 @@ const KeepLearning = () => {
           {keepLearning.map((article, index) => {
             return (
               <Grid item xs={12} lg={4} key={index}>
-                <Card className='shadow-none border'>
+                <Card variant='outlined'>
                   <CardContent className='flex flex-col items-center justify-center gap-3 text-center'>
                     {article.svg}
                     <Typography variant='h5'>{article.title}</Typography>

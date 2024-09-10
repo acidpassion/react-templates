@@ -91,7 +91,7 @@ const AddPaymentDrawer = ({ open, handleClose }: Props) => {
           <AppReactDatepicker
             selected={formData.paymentDate}
             id='payment-date'
-            onChange={(date: Date) => setFormData({ ...formData, paymentDate: date })}
+            onChange={(date: Date | null) => date !== null && setFormData({ ...formData, paymentDate: date })}
             customInput={<CustomTextField fullWidth label='Payment Date' />}
           />
           <CustomTextField

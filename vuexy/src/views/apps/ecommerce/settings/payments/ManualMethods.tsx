@@ -17,6 +17,7 @@ import ButtonGroup from '@mui/material/ButtonGroup'
 import MenuItem from '@mui/material/MenuItem'
 import MenuList from '@mui/material/MenuList'
 import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
 
 // Vars
 const options = ['Create custom payment method', 'Bank Deposit', 'Money Order', 'Cash on Delivery(COD)']
@@ -25,6 +26,9 @@ const PaymentMethodButton = () => {
   // States
   const [open, setOpen] = useState<boolean>(false)
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
+
+  // Hooks
+  const theme = useTheme()
 
   // Refs
   const anchorRef = useRef<HTMLDivElement | null>(null)
@@ -57,9 +61,21 @@ const PaymentMethodButton = () => {
           <i className='tabler-chevron-down' />
         </Button>
       </ButtonGroup>
-      <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition placement='bottom-end'>
+      <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition placement='top-end'>
         {({ TransitionProps, placement }) => (
-          <Grow {...TransitionProps} style={{ transformOrigin: placement === 'bottom-end' ? 'right top' : 'left top' }}>
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin:
+                placement === 'bottom-end'
+                  ? theme.direction === 'ltr'
+                    ? 'right bottom'
+                    : 'left bottom'
+                  : theme.direction === 'rtl'
+                    ? 'left bottom'
+                    : 'right bottom'
+            }}
+          >
             <Paper className='shadow-lg'>
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList id='split-button-menu'>

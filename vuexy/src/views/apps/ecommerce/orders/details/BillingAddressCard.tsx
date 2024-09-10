@@ -20,7 +20,7 @@ const data = {
   address1: 'Latheronwheel',
   address2: 'KW5 8NW, London',
   landmark: 'Near Water Plant',
-  city: 'LondonUK',
+  city: 'London',
   state: 'Capholim',
   zipCode: '403114',
   taxId: 'TAX-875623',
@@ -56,7 +56,7 @@ const BillingAddress = () => {
             <Typography>UK</Typography>
           </div>
         </div>
-        <div className='flex flex-col gap-1'>
+        <div className='flex flex-col items-start gap-1'>
           <Typography variant='h5'>Mastercard</Typography>
           <Typography>Card Number: ******4291</Typography>
         </div>

@@ -41,7 +41,7 @@ const CustomerInformation = () => {
             aria-labelledby='company-radio-buttons-group'
             className='items-start'
           >
-            <FormControlLabel value='dont' control={<Radio />} label='Don’t include' />
+            <FormControlLabel value='dont' control={<Radio />} label="Don't include" />
             <FormControlLabel value='optional' control={<Radio />} label='Optional' />
             <FormControlLabel value='required' control={<Radio />} label='Required' />
           </RadioGroup>
@@ -54,7 +54,7 @@ const CustomerInformation = () => {
             aria-labelledby='address-radio-buttons-group'
             className='items-start'
           >
-            <FormControlLabel value='dont' control={<Radio />} label='Don’t include' />
+            <FormControlLabel value='dont' control={<Radio />} label="Don't include" />
             <FormControlLabel value='optional' control={<Radio />} label='Optional' />
             <FormControlLabel value='required' control={<Radio />} label='Required' />
           </RadioGroup>
@@ -67,7 +67,7 @@ const CustomerInformation = () => {
             aria-labelledby='shipping-radio-buttons-group'
             className='items-start'
           >
-            <FormControlLabel value='dont' control={<Radio />} label='Don’t include' />
+            <FormControlLabel value='dont' control={<Radio />} label="Don't include" />
             <FormControlLabel value='optional' control={<Radio />} label='Optional' />
             <FormControlLabel value='required' control={<Radio />} label='Required' />
           </RadioGroup>

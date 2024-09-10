@@ -96,7 +96,7 @@ const AddCustomerDrawer = (props: Props) => {
       countryCode: 'st',
       countryFlag: `/images/cards/${data.country}.png`,
       order: Math.floor(Math.random() * 1000) + 1,
-      totalSpent: Math.random() * (10000 - 500 + 1) + 500,
+      totalSpent: Math.floor(Math.random() * (1000000 - 100) + 100) / 100,
       avatar: `/images/avatars/${Math.floor(Math.random() * 8) + 1}.png`
     }
 
@@ -237,7 +237,7 @@ const AddCustomerDrawer = (props: Props) => {
               onChange={e => setFormData({ ...formData, contact: e.target.value })}
             />
             <div className='flex justify-between'>
-              <div className='flex flex-col gap-1'>
+              <div className='flex flex-col items-start gap-1'>
                 <Typography color='text.primary' className='font-medium'>
                   Use as a billing address?
                 </Typography>

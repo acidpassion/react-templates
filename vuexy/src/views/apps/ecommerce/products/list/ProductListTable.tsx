@@ -224,14 +224,12 @@ const ProductListTable = ({ productData }: { productData?: ProductType[] }) => {
       columnHelper.accessor('status', {
         header: 'Status',
         cell: ({ row }) => (
-          <div className='flex items-center gap-3'>
-            <Chip
-              label={productStatusObj[row.original.status].title}
-              variant='tonal'
-              color={productStatusObj[row.original.status].color}
-              size='small'
-            />
-          </div>
+          <Chip
+            label={productStatusObj[row.original.status].title}
+            variant='tonal'
+            color={productStatusObj[row.original.status].color}
+            size='small'
+          />
         )
       }),
       columnHelper.accessor('actions', {
@@ -303,24 +301,31 @@ const ProductListTable = ({ productData }: { productData?: ProductType[] }) => {
             value={globalFilter ?? ''}
             onChange={value => setGlobalFilter(String(value))}
             placeholder='Search Product'
+            className='max-sm:is-full'
           />
-          <div className='flex flex-wrap items-center gap-4'>
+          <div className='flex flex-wrap items-center max-sm:flex-col gap-4 max-sm:is-full is-auto'>
             <CustomTextField
               select
               value={table.getState().pagination.pageSize}
               onChange={e => table.setPageSize(Number(e.target.value))}
-              className='flex-auto is-[70px]'
+              className='flex-auto is-[70px] max-sm:is-full'
             >
               <MenuItem value='10'>10</MenuItem>
               <MenuItem value='25'>25</MenuItem>
               <MenuItem value='50'>50</MenuItem>
             </CustomTextField>
-            <Button color='secondary' variant='tonal' startIcon={<i className='tabler-upload' />}>
+            <Button
+              color='secondary'
+              variant='tonal'
+              className='max-sm:is-full is-auto'
+              startIcon={<i className='tabler-upload' />}
+            >
               Export
             </Button>
             <Button
               variant='contained'
               component={Link}
+              className='max-sm:is-full is-auto'
               href={getLocalizedUrl('/apps/ecommerce/products/add', locale as Locale)}
               startIcon={<i className='tabler-plus' />}
             >

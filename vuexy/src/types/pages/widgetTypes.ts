@@ -1,5 +1,4 @@
 // MUI Imports
-import type { AvatarProps } from '@mui/material'
 import type { ChipProps } from '@mui/material/Chip'
 
 // Third-party Imports
@@ -14,9 +13,8 @@ export type CardStatsHorizontalWithAvatarProps = {
   title: string
   avatarIcon: string
   avatarColor?: ThemeColor
-  avatarVariant?: AvatarProps['variant']
+  avatarVariant?: CustomAvatarProps['variant']
   avatarSkin?: CustomAvatarProps['skin']
-  avatarIconSize?: number
   avatarSize?: number
 }
 
@@ -50,7 +48,6 @@ export type CardStatsSquareProps = {
   avatarIcon: string
   avatarColor?: ThemeColor
   avatarSize?: number
-  avatarIconSize?: number
   avatarVariant?: CustomAvatarProps['variant']
   avatarSkin?: CustomAvatarProps['skin']
   stats: string
@@ -61,7 +58,6 @@ export type CardStatsHorizontalProps = {
   title: string
   stats: string
   avatarIcon: string
-  avatarIconSize?: number
   avatarColor?: ThemeColor
   avatarSize?: number
   avatarSkin?: CustomAvatarProps['skin']
@@ -73,7 +69,6 @@ export type CardStatsVerticalProps = {
   stats: string
   avatarIcon: string
   avatarSize?: number
-  avatarIconSize?: number
   avatarSkin?: CustomAvatarProps['skin']
   avatarColor?: ThemeColor
   chipText: string
@@ -89,7 +84,6 @@ export type CardStatsWithAreaChartProps = {
   avatarIcon: string
   avatarSize?: number
   avatarColor?: ThemeColor
-  avatarIconSize?: number
   avatarSkin?: CustomAvatarProps['skin']
 }
 

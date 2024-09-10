@@ -137,9 +137,9 @@ const StepDealDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) =
       <Grid item xs={12} sm={6}>
         <AppReactDatepicker
           selectsRange
-          endDate={endDate}
+          endDate={endDate as Date}
           selected={startDate}
-          startDate={startDate}
+          startDate={startDate as Date}
           id='date-range-picker'
           onChange={handleDateChange}
           shouldCloseOnSelect={false}

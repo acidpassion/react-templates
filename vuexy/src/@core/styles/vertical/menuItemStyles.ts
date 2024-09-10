@@ -150,7 +150,7 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
         },
         ...(level === 0 && {
           boxShadow: 'var(--mui-customShadows-sm)',
-          '[data-skin="bordered"] &': {
+          '[data-skin="bordered"] ~ [data-floating-ui-portal] &': {
             boxShadow: 'none',
             border: '1px solid var(--mui-palette-divider)'
           },

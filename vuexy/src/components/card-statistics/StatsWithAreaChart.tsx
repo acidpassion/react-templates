@@ -24,17 +24,7 @@ const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexChart
 
 const CardStatsWithAreaChart = (props: CardStatsWithAreaChartProps) => {
   // Props
-  const {
-    stats,
-    title,
-    avatarIcon,
-    chartSeries,
-    avatarSize,
-    chartColor = 'primary',
-    avatarColor,
-    avatarIconSize,
-    avatarSkin
-  } = props
+  const { stats, title, avatarIcon, chartSeries, avatarSize, chartColor = 'primary', avatarColor, avatarSkin } = props
 
   // Hook
   const theme = useTheme()
@@ -100,7 +90,7 @@ const CardStatsWithAreaChart = (props: CardStatsWithAreaChartProps) => {
     <Card>
       <CardContent className='flex flex-col gap-2 pb-3'>
         <CustomAvatar variant='rounded' skin={avatarSkin} color={avatarColor} size={avatarSize}>
-          <i className={classnames(avatarIcon, `text-[${avatarIconSize}px]`)} />
+          <i className={classnames(avatarIcon, 'text-[26px]')} />
         </CustomAvatar>
         <div>
           <Typography variant='h5'>{stats}</Typography>

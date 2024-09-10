@@ -57,7 +57,7 @@ const Basic = () => {
       <Grid item xs={12} sm={6} md={4}>
         <CardSupport />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} className='pbs-12'>
         <Typography variant='h3'>Navigation Cards</Typography>
         <Divider />
       </Grid>
@@ -67,7 +67,7 @@ const Basic = () => {
       <Grid item xs={12} md={6}>
         <CardWithTabsCenter />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} className='pbs-12'>
         <Typography variant='h3'>Solid Cards</Typography>
         <Divider />
       </Grid>

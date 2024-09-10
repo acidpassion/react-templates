@@ -2,6 +2,7 @@
 
 // MUI Imports
 import { useTheme } from '@mui/material/styles'
+import useScrollTrigger from '@mui/material/useScrollTrigger'
 
 // Third-party Imports
 import classnames from 'classnames'
@@ -34,6 +35,11 @@ const Navbar = (props: Props) => {
   const { settings } = useSettings()
   const theme = useTheme()
 
+  const trigger = useScrollTrigger({
+    threshold: 0,
+    disableHysteresis: true
+  })
+
   // Vars
   const { navbarContentWidth } = settings
 
@@ -58,7 +64,8 @@ const Navbar = (props: Props) => {
         [verticalLayoutClasses.headerAttached]: !headerFloating && headerAttached,
         [verticalLayoutClasses.headerBlur]: headerBlur,
         [verticalLayoutClasses.headerContentCompact]: headerContentCompact,
-        [verticalLayoutClasses.headerContentWide]: headerContentWide
+        [verticalLayoutClasses.headerContentWide]: headerContentWide,
+        scrolled: trigger
       })}
     >
       <div className={classnames(verticalLayoutClasses.navbar, 'flex bs-full')}>{children}</div>

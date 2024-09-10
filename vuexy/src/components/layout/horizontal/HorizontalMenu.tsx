@@ -17,7 +17,6 @@ import CustomChip from '@core/components/mui/Chip'
 
 // Hook Imports
 import useVerticalNav from '@menu/hooks/useVerticalNav'
-import { useSettings } from '@core/hooks/useSettings'
 
 // Styled Component Imports
 import StyledHorizontalNavExpandIcon from '@menu/styles/horizontal/StyledHorizontalNavExpandIcon'
@@ -58,11 +57,9 @@ const HorizontalMenu = ({ dictionary }: { dictionary: Awaited<ReturnType<typeof 
   // Hooks
   const verticalNavOptions = useVerticalNav()
   const theme = useTheme()
-  const { settings } = useSettings()
   const params = useParams()
 
   // Vars
-  const { skin } = settings
   const { transitionDuration } = verticalNavOptions
   const { lang: locale } = params
 
@@ -72,8 +69,7 @@ const HorizontalMenu = ({ dictionary }: { dictionary: Awaited<ReturnType<typeof 
       verticalNavContent={VerticalNavContent}
       verticalNavProps={{
         customStyles: verticalNavigationCustomStyles(verticalNavOptions, theme),
-        backgroundColor:
-          skin === 'bordered' ? 'var(--mui-palette-background-paper)' : 'var(--mui-palette-background-default)'
+        backgroundColor: 'var(--mui-palette-background-paper)'
       }}
     >
       <Menu

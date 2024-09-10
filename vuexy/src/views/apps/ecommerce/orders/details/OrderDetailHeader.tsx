@@ -44,8 +44,8 @@ const OrderDetailHeader = ({ orderData, order }: { orderData?: OrderType; order:
   })
 
   return (
-    <div className='flex flex-wrap justify-between items-center gap-y-4'>
-      <div className='flex flex-col gap-1'>
+    <div className='flex flex-wrap justify-between sm:items-center max-sm:flex-col gap-y-4'>
+      <div className='flex flex-col items-start gap-1'>
         <div className='flex items-center gap-2'>
           <Typography variant='h5'>{`Order #${order}`}</Typography>
           <Chip

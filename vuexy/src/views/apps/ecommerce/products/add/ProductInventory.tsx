@@ -25,6 +25,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 
 // Component Imports
+import Link from '@components/Link'
 import CustomTabList from '@core/components/mui/TabList'
 import CustomTextField from '@core/components/mui/TextField'
 
@@ -34,8 +35,6 @@ import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 const ProductInventory = () => {
   // States
   const [activeTab, setActiveTab] = useState('restock')
-  const [shipping, setShipping] = useState('seller')
-  const [delivery, setDelivery] = useState('worldwide')
   const [date, setDate] = useState<Date | null>(null)
 
   // Hooks
@@ -59,35 +58,35 @@ const ProductInventory = () => {
                   label='Restock'
                   icon={<i className='tabler-box' />}
                   iconPosition='start'
-                  className='flex-row justify-start min-is-full'
+                  className='flex-row justify-start min-is-full text-start'
                 />
                 <Tab
                   value='shipping'
                   label='Shipping'
                   icon={<i className='tabler-car' />}
                   iconPosition='start'
-                  className='flex-row justify-start min-is-full'
+                  className='flex-row justify-start min-is-full text-start'
                 />
                 <Tab
                   value='global-delivery'
                   label='Global Delivery'
                   icon={<i className='tabler-world' />}
                   iconPosition='start'
-                  className='flex-row justify-start min-is-full'
+                  className='flex-row justify-start min-is-full text-start'
                 />
                 <Tab
                   value='attributes'
                   label='Attributes'
                   icon={<i className='tabler-link' />}
                   iconPosition='start'
-                  className='flex-row justify-start min-is-full'
+                  className='flex-row justify-start min-is-full text-start'
                 />
                 <Tab
                   value='advanced'
                   label='Advanced'
                   icon={<i className='tabler-lock' />}
                   iconPosition='start'
-                  className='flex-row justify-start min-is-full'
+                  className='flex-row justify-start min-is-full text-start'
                 />
               </CustomTabList>
             </div>
@@ -111,8 +110,7 @@ const ProductInventory = () => {
                   <Typography className='font-medium'>Shipping Type</Typography>
                   <RadioGroup
                     name='radio-buttons-group'
-                    value={shipping}
-                    onChange={e => setShipping(e.target.value)}
+                    defaultValue='seller'
                     className='items-start gap-4'
                     aria-labelledby='shipping-type-radio-buttons-group-label'
                   >
@@ -154,8 +152,7 @@ const ProductInventory = () => {
                   <Typography className='font-medium'>Global Delivery</Typography>
                   <RadioGroup
                     name='radio-buttons-group'
-                    value={delivery}
-                    onChange={e => setDelivery(e.target.value)}
+                    defaultValue='worldwide'
                     className='items-start gap-4'
                     aria-labelledby='global-delivery-radio-buttons-group-label'
                   >
@@ -169,7 +166,7 @@ const ProductInventory = () => {
                           </Typography>
                           <Typography variant='body2'>
                             Only available with Shipping method:{' '}
-                            <span className='text-primary'>Fulfilled by Company name</span>
+                            <Link className='text-primary'>Fulfilled by Company name</Link>
                           </Typography>
                         </>
                       }
@@ -196,7 +193,7 @@ const ProductInventory = () => {
                           </Typography>
                           <Typography variant='body2'>
                             Deliver to your country of residence{' '}
-                            <span className='text-primary'>Change profile address</span>
+                            <Link className='text-primary'>Change profile address</Link>
                           </Typography>
                         </>
                       }
@@ -245,7 +242,7 @@ const ProductInventory = () => {
                         </Typography>
                         <AppReactDatepicker
                           selected={date}
-                          onChange={(date: Date) => setDate(date)}
+                          onChange={(date: Date | null) => setDate(date)}
                           placeholderText='MM/DD/YYYY'
                           customInput={<CustomTextField fullWidth size='small' />}
                         />

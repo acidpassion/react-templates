@@ -1,7 +1,8 @@
-import 'server-only'
-
 // Next Imports
 import { cookies } from 'next/headers'
+
+// Third-party Imports
+import 'server-only'
 
 // Type Imports
 import type { Settings } from '@core/contexts/settingsContext'

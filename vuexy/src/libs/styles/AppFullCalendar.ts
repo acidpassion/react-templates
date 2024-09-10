@@ -24,12 +24,14 @@ const AppFullCalendar = styled('div')(({ theme }: { theme: Theme }) => ({
         gap: theme.spacing(2),
         marginBottom: theme.spacing(6)
       },
-      '& .fc-sidebarToggle-button': {
-        color: 'var(--mui-palette-text-secondary) !important',
-        marginInlineEnd: theme.spacing(2)
-      },
       '& .fc-button-group:has(.fc-next-button)': {
         marginInlineStart: theme.spacing(2)
+      },
+      '& .fc-button': {
+        padding: theme.spacing(),
+        '&:active, .&:focus': {
+          boxShadow: 'none'
+        }
       },
       '.fc-prev-button, & .fc-next-button': {
         display: 'flex',
@@ -57,11 +59,6 @@ const AppFullCalendar = styled('div')(({ theme }: { theme: Theme }) => ({
           }
         }
       },
-      '& .fc-button': {
-        '&:active, .&:focus': {
-          boxShadow: 'none'
-        }
-      },
       '& .fc-button-group': {
         '& .fc-button': {
           textTransform: 'capitalize',
@@ -84,13 +81,14 @@ const AppFullCalendar = styled('div')(({ theme }: { theme: Theme }) => ({
           }
         },
         '& .fc-sidebarToggle-button': {
-          border: 0,
+          border: '0 !important',
           lineHeight: 0.8,
-          borderColor: 'transparent',
           paddingBottom: '0 !important',
           backgroundColor: 'transparent !important',
+          marginInlineEnd: theme.spacing(2),
+          color: 'var(--mui-palette-text-secondary) !important',
           marginLeft: `${theme.spacing(-2)} !important`,
-          padding: `${theme.spacing(1.275, 2)} !important`,
+          padding: `${theme.spacing(1.25, 2)} !important`,
           '&:focus': {
             outline: 0,
             boxShadow: 'none'
@@ -138,7 +136,7 @@ const AppFullCalendar = styled('div')(({ theme }: { theme: Theme }) => ({
         borderRight: 0
       },
       '&[role="presentation"]': {
-        borderRightWidth: 0
+        borderInline: 0
       }
     },
     '& colgroup col': {
@@ -154,8 +152,6 @@ const AppFullCalendar = styled('div')(({ theme }: { theme: Theme }) => ({
         '&.event-bg-primary': {
           border: 0,
           color: 'var(--mui-palette-primary-main)',
-
-          // backgroundColor: bgColors.primaryLight.backgroundColor,
           backgroundColor: 'var(--mui-palette-primary-lightOpacity)',
           '& .fc-event-title, & .fc-event-time': {
             fontSize: theme.typography.caption.fontSize,
@@ -167,8 +163,6 @@ const AppFullCalendar = styled('div')(({ theme }: { theme: Theme }) => ({
         '&.event-bg-success': {
           border: 0,
           color: 'var(--mui-palette-success-main)',
-
-          // backgroundColor: bgColors.successLight.backgroundColor,
           backgroundColor: 'var(--mui-palette-success-lightOpacity)',
           '& .fc-event-title, & .fc-event-time': {
             fontSize: theme.typography.caption.fontSize,
@@ -180,8 +174,6 @@ const AppFullCalendar = styled('div')(({ theme }: { theme: Theme }) => ({
         '&.event-bg-error': {
           border: 0,
           color: 'var(--mui-palette-error-main)',
-
-          // backgroundColor: bgColors.errorLight.backgroundColor,
           backgroundColor: 'var(--mui-palette-error-lightOpacity)',
           '& .fc-event-title, & .fc-event-time': {
             fontSize: theme.typography.caption.fontSize,
@@ -193,8 +185,6 @@ const AppFullCalendar = styled('div')(({ theme }: { theme: Theme }) => ({
         '&.event-bg-warning': {
           border: 0,
           color: 'var(--mui-palette-warning-main)',
-
-          // backgroundColor: bgColors.warningLight.backgroundColor,
           backgroundColor: 'var(--mui-palette-warning-lightOpacity)',
           '& .fc-event-title, & .fc-event-time': {
             fontSize: theme.typography.caption.fontSize,
@@ -206,8 +196,6 @@ const AppFullCalendar = styled('div')(({ theme }: { theme: Theme }) => ({
         '&.event-bg-info': {
           border: 0,
           color: 'var(--mui-palette-info-main)',
-
-          // backgroundColor: bgColors.infoLight.backgroundColor,
           backgroundColor: 'var(--mui-palette-info-lightOpacity)',
           '& .fc-event-title, & .fc-event-time': {
             fontSize: theme.typography.caption.fontSize,
@@ -275,15 +263,12 @@ const AppFullCalendar = styled('div')(({ theme }: { theme: Theme }) => ({
 
     // Calendar Head
     '& .fc-col-header': {
-      '& .fc-col-header-cell': {
-        fontSize: '.875rem',
+      '& .fc-col-header-cell-cushion': {
+        ...theme.typography.body1,
+        fontWeight: 500,
         color: 'var(--mui-palette-text-primary)',
-        '& .fc-col-header-cell-cushion': {
-          ...theme.typography.body1,
-          fontWeight: 500,
-          padding: theme.spacing(2),
-          textDecoration: 'none !important'
-        }
+        padding: theme.spacing(2),
+        textDecoration: 'none !important'
       }
     },
 
@@ -311,7 +296,7 @@ const AppFullCalendar = styled('div')(({ theme }: { theme: Theme }) => ({
     },
     '& .fc-scrollgrid': {
       borderColor: 'var(--mui-palette-divider)',
-      borderInlineStart: 0
+      borderInline: 0
     },
     '& .fc-daygrid-day-events': {
       marginTop: theme.spacing(2.5),

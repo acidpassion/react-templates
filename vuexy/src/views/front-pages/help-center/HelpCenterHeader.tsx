@@ -53,7 +53,7 @@ const HelpCenterHeader = ({ searchValue, setSearchValue }: Props) => {
             )
           }}
         />
-        <Typography className='mbe-6'>Common troubleshooting topics: eCommerce, Blogging to payment</Typography>
+        <Typography>Common troubleshooting topics: eCommerce, Blogging to payment</Typography>
       </div>
     </section>
   )

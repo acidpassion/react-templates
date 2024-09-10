@@ -113,7 +113,7 @@ const ReferEarn = ({ open, setOpen }: ReferEarnProps) => {
               placeholder='johnDoe@email.com'
               label=' Enter your friend&#39;s email address and invite them to join Vuexy 😍'
             />
-            <Button variant='contained' className='is-full sm:is-auto'>
+            <Button variant='contained' className='max-sm:is-full'>
               Send
             </Button>
           </div>

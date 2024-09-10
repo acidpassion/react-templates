@@ -1,6 +1,6 @@
 // Type Imports
 import type { ChildrenType } from '@core/types'
-import type { Locale } from '@/configs/i18n'
+import type { Locale } from '@configs/i18n'
 
 // HOC Imports
 import GuestOnlyRoute from '@/hocs/GuestOnlyRoute'

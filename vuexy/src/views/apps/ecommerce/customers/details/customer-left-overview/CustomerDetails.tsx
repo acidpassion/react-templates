@@ -28,12 +28,12 @@ const CustomerDetails = ({ customerData }: { customerData?: Customer }) => {
         <div className='flex flex-col justify-self-center items-center gap-6'>
           <div className='flex flex-col items-center gap-4'>
             <CustomAvatar src={customerData?.avatar} variant='rounded' alt='Customer Avatar' size={120} />
-            <div className='flex flex-col items-center'>
+            <div className='flex flex-col items-center text-center'>
               <Typography variant='h5'>{customerData?.customer}</Typography>
               <Typography>Customer ID #{customerData?.customerId}</Typography>
             </div>
           </div>
-          <div className='flex items-center justify-center gap-x-12 gap-y-3 flex-wrap'>
+          <div className='flex items-center justify-around gap-4 flex-wrap is-full'>
             <div className='flex items-center gap-4'>
               <CustomAvatar variant='rounded' skin='light' color='primary'>
                 <i className='tabler-shopping-cart' />

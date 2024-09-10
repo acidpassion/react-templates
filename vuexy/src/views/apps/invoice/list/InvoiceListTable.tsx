@@ -340,14 +340,14 @@ const InvoiceListTable = ({ invoiceData }: { invoiceData?: InvoiceType[] }) => {
   return (
     <Card>
       <CardContent className='flex justify-between flex-col items-start md:items-center md:flex-row gap-4'>
-        <div className='flex items-center justify-between gap-4'>
-          <div className='flex items-center gap-2'>
+        <div className='flex flex-col sm:flex-row items-center justify-between gap-4 is-full sm:is-auto'>
+          <div className='flex items-center gap-2 is-full sm:is-auto'>
             <Typography className='hidden sm:block'>Show</Typography>
             <CustomTextField
               select
               value={table.getState().pagination.pageSize}
               onChange={e => table.setPageSize(Number(e.target.value))}
-              className='is-[70px]'
+              className='is-[70px] max-sm:is-full'
             >
               <MenuItem value='10'>10</MenuItem>
               <MenuItem value='25'>25</MenuItem>
@@ -359,24 +359,24 @@ const InvoiceListTable = ({ invoiceData }: { invoiceData?: InvoiceType[] }) => {
             component={Link}
             startIcon={<i className='tabler-plus' />}
             href={getLocalizedUrl('apps/invoice/add', locale as Locale)}
-            className='is-full sm:is-auto'
+            className='max-sm:is-full'
           >
             Create Invoice
           </Button>
         </div>
-        <div className='flex flex-col sm:flex-row is-full sm:is-auto items-start sm:items-center gap-4'>
+        <div className='flex max-sm:flex-col max-sm:is-full sm:items-center gap-4'>
           <DebouncedInput
             value={globalFilter ?? ''}
             onChange={value => setGlobalFilter(String(value))}
             placeholder='Search Invoice'
-            className='is-[250px]'
+            className='max-sm:is-full sm:is-[250px]'
           />
           <CustomTextField
             select
             id='select-status'
             value={status}
             onChange={e => setStatus(e.target.value)}
-            className='is-[160px]'
+            className='max-sm:is-full sm:is-[160px]'
             SelectProps={{ displayEmpty: true }}
           >
             <MenuItem value=''>Invoice Status</MenuItem>

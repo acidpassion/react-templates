@@ -30,7 +30,7 @@ const domesticTableData: tableData[] = [
 ]
 
 const internationalTableData: tableData[] = [
-  { rate: 'Weight', condition: '5Kg-10Kg', price: '$9' },
+  { rate: 'Weight', condition: '5Kg-10Kg', price: '$19' },
   { rate: 'VAT', condition: '12%', price: '$25' },
   { rate: 'Duty', condition: 'Japan', price: '$49' }
 ]

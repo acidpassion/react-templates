@@ -83,20 +83,22 @@ const ProductCard = () => {
                     <Typography variant='h4'>{item.value}</Typography>
                   </div>
                   <CustomAvatar variant='rounded' size={44}>
-                    <i className={classnames('text-[28px]', item.icon)} />
+                    <i className={classnames(item.icon, 'text-[28px]')} />
                   </CustomAvatar>
                 </div>
-                <div className='flex items-start gap-2'>
-                  <Typography>{item.desc} orders</Typography>
-                  {item.change && (
+                {item.change ? (
+                  <div className='flex items-center gap-2'>
+                    <Typography>{`${item.desc} orders`}</Typography>
                     <Chip
                       variant='tonal'
                       label={`${item.change}%`}
                       size='small'
                       color={item.change > 0 ? 'success' : 'error'}
                     />
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <Typography>{`${item.desc} orders`}</Typography>
+                )}
               </div>
               {isBelowMdScreen && !isSmallScreen && index < data.length - 2 && (
                 <Divider

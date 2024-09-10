@@ -317,24 +317,24 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
             select
             value={table.getState().pagination.pageSize}
             onChange={e => table.setPageSize(Number(e.target.value))}
-            className='is-[70px]'
+            className='max-sm:is-full sm:is-[70px]'
           >
             <MenuItem value='10'>10</MenuItem>
             <MenuItem value='25'>25</MenuItem>
             <MenuItem value='50'>50</MenuItem>
           </CustomTextField>
-          <div className='flex flex-col sm:flex-row is-full sm:is-auto items-start sm:items-center gap-4'>
+          <div className='flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4'>
             <DebouncedInput
               value={globalFilter ?? ''}
               onChange={value => setGlobalFilter(String(value))}
               placeholder='Search User'
-              className='is-full sm:is-auto'
+              className='max-sm:is-full'
             />
             <Button
               color='secondary'
               variant='tonal'
               startIcon={<i className='tabler-upload' />}
-              className='is-full sm:is-auto'
+              className='max-sm:is-full'
             >
               Export
             </Button>
@@ -342,7 +342,7 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
               variant='contained'
               startIcon={<i className='tabler-plus' />}
               onClick={() => setAddUserOpen(!addUserOpen)}
-              className='is-full sm:is-auto'
+              className='max-sm:is-full'
             >
               Add New User
             </Button>

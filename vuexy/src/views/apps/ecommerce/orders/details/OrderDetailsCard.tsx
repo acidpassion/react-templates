@@ -3,9 +3,6 @@
 // React Imports
 import { useState, useMemo } from 'react'
 
-// Next Imports
-import Link from 'next/link'
-
 // MUI Imports
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
@@ -29,6 +26,9 @@ import {
   getSortedRowModel
 } from '@tanstack/react-table'
 import type { ColumnDef, FilterFn } from '@tanstack/react-table'
+
+// Component Imports
+import Link from '@components/Link'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
@@ -128,14 +128,12 @@ const OrderTable = () => {
         header: 'Product',
         cell: ({ row }) => (
           <div className='flex items-center gap-3'>
-            <img src={row.original.productImage} alt={row.original.productName} height={34} />
-            <div>
+            <img src={row.original.productImage} alt={row.original.productName} height={34} className='rounded' />
+            <div className='flex flex-col items-start'>
               <Typography color='text.primary' className='font-medium'>
                 {row.original.productName}
               </Typography>
-              <Typography variant='body2' color='textSecondary'>
-                {row.original.brand}
-              </Typography>
+              <Typography variant='body2'>{row.original.brand}</Typography>
             </div>
           </div>
         )
@@ -251,13 +249,7 @@ const OrderDetailsCard = () => {
       <CardHeader
         title='Order Details'
         action={
-          <Typography
-            component={Link}
-            href='/'
-            onClick={e => e.preventDefault()}
-            color='primary.main'
-            className='font-medium'
-          >
+          <Typography component={Link} color='primary.main' className='font-medium'>
             Edit
           </Typography>
         }

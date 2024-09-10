@@ -327,17 +327,17 @@ const RolesTable = ({ tableData }: { tableData?: UsersType[] }) => {
             select
             value={table.getState().pagination.pageSize}
             onChange={e => table.setPageSize(Number(e.target.value))}
-            className='is-[70px]'
+            className='max-sm:is-full sm:is-[70px]'
           >
             <MenuItem value='10'>10</MenuItem>
             <MenuItem value='25'>25</MenuItem>
             <MenuItem value='50'>50</MenuItem>
           </CustomTextField>
         </div>
-        <div className='flex gap-4 flex-col !items-start is-full sm:flex-row sm:is-auto sm:items-center'>
+        <div className='flex gap-4 flex-col !items-start max-sm:is-full sm:flex-row sm:items-center'>
           <DebouncedInput
             value={globalFilter ?? ''}
-            className='is-[250px]'
+            className='max-sm:is-full min-is-[250px]'
             onChange={value => setGlobalFilter(String(value))}
             placeholder='Search User'
           />
@@ -346,7 +346,7 @@ const RolesTable = ({ tableData }: { tableData?: UsersType[] }) => {
             value={role}
             onChange={e => setRole(e.target.value)}
             id='roles-app-role-select'
-            className='is-[160px]'
+            className='max-sm:is-full sm:is-[160px]'
             SelectProps={{ displayEmpty: true }}
           >
             <MenuItem value=''>Select Role</MenuItem>

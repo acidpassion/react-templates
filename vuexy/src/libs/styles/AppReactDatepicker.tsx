@@ -74,13 +74,13 @@ const StyledReactDatePicker = styled(Box)<BoxProps>(({ theme }) => {
             ? {
                 backgroundImage: `${"url(\"data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='currentColor' d='M17.5 10L12.5 15L17.5 20' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' /%3E%3C/svg%3E\")".replace(
                   'currentColor',
-                  theme.palette.mode === 'dark' ? 'rgb(231 227 252 / 0.7)' : 'rgb(46 38 61 / 0.7)'
+                  theme.palette.mode === 'dark' ? 'rgb(225 222 245 / 0.7)' : 'rgb(47 43 61 / 0.7)'
                 )}`
               }
             : {
                 backgroundImage: `${"url(\"data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='currentColor' d='M12.5 10L17.5 15L12.5 20' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' /%3E%3C/svg%3E\")".replace(
                   'currentColor',
-                  theme.palette.mode === 'dark' ? 'rgb(231 227 252 / 0.7)' : 'rgb(46 38 61 / 0.7)'
+                  theme.palette.mode === 'dark' ? 'rgb(225 222 245 / 0.7)' : 'rgb(47 43 61 / 0.7)'
                 )}`
               }),
           '& .react-datepicker__navigation-icon': {
